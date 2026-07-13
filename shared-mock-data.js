@@ -3357,7 +3357,7 @@ getLatestActivityRecordBySource(sourceOrId) {
       return api.AccountingModels.map(normalizeAccountingModel);
     },
 
-    saveState() {
+saveState() {
   try {
     if (typeof refreshBoundaryClosureStatuses === "function") {
       refreshBoundaryClosureStatuses();
@@ -3391,6 +3391,11 @@ getLatestActivityRecordBySource(sourceOrId) {
   root.dispatchEvent?.(
     new CustomEvent("carbon-mock-updated", { detail: api })
   );
+
+  // 🔥【核心补丁：线上环境穿透广播】向外层的父壳体大喊：“数据改了，必须强刷！”
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: "carbon-mock-updated-global" }, "*");
+  }
 },
 
     upsertEmissionSource(source) {
