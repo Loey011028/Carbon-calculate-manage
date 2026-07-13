@@ -710,77 +710,77 @@
         }, true);
       }
 
-      function setupDatasourceDataFlow() {
-        if (moduleKey !== "datasource" || doc.__datasourceDataFlowReady) return;
-        doc.__datasourceDataFlowReady = true;
+      // function setupDatasourceDataFlow() {
+      //   if (moduleKey !== "datasource" || doc.__datasourceDataFlowReady) return;
+      //   doc.__datasourceDataFlowReady = true;
 
-        let datasourceList = [
-          { id: 1, name: "办公楼总电表", type: "smart-meter", meterType: "electric", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:30", unit: "kWh", meterId: "MTR-001", gateway: "GW-HQ-01", check: true, related: "外购电力-办公楼" },
-          { id: 2, name: "生产车间A电表", type: "smart-meter", meterType: "electric", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:29", unit: "kWh", meterId: "MTR-002", gateway: "GW-HQ-01", check: true, related: "外购电力-生产车间" },
-          { id: 3, name: "R410a充注记录", type: "manual", meterType: "refrigerant", org: "华东园区", frequency: "月度", status: "离线", time: "2026-06-28 18:00", unit: "kg", person: "张三", period: "每月", related: "制冷剂逸散" },
-          { id: 4, name: "采购系统数据", type: "api", meterType: "api", org: "华东园区", frequency: "日", status: "同步中", time: "2026-06-29 10:25", unit: "t", url: "https://api.factory.com/v1", token: "secret123", mapping: "data.val", related: "采购活动数据" },
-          { id: 5, name: "综合楼冷水表", type: "smart-meter", meterType: "water", org: "华南分公司", frequency: "1小时", status: "在线", time: "2026-06-29 10:18", unit: "m3", meterId: "MTR-W012", gateway: "GW-SC-02", check: true, related: "办公用水" },
-          { id: 6, name: "锅炉房天然气表", type: "smart-meter", meterType: "gas", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:27", unit: "Nm3", meterId: "MTR-G008", gateway: "GW-BOILER-01", check: true, related: "固定燃烧-天然气" },
-          { id: 7, name: "园区蒸汽热量表", type: "smart-meter", meterType: "heat", org: "西北生产基地", frequency: "1小时", status: "离线", time: "2026-06-29 08:10", unit: "GJ", meterId: "MTR-H021", gateway: "GW-NW-HEAT", check: false, related: "外购蒸汽" },
-          { id: 8, name: "污水站IoT流量计", type: "iot", meterType: "iot", org: "华南分公司", frequency: "5分钟", status: "在线", time: "2026-06-29 10:31", unit: "m3", protocol: "MQTT", deviceId: "DEV-WW-8829", heartbeat: "60", related: "污水处理设施" },
-          { id: 9, name: "员工通勤Excel台账", type: "excel", meterType: "excel", org: "华东园区", frequency: "月度", status: "离线", time: "2026-06-25 17:40", unit: "人次", template: "数据上报模板.xlsx", related: "员工通勤" },
-          { id: 10, name: "柴油加注手工台账", type: "manual", meterType: "gas", org: "西北生产基地", frequency: "每周", status: "在线", time: "2026-06-29 09:20", unit: "L", person: "李四", period: "每周", related: "移动燃烧-柴油" }
-        ];
-        let currentTreeCategory = "";
-        let editingDatasourceId = null;
-        doc.__datasourceList = datasourceList;
+      //   let datasourceList = [
+      //     { id: 1, name: "办公楼总电表", type: "smart-meter", meterType: "electric", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:30", unit: "kWh", meterId: "MTR-001", gateway: "GW-HQ-01", check: true, related: "外购电力-办公楼" },
+      //     { id: 2, name: "生产车间A电表", type: "smart-meter", meterType: "electric", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:29", unit: "kWh", meterId: "MTR-002", gateway: "GW-HQ-01", check: true, related: "外购电力-生产车间" },
+      //     { id: 3, name: "R410a充注记录", type: "manual", meterType: "refrigerant", org: "华东园区", frequency: "月度", status: "离线", time: "2026-06-28 18:00", unit: "kg", person: "张三", period: "每月", related: "制冷剂逸散" },
+      //     { id: 4, name: "采购系统数据", type: "api", meterType: "api", org: "华东园区", frequency: "日", status: "同步中", time: "2026-06-29 10:25", unit: "t", url: "https://api.factory.com/v1", token: "secret123", mapping: "data.val", related: "采购活动数据" },
+      //     { id: 5, name: "综合楼冷水表", type: "smart-meter", meterType: "water", org: "华南分公司", frequency: "1小时", status: "在线", time: "2026-06-29 10:18", unit: "m3", meterId: "MTR-W012", gateway: "GW-SC-02", check: true, related: "办公用水" },
+      //     { id: 6, name: "锅炉房天然气表", type: "smart-meter", meterType: "gas", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:27", unit: "Nm3", meterId: "MTR-G008", gateway: "GW-BOILER-01", check: true, related: "固定燃烧-天然气" },
+      //     { id: 7, name: "园区蒸汽热量表", type: "smart-meter", meterType: "heat", org: "西北生产基地", frequency: "1小时", status: "离线", time: "2026-06-29 08:10", unit: "GJ", meterId: "MTR-H021", gateway: "GW-NW-HEAT", check: false, related: "外购蒸汽" },
+      //     { id: 8, name: "污水站IoT流量计", type: "iot", meterType: "iot", org: "华南分公司", frequency: "5分钟", status: "在线", time: "2026-06-29 10:31", unit: "m3", protocol: "MQTT", deviceId: "DEV-WW-8829", heartbeat: "60", related: "污水处理设施" },
+      //     { id: 9, name: "员工通勤Excel台账", type: "excel", meterType: "excel", org: "华东园区", frequency: "月度", status: "离线", time: "2026-06-25 17:40", unit: "人次", template: "数据上报模板.xlsx", related: "员工通勤" },
+      //     { id: 10, name: "柴油加注手工台账", type: "manual", meterType: "gas", org: "西北生产基地", frequency: "每周", status: "在线", time: "2026-06-29 09:20", unit: "L", person: "李四", period: "每周", related: "移动燃烧-柴油" }
+      //   ];
+      //   let currentTreeCategory = "";
+      //   let editingDatasourceId = null;
+      //   doc.__datasourceList = datasourceList;
 
-        const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
-        const typeLabels = { "smart-meter": "智能表计", manual: "手工填报", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
-        const meterLabels = { electric: "电表", water: "水表", gas: "燃气/燃料", heat: "热表", refrigerant: "制冷剂", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
-        const statusClasses = { "在线": "bg-green-50 text-green-600 border-green-200", "离线": "bg-gray-100 text-gray-500 border-gray-200", "同步中": "bg-blue-50 text-blue-600 border-blue-200" };
-        const tbody = doc.querySelector("tbody");
-        const addBtn = doc.getElementById("add-datasource-btn") || Array.from(doc.querySelectorAll("button")).find((btn) => textOf(btn).includes("新增数据源"));
-        const toolbar = addBtn?.closest(".flex");
-        const modal = doc.getElementById("add-datasource-modal");
-        const typeSelect = doc.getElementById("datasource-type-select");
-        const modalTitle = modal?.querySelector("h2");
-        const saveBtn = modal ? Array.from(modal.querySelectorAll("button")).find((btn) => textOf(btn).includes("保存") || textOf(btn).includes("提交")) || modal.querySelector(".border-t button:last-child") : null;
+      //   const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
+      //   const typeLabels = { "smart-meter": "智能表计", manual: "手工填报", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
+      //   const meterLabels = { electric: "电表", water: "水表", gas: "燃气/燃料", heat: "热表", refrigerant: "制冷剂", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
+      //   const statusClasses = { "在线": "bg-green-50 text-green-600 border-green-200", "离线": "bg-gray-100 text-gray-500 border-gray-200", "同步中": "bg-blue-50 text-blue-600 border-blue-200" };
+      //   const tbody = doc.querySelector("tbody");
+      //   const addBtn = doc.getElementById("add-datasource-btn") || Array.from(doc.querySelectorAll("button")).find((btn) => textOf(btn).includes("新增数据源"));
+      //   const toolbar = addBtn?.closest(".flex");
+      //   const modal = doc.getElementById("add-datasource-modal");
+      //   const typeSelect = doc.getElementById("datasource-type-select");
+      //   const modalTitle = modal?.querySelector("h2");
+      //   const saveBtn = modal ? Array.from(modal.querySelectorAll("button")).find((btn) => textOf(btn).includes("保存") || textOf(btn).includes("提交")) || modal.querySelector(".border-t button:last-child") : null;
 
-        function toast(message) { flash(message); }
-        function optionHtml(items, label) { return '<option value="">' + label + '：全部</option>' + items.map((item) => '<option value="' + esc(item.value) + '">' + esc(item.label) + '</option>').join(""); }
+      //   function toast(message) { flash(message); }
+      //   function optionHtml(items, label) { return '<option value="">' + label + '：全部</option>' + items.map((item) => '<option value="' + esc(item.value) + '">' + esc(item.label) + '</option>').join(""); }
 
-        function setupDatasourceFilters() {
-          if (!toolbar) return;
-          const input = toolbar.querySelector("input");
-          const selects = Array.from(toolbar.querySelectorAll("select"));
-          if (input) input.id = "search-input";
-          if (selects[0]) selects[0].id = "filter-status";
-          if (selects[1]) selects[1].id = "filter-org";
-          if (selects[2]) selects[2].id = "filter-meter-type";
-          let typeFilter = doc.getElementById("filter-type");
-          if (!typeFilter) {
-            typeFilter = doc.createElement("select");
-            typeFilter.id = "filter-type";
-            typeFilter.className = "px-3 py-1.5 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary";
-            toolbar.insertBefore(typeFilter, selects[1] || addBtn);
-          }
-          typeFilter.innerHTML = optionHtml([{ value: "smart-meter", label: "智能表计" }, { value: "manual", label: "手工填报" }, { value: "api", label: "API接口" }, { value: "iot", label: "IoT设备" }, { value: "excel", label: "Excel导入" }], "接入类型");
-          if (selects[0]) selects[0].innerHTML = optionHtml([{ value: "在线", label: "在线" }, { value: "离线", label: "离线" }, { value: "同步中", label: "同步中" }], "状态");
-          if (selects[1]) selects[1].innerHTML = optionHtml([{ value: "华东园区", label: "华东园区" }, { value: "华南分公司", label: "华南分公司" }, { value: "西北生产基地", label: "西北生产基地" }], "所属组织");
-          if (selects[2]) selects[2].innerHTML = optionHtml(Object.entries(meterLabels).map(([value, label]) => ({ value, label })), "数据源分类");
-          const resetBtn = Array.from(toolbar.querySelectorAll("button")).find((btn) => textOf(btn).includes("重置"));
-          if (resetBtn) {
-            resetBtn.id = "filter-reset";
-            resetBtn.addEventListener("click", (event) => {
-              event.preventDefault();
-              event.stopImmediatePropagation();
-              currentTreeCategory = "";
-              ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => { const el = doc.getElementById(id); if (el) el.value = ""; });
-              setActiveTreeNode(null);
-              renderTable();
-            }, true);
-          }
-          ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => {
-            const el = doc.getElementById(id);
-            if (el) el.addEventListener(el.tagName === "INPUT" ? "input" : "change", renderTable);
-          });
-        }
+      //   function setupDatasourceFilters() {
+      //     if (!toolbar) return;
+      //     const input = toolbar.querySelector("input");
+      //     const selects = Array.from(toolbar.querySelectorAll("select"));
+      //     if (input) input.id = "search-input";
+      //     if (selects[0]) selects[0].id = "filter-status";
+      //     if (selects[1]) selects[1].id = "filter-org";
+      //     if (selects[2]) selects[2].id = "filter-meter-type";
+      //     let typeFilter = doc.getElementById("filter-type");
+      //     if (!typeFilter) {
+      //       typeFilter = doc.createElement("select");
+      //       typeFilter.id = "filter-type";
+      //       typeFilter.className = "px-3 py-1.5 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary";
+      //       toolbar.insertBefore(typeFilter, selects[1] || addBtn);
+      //     }
+      //     typeFilter.innerHTML = optionHtml([{ value: "smart-meter", label: "智能表计" }, { value: "manual", label: "手工填报" }, { value: "api", label: "API接口" }, { value: "iot", label: "IoT设备" }, { value: "excel", label: "Excel导入" }], "接入类型");
+      //     if (selects[0]) selects[0].innerHTML = optionHtml([{ value: "在线", label: "在线" }, { value: "离线", label: "离线" }, { value: "同步中", label: "同步中" }], "状态");
+      //     if (selects[1]) selects[1].innerHTML = optionHtml([{ value: "华东园区", label: "华东园区" }, { value: "华南分公司", label: "华南分公司" }, { value: "西北生产基地", label: "西北生产基地" }], "所属组织");
+      //     if (selects[2]) selects[2].innerHTML = optionHtml(Object.entries(meterLabels).map(([value, label]) => ({ value, label })), "数据源分类");
+      //     const resetBtn = Array.from(toolbar.querySelectorAll("button")).find((btn) => textOf(btn).includes("重置"));
+      //     if (resetBtn) {
+      //       resetBtn.id = "filter-reset";
+      //       resetBtn.addEventListener("click", (event) => {
+      //         event.preventDefault();
+      //         event.stopImmediatePropagation();
+      //         currentTreeCategory = "";
+      //         ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => { const el = doc.getElementById(id); if (el) el.value = ""; });
+      //         setActiveTreeNode(null);
+      //         renderTable();
+      //       }, true);
+      //     }
+      //     ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => {
+      //       const el = doc.getElementById(id);
+      //       if (el) el.addEventListener(el.tagName === "INPUT" ? "input" : "change", renderTable);
+      //     });
+      //   }
 
         function setupDatasourceTree() {
           const title = Array.from(doc.querySelectorAll("h3")).find((node) => textOf(node).includes("数据源分类"));
