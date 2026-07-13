@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
@@ -1049,14 +1049,17 @@
         });
       }
 
-      setupTables();
-      setupSelectOptions();
-      setupFilters();
-      setupCategorySwitching();
-      setupButtons();
-     
-      setupActionDelegation();
-      setupInternalTabs();
+      // 子页面会自行加载 shared-mock-data.js；整合壳只负责 iframe 外壳，不接管子页面数据/表格/按钮。
+      // setupTables();
+      // setupSelectOptions();
+      // setupFilters();
+      // setupCategorySwitching();
+      // setupButtons();
+      // setupDatasourceDataFlow();
+      // setupBoundaryMatrixDemo();
+      // setupAdvancedBoundaryInteractions();
+      // setupActionDelegation();
+      // setupInternalTabs();
     }
 
     function cleanupEmbeddedPage() {
@@ -1169,3 +1172,4 @@
   </script>
 </body>
 </html>
+
