@@ -1489,6 +1489,19 @@
 
   setCurrentSubtitle("");
 });
+    // 🔥【直接粘贴在 index.html 底部 script 标签里的任意空白处】
+window.addEventListener("message", (event) => {
+  const data = event.data || {};
+  // 线上穿透：一旦收到子页面发过来的数据变更信号
+  if (data.type === "carbon-mock-updated-global") {
+    // 强制通知当前展示的核心 Iframe 视窗重新拉取共享数据库的最纯净状态
+    const frame = document.getElementById("content-frame");
+    if (frame && frame.contentWindow) {
+      // 线上 HTTPS 环境下最安全的重载手法
+      frame.contentWindow.location.reload();
+    }
+  }
+});
   </script>
 </body>
 </html>
