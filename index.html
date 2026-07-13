@@ -782,236 +782,236 @@
       //     });
       //   }
 
-        function setupDatasourceTree() {
-          const title = Array.from(doc.querySelectorAll("h3")).find((node) => textOf(node).includes("数据源分类"));
-          const panel = title?.closest(".col-span-3, .bg-surface-container-lowest, .border");
-          if (!panel) return;
-          panel.innerHTML = '<h3 class="font-bold text-sm mb-4 border-b border-surface-container-high pb-2">数据源分类</h3>' +
-            '<div class="space-y-1" data-datasource-tree>' +
-            '<button type="button" data-category="" class="w-full flex items-center py-2 px-2 text-sm rounded cursor-pointer hover:bg-surface-container"><span class="material-symbols-outlined text-sm mr-2 text-outline">dataset</span><span class="flex-1 text-left">全部数据源</span></button>' +
-            '<div class="flex items-center py-2 px-2 text-primary font-medium bg-primary/5 rounded"><span class="material-symbols-outlined text-sm mr-2">expand_more</span><span class="text-sm flex-1">智能表计</span></div>' +
-            '<div class="ml-6 space-y-1 mt-1">' +
-            treeButton("electric", "电表") + treeButton("water", "水表") + treeButton("gas", "燃气/燃料") + treeButton("heat", "热表") +
-            '</div>' + treeButton("refrigerant", "制冷剂/手工填报", true, "edit_note") + treeButton("api", "API接口", true, "api") + treeButton("iot", "IoT设备", true, "sensors") + treeButton("excel", "Excel导入", true, "description") + '</div>';
-          panel.querySelectorAll("[data-category]").forEach((node) => {
-            node.addEventListener("click", (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              currentTreeCategory = node.dataset.category || "";
-              const filter = doc.getElementById("filter-meter-type");
-              if (filter) filter.value = currentTreeCategory;
-              setActiveTreeNode(node);
-              renderTable();
-            }, true);
-          });
-        }
-        function treeButton(category, label, topLevel = false, icon = "") {
-          if (topLevel) return '<button type="button" data-category="' + category + '" class="w-full flex items-center py-2 px-2 hover:bg-surface-container rounded cursor-pointer text-sm text-outline"><span class="material-symbols-outlined text-sm mr-2 text-outline">' + icon + '</span><span class="flex-1 text-left">' + label + '</span></button>';
-          return '<button type="button" data-category="' + category + '" class="w-full flex items-center py-1.5 px-3 hover:bg-surface-container text-outline text-sm rounded"><span class="w-1.5 h-1.5 bg-outline-variant rounded-full mr-3"></span><span class="flex-1 text-left">' + label + '</span></button>';
-        }
-        function setActiveTreeNode(active) {
-          doc.querySelectorAll("[data-category]").forEach((node) => {
-            node.classList.remove("bg-primary/10", "text-primary");
-            node.classList.add("text-outline");
-            node.querySelectorAll(".rounded-full").forEach((dot) => dot.classList.remove("bg-primary"));
-          });
-          if (active) {
-            active.classList.add("bg-primary/10", "text-primary");
-            active.classList.remove("text-outline");
-            active.querySelectorAll(".rounded-full").forEach((dot) => dot.classList.add("bg-primary"));
-          }
-        }
+      //   function setupDatasourceTree() {
+      //     const title = Array.from(doc.querySelectorAll("h3")).find((node) => textOf(node).includes("数据源分类"));
+      //     const panel = title?.closest(".col-span-3, .bg-surface-container-lowest, .border");
+      //     if (!panel) return;
+      //     panel.innerHTML = '<h3 class="font-bold text-sm mb-4 border-b border-surface-container-high pb-2">数据源分类</h3>' +
+      //       '<div class="space-y-1" data-datasource-tree>' +
+      //       '<button type="button" data-category="" class="w-full flex items-center py-2 px-2 text-sm rounded cursor-pointer hover:bg-surface-container"><span class="material-symbols-outlined text-sm mr-2 text-outline">dataset</span><span class="flex-1 text-left">全部数据源</span></button>' +
+      //       '<div class="flex items-center py-2 px-2 text-primary font-medium bg-primary/5 rounded"><span class="material-symbols-outlined text-sm mr-2">expand_more</span><span class="text-sm flex-1">智能表计</span></div>' +
+      //       '<div class="ml-6 space-y-1 mt-1">' +
+      //       treeButton("electric", "电表") + treeButton("water", "水表") + treeButton("gas", "燃气/燃料") + treeButton("heat", "热表") +
+      //       '</div>' + treeButton("refrigerant", "制冷剂/手工填报", true, "edit_note") + treeButton("api", "API接口", true, "api") + treeButton("iot", "IoT设备", true, "sensors") + treeButton("excel", "Excel导入", true, "description") + '</div>';
+      //     panel.querySelectorAll("[data-category]").forEach((node) => {
+      //       node.addEventListener("click", (event) => {
+      //         event.preventDefault();
+      //         event.stopPropagation();
+      //         currentTreeCategory = node.dataset.category || "";
+      //         const filter = doc.getElementById("filter-meter-type");
+      //         if (filter) filter.value = currentTreeCategory;
+      //         setActiveTreeNode(node);
+      //         renderTable();
+      //       }, true);
+      //     });
+      //   }
+      //   function treeButton(category, label, topLevel = false, icon = "") {
+      //     if (topLevel) return '<button type="button" data-category="' + category + '" class="w-full flex items-center py-2 px-2 hover:bg-surface-container rounded cursor-pointer text-sm text-outline"><span class="material-symbols-outlined text-sm mr-2 text-outline">' + icon + '</span><span class="flex-1 text-left">' + label + '</span></button>';
+      //     return '<button type="button" data-category="' + category + '" class="w-full flex items-center py-1.5 px-3 hover:bg-surface-container text-outline text-sm rounded"><span class="w-1.5 h-1.5 bg-outline-variant rounded-full mr-3"></span><span class="flex-1 text-left">' + label + '</span></button>';
+      //   }
+      //   function setActiveTreeNode(active) {
+      //     doc.querySelectorAll("[data-category]").forEach((node) => {
+      //       node.classList.remove("bg-primary/10", "text-primary");
+      //       node.classList.add("text-outline");
+      //       node.querySelectorAll(".rounded-full").forEach((dot) => dot.classList.remove("bg-primary"));
+      //     });
+      //     if (active) {
+      //       active.classList.add("bg-primary/10", "text-primary");
+      //       active.classList.remove("text-outline");
+      //       active.querySelectorAll(".rounded-full").forEach((dot) => dot.classList.add("bg-primary"));
+      //     }
+      //   }
 
-        function getFilteredData() {
-          const keyword = (doc.getElementById("search-input")?.value || "").trim().toLowerCase();
-          const type = doc.getElementById("filter-type")?.value || "";
-          const status = doc.getElementById("filter-status")?.value || "";
-          const org = doc.getElementById("filter-org")?.value || "";
-          const meterType = doc.getElementById("filter-meter-type")?.value || "";
-          return datasourceList.filter((item) => {
-            const matchKeyword = !keyword || [item.name, item.org, item.related, item.meterId, item.gateway, item.url, item.deviceId].some((field) => String(field || "").toLowerCase().includes(keyword));
-            return matchKeyword && (!currentTreeCategory || item.meterType === currentTreeCategory) && (!type || item.type === type) && (!status || item.status === status) && (!org || item.org === org) && (!meterType || item.meterType === meterType);
-          });
-        }
+      //   function getFilteredData() {
+      //     const keyword = (doc.getElementById("search-input")?.value || "").trim().toLowerCase();
+      //     const type = doc.getElementById("filter-type")?.value || "";
+      //     const status = doc.getElementById("filter-status")?.value || "";
+      //     const org = doc.getElementById("filter-org")?.value || "";
+      //     const meterType = doc.getElementById("filter-meter-type")?.value || "";
+      //     return datasourceList.filter((item) => {
+      //       const matchKeyword = !keyword || [item.name, item.org, item.related, item.meterId, item.gateway, item.url, item.deviceId].some((field) => String(field || "").toLowerCase().includes(keyword));
+      //       return matchKeyword && (!currentTreeCategory || item.meterType === currentTreeCategory) && (!type || item.type === type) && (!status || item.status === status) && (!org || item.org === org) && (!meterType || item.meterType === meterType);
+      //     });
+      //   }
 
-        function renderTable() {
-          if (!tbody) return;
-          const rows = getFilteredData();
-          if (!rows.length) {
-            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-10 text-center text-outline">暂无匹配的数据源</td></tr>';
-            return;
-          }
-          tbody.innerHTML = rows.map((item) => {
-            const statusClass = statusClasses[item.status] || statusClasses["离线"];
-            return '<tr class="hover:bg-surface-container/30 transition-colors" data-id="' + item.id + '">' +
-              '<td class="px-4 py-3 font-medium">' + esc(item.name) + '</td>' +
-              '<td class="px-4 py-3 text-outline">' + esc(typeLabels[item.type] || item.type) + '-' + esc(meterLabels[item.meterType] || item.meterType) + '</td>' +
-              '<td class="px-4 py-3">' + esc(item.related || "-") + '</td>' +
-              '<td class="px-4 py-3">' + esc(item.frequency) + '</td>' +
-              '<td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] border ' + statusClass + '">' + esc(item.status) + '</span></td>' +
-              '<td class="px-4 py-3 text-outline text-xs">' + esc(item.time) + '</td>' +
-              '<td class="px-4 py-3">' + esc(item.org) + '</td>' +
-              '<td class="px-4 py-3 text-right"><div class="flex items-center justify-end space-x-3 text-primary"><button class="hover:underline" data-datasource-action="edit" data-id="' + item.id + '">编辑</button><button class="hover:underline" data-datasource-action="detail" data-id="' + item.id + '">详情</button><button class="hover:underline flex items-center" data-datasource-action="more" data-id="' + item.id + '">更多 <span class="material-symbols-outlined text-sm">expand_more</span></button></div></td></tr>';
-          }).join("");
-        }
+      //   function renderTable() {
+      //     if (!tbody) return;
+      //     const rows = getFilteredData();
+      //     if (!rows.length) {
+      //       tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-10 text-center text-outline">暂无匹配的数据源</td></tr>';
+      //       return;
+      //     }
+      //     tbody.innerHTML = rows.map((item) => {
+      //       const statusClass = statusClasses[item.status] || statusClasses["离线"];
+      //       return '<tr class="hover:bg-surface-container/30 transition-colors" data-id="' + item.id + '">' +
+      //         '<td class="px-4 py-3 font-medium">' + esc(item.name) + '</td>' +
+      //         '<td class="px-4 py-3 text-outline">' + esc(typeLabels[item.type] || item.type) + '-' + esc(meterLabels[item.meterType] || item.meterType) + '</td>' +
+      //         '<td class="px-4 py-3">' + esc(item.related || "-") + '</td>' +
+      //         '<td class="px-4 py-3">' + esc(item.frequency) + '</td>' +
+      //         '<td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] border ' + statusClass + '">' + esc(item.status) + '</span></td>' +
+      //         '<td class="px-4 py-3 text-outline text-xs">' + esc(item.time) + '</td>' +
+      //         '<td class="px-4 py-3">' + esc(item.org) + '</td>' +
+      //         '<td class="px-4 py-3 text-right"><div class="flex items-center justify-end space-x-3 text-primary"><button class="hover:underline" data-datasource-action="edit" data-id="' + item.id + '">编辑</button><button class="hover:underline" data-datasource-action="detail" data-id="' + item.id + '">详情</button><button class="hover:underline flex items-center" data-datasource-action="more" data-id="' + item.id + '">更多 <span class="material-symbols-outlined text-sm">expand_more</span></button></div></td></tr>';
+      //     }).join("");
+      //   }
 
-        function ensureModalFields() {
-          if (!modal) return;
-          const base = modal.querySelectorAll("section:first-of-type input, section:first-of-type select");
-          if (base[0]) base[0].id = "modal-name-input";
-          if (base[1]) base[1].id = "modal-org-select";
-          const smart = doc.querySelectorAll("#config-smart-meter input, #config-smart-meter select");
-          if (smart[0]) smart[0].id = "modal-meter-id-input";
-          if (smart[1]) smart[1].id = "modal-frequency-select";
-          if (smart[2]) smart[2].id = "modal-gateway-input";
-          const manual = doc.querySelectorAll("#config-manual input, #config-manual select");
-          if (manual[0]) manual[0].id = "modal-person-input";
-          if (manual[1]) manual[1].id = "modal-period-select";
-          const api = doc.querySelectorAll("#config-api input, #config-api select");
-          if (api[0]) api[0].id = "modal-url-input";
-          if (api[1]) api[1].id = "modal-method-select";
-          if (api[2]) api[2].id = "modal-token-input";
-          const iot = doc.querySelectorAll("#config-iot input, #config-iot select");
-          if (iot[0]) iot[0].id = "modal-protocol-select";
-          if (iot[1]) iot[1].id = "modal-device-id-input";
-          if (iot[2]) iot[2].id = "modal-heartbeat-input";
-        }
-        function switchConfigSection(type) {
-          doc.querySelectorAll(".config-section").forEach((section) => section.classList.toggle("active", section.id === "config-" + type));
-        }
-        function setModalVisible(show) { if (modal) modal.classList.toggle("hidden", !show); }
-        function setToggle(prefix, enabled) {
-          const btn = doc.getElementById(prefix + "-switch");
-          const knob = doc.getElementById(prefix + "-knob");
-          if (!btn || !knob) return;
-          btn.classList.toggle("bg-primary", enabled);
-          btn.classList.toggle("bg-outline-variant", !enabled);
-          knob.classList.toggle("translate-x-5", enabled);
-          knob.classList.toggle("translate-x-0", !enabled);
-        }
-        function setupToggle(prefix) {
-          const btn = doc.getElementById(prefix + "-switch");
-          if (btn) btn.addEventListener("click", (event) => { event.preventDefault(); event.stopImmediatePropagation(); setToggle(prefix, !btn.classList.contains("bg-primary")); }, true);
-        }
-        function clearModal() {
-          if (!modal) return;
-          modal.querySelectorAll("input").forEach((input) => { if (input.type === "checkbox") input.checked = false; else if (input.type === "number") input.value = input.defaultValue || ""; else input.value = ""; });
-          modal.querySelectorAll("select").forEach((select) => { select.selectedIndex = 0; });
-          const org = doc.getElementById("modal-org-select");
-          if (org) org.value = "";
-          if (typeSelect) typeSelect.value = "smart-meter";
-          switchConfigSection("smart-meter");
-          setToggle("quality", true);
-          setToggle("active", true);
-        }
-        function openCreateModal(event) {
-          event?.preventDefault();
-          event?.stopImmediatePropagation?.();
-          editingDatasourceId = null;
-          clearModal();
-          if (modalTitle) modalTitle.textContent = "新增数据源";
-          if (saveBtn) saveBtn.textContent = "保存并测试";
-          setModalVisible(true);
-        }
-        function openEditModal(id) {
-          const item = datasourceList.find((row) => row.id === Number(id));
-          if (!item) return;
-          editingDatasourceId = item.id;
-          clearModal();
-          if (modalTitle) modalTitle.textContent = "编辑数据源";
-          if (saveBtn) saveBtn.textContent = "提交修改";
-          const set = (id, value) => { const el = doc.getElementById(id); if (el) el.value = value || ""; };
-          set("modal-name-input", item.name);
-          set("modal-org-select", item.org);
-          if (typeSelect) typeSelect.value = item.type || "smart-meter";
-          set("modal-meter-id-input", item.meterId);
-          set("modal-frequency-select", item.frequency || "15分钟");
-          set("modal-gateway-input", item.gateway);
-          set("modal-person-input", item.person);
-          set("modal-period-select", item.period || "每月");
-          set("modal-url-input", item.url);
-          set("modal-token-input", item.token);
-          set("modal-protocol-select", item.protocol || "MQTT");
-          set("modal-device-id-input", item.deviceId);
-          set("modal-heartbeat-input", item.heartbeat || "60");
-          setToggle("quality", item.check !== false);
-          setToggle("active", item.status !== "离线");
-          switchConfigSection(item.type || "smart-meter");
-          setModalVisible(true);
-        }
-        function collectModalData() {
-          const type = typeSelect?.value || "smart-meter";
-          const get = (id) => doc.getElementById(id)?.value?.trim() || "";
-          const active = doc.getElementById("active-switch")?.classList.contains("bg-primary");
-          const base = { name: get("modal-name-input") || "未命名数据源", org: get("modal-org-select") || "华东园区", type, frequency: "日", status: active ? "在线" : "离线", time: "2026-06-29 10:35", check: doc.getElementById("quality-switch")?.classList.contains("bg-primary"), unit: "kWh", related: "待关联排放源" };
-          if (type === "smart-meter") return { ...base, meterType: "electric", frequency: get("modal-frequency-select") || "15分钟", meterId: get("modal-meter-id-input"), gateway: get("modal-gateway-input") };
-          if (type === "manual") return { ...base, meterType: "refrigerant", frequency: get("modal-period-select") || "每月", unit: "kg", person: get("modal-person-input"), period: get("modal-period-select") || "每月" };
-          if (type === "api") return { ...base, meterType: "api", unit: "t", url: get("modal-url-input"), token: get("modal-token-input"), mapping: "data.val" };
-          if (type === "iot") return { ...base, meterType: "iot", frequency: "5分钟", unit: "m3", protocol: get("modal-protocol-select") || "MQTT", deviceId: get("modal-device-id-input"), heartbeat: get("modal-heartbeat-input") || "60" };
-          return { ...base, meterType: "excel", frequency: "月度", unit: "条", template: "数据上报模板.xlsx" };
-        }
-        function saveDatasource(event) {
-          event?.preventDefault();
-          event?.stopImmediatePropagation?.();
-          const data = collectModalData();
-          if (editingDatasourceId) {
-            const index = datasourceList.findIndex((row) => row.id === editingDatasourceId);
-            if (index >= 0) datasourceList[index] = { ...datasourceList[index], ...data };
-            toast("修改成功");
-          } else {
-            datasourceList.unshift({ id: Math.max(...datasourceList.map((row) => row.id)) + 1, ...data });
-            toast("新增成功");
-          }
-          doc.__datasourceList = datasourceList;
-          setModalVisible(false);
-          renderTable();
-        }
-        function detailRows(item) {
-          const rows = [["数据源名称", item.name], ["接入类型", typeLabels[item.type] || item.type], ["分类", meterLabels[item.meterType] || item.meterType], ["所属组织", item.org], ["关联排放源", item.related], ["采集频率", item.frequency], ["状态", item.status], ["单位", item.unit], ["最后更新时间", item.time], ["质量校验", item.check === false ? "关闭" : "开启"], ["表计ID", item.meterId], ["网关", item.gateway], ["负责人", item.person], ["填报周期", item.period], ["接口地址", item.url], ["鉴权 Token/Key", item.token], ["映射路径", item.mapping], ["设备ID", item.deviceId], ["接入协议", item.protocol], ["心跳间隔", item.heartbeat ? item.heartbeat + " 秒" : ""], ["导入模板", item.template]];
-          return rows.filter(([, value]) => value !== undefined && value !== null && value !== "").map(([label, value]) => '<div class="rounded-lg border border-outline-variant bg-surface-container-lowest p-3"><div class="text-xs text-outline mb-1">' + esc(label) + '</div><div class="text-sm font-medium break-all">' + esc(value) + '</div></div>').join("");
-        }
-        function showDetails(id) {
-          const item = datasourceList.find((row) => row.id === Number(id));
-          if (!item) return;
-          let panel = doc.getElementById("datasource-detail-modal");
-          if (!panel) {
-            panel = doc.createElement("div");
-            panel.id = "datasource-detail-modal";
-            panel.className = "fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 backdrop-blur-sm";
-            panel.innerHTML = '<div class="bg-white w-[760px] max-h-[86vh] overflow-y-auto rounded-xl shadow-2xl"><div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between"><h2 class="text-lg font-bold">数据源详情</h2><button data-close class="text-outline hover:text-on-surface"><span class="material-symbols-outlined">close</span></button></div><div class="p-6 grid grid-cols-2 gap-4" data-detail-body></div><div class="px-6 py-4 border-t border-outline-variant bg-surface-container-low flex justify-end"><button data-close class="px-5 py-2 rounded-lg bg-primary text-white text-sm">关闭</button></div></div>';
-            doc.body.appendChild(panel);
-            panel.querySelectorAll("[data-close]").forEach((btn) => btn.addEventListener("click", () => panel.classList.add("hidden")));
-            panel.addEventListener("click", (event) => { if (event.target === panel) panel.classList.add("hidden"); });
-          }
-          panel.querySelector("[data-detail-body]").innerHTML = detailRows(item);
-          panel.classList.remove("hidden");
-          panel.classList.add("flex");
-        }
+      //   function ensureModalFields() {
+      //     if (!modal) return;
+      //     const base = modal.querySelectorAll("section:first-of-type input, section:first-of-type select");
+      //     if (base[0]) base[0].id = "modal-name-input";
+      //     if (base[1]) base[1].id = "modal-org-select";
+      //     const smart = doc.querySelectorAll("#config-smart-meter input, #config-smart-meter select");
+      //     if (smart[0]) smart[0].id = "modal-meter-id-input";
+      //     if (smart[1]) smart[1].id = "modal-frequency-select";
+      //     if (smart[2]) smart[2].id = "modal-gateway-input";
+      //     const manual = doc.querySelectorAll("#config-manual input, #config-manual select");
+      //     if (manual[0]) manual[0].id = "modal-person-input";
+      //     if (manual[1]) manual[1].id = "modal-period-select";
+      //     const api = doc.querySelectorAll("#config-api input, #config-api select");
+      //     if (api[0]) api[0].id = "modal-url-input";
+      //     if (api[1]) api[1].id = "modal-method-select";
+      //     if (api[2]) api[2].id = "modal-token-input";
+      //     const iot = doc.querySelectorAll("#config-iot input, #config-iot select");
+      //     if (iot[0]) iot[0].id = "modal-protocol-select";
+      //     if (iot[1]) iot[1].id = "modal-device-id-input";
+      //     if (iot[2]) iot[2].id = "modal-heartbeat-input";
+      //   }
+      //   function switchConfigSection(type) {
+      //     doc.querySelectorAll(".config-section").forEach((section) => section.classList.toggle("active", section.id === "config-" + type));
+      //   }
+      //   function setModalVisible(show) { if (modal) modal.classList.toggle("hidden", !show); }
+      //   function setToggle(prefix, enabled) {
+      //     const btn = doc.getElementById(prefix + "-switch");
+      //     const knob = doc.getElementById(prefix + "-knob");
+      //     if (!btn || !knob) return;
+      //     btn.classList.toggle("bg-primary", enabled);
+      //     btn.classList.toggle("bg-outline-variant", !enabled);
+      //     knob.classList.toggle("translate-x-5", enabled);
+      //     knob.classList.toggle("translate-x-0", !enabled);
+      //   }
+      //   function setupToggle(prefix) {
+      //     const btn = doc.getElementById(prefix + "-switch");
+      //     if (btn) btn.addEventListener("click", (event) => { event.preventDefault(); event.stopImmediatePropagation(); setToggle(prefix, !btn.classList.contains("bg-primary")); }, true);
+      //   }
+      //   function clearModal() {
+      //     if (!modal) return;
+      //     modal.querySelectorAll("input").forEach((input) => { if (input.type === "checkbox") input.checked = false; else if (input.type === "number") input.value = input.defaultValue || ""; else input.value = ""; });
+      //     modal.querySelectorAll("select").forEach((select) => { select.selectedIndex = 0; });
+      //     const org = doc.getElementById("modal-org-select");
+      //     if (org) org.value = "";
+      //     if (typeSelect) typeSelect.value = "smart-meter";
+      //     switchConfigSection("smart-meter");
+      //     setToggle("quality", true);
+      //     setToggle("active", true);
+      //   }
+      //   function openCreateModal(event) {
+      //     event?.preventDefault();
+      //     event?.stopImmediatePropagation?.();
+      //     editingDatasourceId = null;
+      //     clearModal();
+      //     if (modalTitle) modalTitle.textContent = "新增数据源";
+      //     if (saveBtn) saveBtn.textContent = "保存并测试";
+      //     setModalVisible(true);
+      //   }
+      //   function openEditModal(id) {
+      //     const item = datasourceList.find((row) => row.id === Number(id));
+      //     if (!item) return;
+      //     editingDatasourceId = item.id;
+      //     clearModal();
+      //     if (modalTitle) modalTitle.textContent = "编辑数据源";
+      //     if (saveBtn) saveBtn.textContent = "提交修改";
+      //     const set = (id, value) => { const el = doc.getElementById(id); if (el) el.value = value || ""; };
+      //     set("modal-name-input", item.name);
+      //     set("modal-org-select", item.org);
+      //     if (typeSelect) typeSelect.value = item.type || "smart-meter";
+      //     set("modal-meter-id-input", item.meterId);
+      //     set("modal-frequency-select", item.frequency || "15分钟");
+      //     set("modal-gateway-input", item.gateway);
+      //     set("modal-person-input", item.person);
+      //     set("modal-period-select", item.period || "每月");
+      //     set("modal-url-input", item.url);
+      //     set("modal-token-input", item.token);
+      //     set("modal-protocol-select", item.protocol || "MQTT");
+      //     set("modal-device-id-input", item.deviceId);
+      //     set("modal-heartbeat-input", item.heartbeat || "60");
+      //     setToggle("quality", item.check !== false);
+      //     setToggle("active", item.status !== "离线");
+      //     switchConfigSection(item.type || "smart-meter");
+      //     setModalVisible(true);
+      //   }
+      //   function collectModalData() {
+      //     const type = typeSelect?.value || "smart-meter";
+      //     const get = (id) => doc.getElementById(id)?.value?.trim() || "";
+      //     const active = doc.getElementById("active-switch")?.classList.contains("bg-primary");
+      //     const base = { name: get("modal-name-input") || "未命名数据源", org: get("modal-org-select") || "华东园区", type, frequency: "日", status: active ? "在线" : "离线", time: "2026-06-29 10:35", check: doc.getElementById("quality-switch")?.classList.contains("bg-primary"), unit: "kWh", related: "待关联排放源" };
+      //     if (type === "smart-meter") return { ...base, meterType: "electric", frequency: get("modal-frequency-select") || "15分钟", meterId: get("modal-meter-id-input"), gateway: get("modal-gateway-input") };
+      //     if (type === "manual") return { ...base, meterType: "refrigerant", frequency: get("modal-period-select") || "每月", unit: "kg", person: get("modal-person-input"), period: get("modal-period-select") || "每月" };
+      //     if (type === "api") return { ...base, meterType: "api", unit: "t", url: get("modal-url-input"), token: get("modal-token-input"), mapping: "data.val" };
+      //     if (type === "iot") return { ...base, meterType: "iot", frequency: "5分钟", unit: "m3", protocol: get("modal-protocol-select") || "MQTT", deviceId: get("modal-device-id-input"), heartbeat: get("modal-heartbeat-input") || "60" };
+      //     return { ...base, meterType: "excel", frequency: "月度", unit: "条", template: "数据上报模板.xlsx" };
+      //   }
+      //   function saveDatasource(event) {
+      //     event?.preventDefault();
+      //     event?.stopImmediatePropagation?.();
+      //     const data = collectModalData();
+      //     if (editingDatasourceId) {
+      //       const index = datasourceList.findIndex((row) => row.id === editingDatasourceId);
+      //       if (index >= 0) datasourceList[index] = { ...datasourceList[index], ...data };
+      //       toast("修改成功");
+      //     } else {
+      //       datasourceList.unshift({ id: Math.max(...datasourceList.map((row) => row.id)) + 1, ...data });
+      //       toast("新增成功");
+      //     }
+      //     doc.__datasourceList = datasourceList;
+      //     setModalVisible(false);
+      //     renderTable();
+      //   }
+      //   function detailRows(item) {
+      //     const rows = [["数据源名称", item.name], ["接入类型", typeLabels[item.type] || item.type], ["分类", meterLabels[item.meterType] || item.meterType], ["所属组织", item.org], ["关联排放源", item.related], ["采集频率", item.frequency], ["状态", item.status], ["单位", item.unit], ["最后更新时间", item.time], ["质量校验", item.check === false ? "关闭" : "开启"], ["表计ID", item.meterId], ["网关", item.gateway], ["负责人", item.person], ["填报周期", item.period], ["接口地址", item.url], ["鉴权 Token/Key", item.token], ["映射路径", item.mapping], ["设备ID", item.deviceId], ["接入协议", item.protocol], ["心跳间隔", item.heartbeat ? item.heartbeat + " 秒" : ""], ["导入模板", item.template]];
+      //     return rows.filter(([, value]) => value !== undefined && value !== null && value !== "").map(([label, value]) => '<div class="rounded-lg border border-outline-variant bg-surface-container-lowest p-3"><div class="text-xs text-outline mb-1">' + esc(label) + '</div><div class="text-sm font-medium break-all">' + esc(value) + '</div></div>').join("");
+      //   }
+      //   function showDetails(id) {
+      //     const item = datasourceList.find((row) => row.id === Number(id));
+      //     if (!item) return;
+      //     let panel = doc.getElementById("datasource-detail-modal");
+      //     if (!panel) {
+      //       panel = doc.createElement("div");
+      //       panel.id = "datasource-detail-modal";
+      //       panel.className = "fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 backdrop-blur-sm";
+      //       panel.innerHTML = '<div class="bg-white w-[760px] max-h-[86vh] overflow-y-auto rounded-xl shadow-2xl"><div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between"><h2 class="text-lg font-bold">数据源详情</h2><button data-close class="text-outline hover:text-on-surface"><span class="material-symbols-outlined">close</span></button></div><div class="p-6 grid grid-cols-2 gap-4" data-detail-body></div><div class="px-6 py-4 border-t border-outline-variant bg-surface-container-low flex justify-end"><button data-close class="px-5 py-2 rounded-lg bg-primary text-white text-sm">关闭</button></div></div>';
+      //       doc.body.appendChild(panel);
+      //       panel.querySelectorAll("[data-close]").forEach((btn) => btn.addEventListener("click", () => panel.classList.add("hidden")));
+      //       panel.addEventListener("click", (event) => { if (event.target === panel) panel.classList.add("hidden"); });
+      //     }
+      //     panel.querySelector("[data-detail-body]").innerHTML = detailRows(item);
+      //     panel.classList.remove("hidden");
+      //     panel.classList.add("flex");
+      //   }
 
-        setupDatasourceFilters();
-        setupDatasourceTree();
-        ensureModalFields();
-        setupToggle("quality");
-        setupToggle("active");
-        if (typeSelect) typeSelect.addEventListener("change", () => switchConfigSection(typeSelect.value));
-        if (addBtn) addBtn.addEventListener("click", openCreateModal, true);
-        if (saveBtn) saveBtn.addEventListener("click", saveDatasource, true);
-        const closeBtn = doc.getElementById("close-modal-btn");
-        const cancelBtn = doc.getElementById("cancel-modal-btn");
-        [closeBtn, cancelBtn].filter(Boolean).forEach((btn) => btn.addEventListener("click", (event) => { event.preventDefault(); event.stopImmediatePropagation(); setModalVisible(false); }, true));
-        if (modal) modal.addEventListener("click", (event) => { if (event.target === modal) setModalVisible(false); });
-        if (tbody) tbody.addEventListener("click", (event) => {
-          const btn = event.target.closest("[data-datasource-action]");
-          if (!btn) return;
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          const id = btn.dataset.id;
-          if (btn.dataset.datasourceAction === "edit") openEditModal(id);
-          if (btn.dataset.datasourceAction === "detail") showDetails(id);
-          if (btn.dataset.datasourceAction === "more") toast("更多操作已展开");
-        }, true);
-        renderTable();
-      }
+      //   setupDatasourceFilters();
+      //   setupDatasourceTree();
+      //   ensureModalFields();
+      //   setupToggle("quality");
+      //   setupToggle("active");
+      //   if (typeSelect) typeSelect.addEventListener("change", () => switchConfigSection(typeSelect.value));
+      //   if (addBtn) addBtn.addEventListener("click", openCreateModal, true);
+      //   if (saveBtn) saveBtn.addEventListener("click", saveDatasource, true);
+      //   const closeBtn = doc.getElementById("close-modal-btn");
+      //   const cancelBtn = doc.getElementById("cancel-modal-btn");
+      //   [closeBtn, cancelBtn].filter(Boolean).forEach((btn) => btn.addEventListener("click", (event) => { event.preventDefault(); event.stopImmediatePropagation(); setModalVisible(false); }, true));
+      //   if (modal) modal.addEventListener("click", (event) => { if (event.target === modal) setModalVisible(false); });
+      //   if (tbody) tbody.addEventListener("click", (event) => {
+      //     const btn = event.target.closest("[data-datasource-action]");
+      //     if (!btn) return;
+      //     event.preventDefault();
+      //     event.stopImmediatePropagation();
+      //     const id = btn.dataset.id;
+      //     if (btn.dataset.datasourceAction === "edit") openEditModal(id);
+      //     if (btn.dataset.datasourceAction === "detail") showDetails(id);
+      //     if (btn.dataset.datasourceAction === "more") toast("更多操作已展开");
+      //   }, true);
+      //   renderTable();
+      // }
 
       function setupBoundaryMatrixDemo() {
         if (moduleKey !== "boundary" || doc.__boundaryMatrixReady) return;
