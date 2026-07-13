@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>碳核算管理 - 核算模型管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline": "#707785",
+            "tertiary-fixed": "#ffdbc7",
+            "error": "#ba1a1a",
+            "surface-variant": "#e0e3e6",
+            "inverse-surface": "#2d3133",
+            "surface-container": "#eceef1",
+            "on-error": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed-dim": "#b4c8e3",
+            "surface-tint": "#005fae",
+            "inverse-primary": "#a5c8ff",
+            "surface-dim": "#d8dadd",
+            "primary": "#1890ff",
+            "error-container": "#ffdad6",
+            "secondary": "#4d6077",
+            "on-secondary-fixed": "#071d31",
+            "secondary-container": "#cde1fd",
+            "primary-fixed-dim": "#a5c8ff",
+            "primary-container": "#0075d5",
+            "tertiary-container": "#b95a00",
+            "surface-bright": "#f7f9fc",
+            "on-primary-fixed-variant": "#004785",
+            "on-surface": "#191c1e",
+            "on-tertiary": "#ffffff",
+            "on-background": "#191c1e",
+            "tertiary-fixed-dim": "#ffb688",
+            "outline-variant": "#c0c7d6",
+            "on-error-container": "#93000a",
+            "surface-container-high": "#e6e8eb",
+            "surface": "#f7f9fc",
+            "background": "#f7f9fc",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#fffbff",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001c3a",
+            "on-surface-variant": "#404753",
+            "on-primary-container": "#fefcff",
+            "on-secondary-container": "#51647c",
+            "inverse-on-surface": "#eff1f4",
+            "tertiary": "#934600",
+            "on-tertiary-fixed": "#311300",
+            "surface-container-low": "#f2f4f7",
+            "on-secondary-fixed-variant": "#35485e",
+            "on-tertiary-fixed-variant": "#733600",
+            "primary-fixed": "#d4e3ff",
+            "surface-container-highest": "#e0e3e6",
+            "secondary-fixed": "#d1e4ff",
+            "sidebar": "#1e293b",
+          },
+          "borderRadius": {
+            "DEFAULT": "4px",
+            "md": "4px",
+            "lg": "8px",
+            "xl": "12px",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "sans": ["Inter", "sans-serif"],
+          }
+        },
+      },
+    }
+  </script>
+<style data-purpose="custom-styles">
+    body {
+      background-color: theme('colors.surface');
+      color: #333;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .table-header th {
+      background-color: #fafafa;
+      color: #666;
+      font-weight: 500;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .table-row td {
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+    .table-row:hover {
+      background-color: #f5f5f5;
+    }
+    .tree-node-selected {
+      background-color: #e6f7ff;
+      color: #1890ff;
+    }
+    .model-standard-cell {
+      max-width: 220px;
+    }
+    .model-standard-cell span {
+      display: inline-block;
+      max-width: 210px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: bottom;
+    }
+    .version-compare-highlight {
+      background: rgba(24, 144, 255, 0.08);
+    }
+  </style>
+
+
+<style data-integrated-cleanup>
+  html,
+  body {
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    background: #f7f9fc !important;
+  }
+
+  body.module-body {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  body > aside:first-of-type,
+  body > header:first-of-type,
+  body > nav:first-of-type {
+    display: none !important;
+  }
+
+  body.module-body > .flex,
+  body.module-body > div[class*="flex"] {
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+  }
+
+  main {
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  main[class*="ml-"],
+  main[class*="pt-"] {
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  main > .flex-1,
+  main > section.flex-1,
+  main > div.flex-1,
+  main > div[class*="overflow-hidden"],
+  main > section[class*="overflow-hidden"],
+  main > div[class*="h-[calc"],
+  main > section[class*="h-[calc"] {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  main > div:last-child,
+  main > section:last-child {
+    min-height: 0 !important;
+  }
+
+  .integrated-module-shell {
+    min-height: 100vh;
+    background: #f7f9fc;
+  }
+</style>
+<script src="./shared-mock-data.js"></script>
+</head>
+<body class="h-screen text-sm module-body">
+
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+<!-- BEGIN: Header -->
+
+<!-- END: Header -->
+<div class="flex-1 overflow-auto p-6 flex flex-col space-y-4">
+<!-- BEGIN: Stats Cards -->
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between shadow-sm">
+<div>
+<div class="text-gray-500 mb-1">模型总数</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-2xl font-semibold">56</span>
+<span class="text-gray-500 text-xs">个</span>
+</div>
+<div class="text-xs text-gray-500 mt-2">较上月 <span class="text-green-500"><i class="fa-solid fa-arrow-up text-[10px]"></i> 8.2%</span></div>
+</div>
+<div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-primary text-xl">
+<i class="fa-regular fa-file-lines"></i>
+</div>
+</div>
+<div class="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between shadow-sm">
+<div>
+<div class="text-gray-500 mb-1">启用中</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-2xl font-semibold">42</span>
+<span class="text-gray-500 text-xs">个</span>
+</div>
+<div class="text-xs text-gray-500 mt-2">较上月 <span class="text-green-500"><i class="fa-solid fa-arrow-up text-[10px]"></i> 6.1%</span></div>
+</div>
+<div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-500 text-xl">
+<i class="fa-solid fa-check-circle"></i>
+</div>
+</div>
+<div class="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between shadow-sm">
+<div>
+<div class="text-gray-500 mb-1">停用</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-2xl font-semibold">6</span>
+<span class="text-gray-500 text-xs">个</span>
+</div>
+<div class="text-xs text-gray-500 mt-2">较上月 <span class="text-green-500"><i class="fa-solid fa-arrow-down text-[10px]"></i> 14.3%</span></div>
+</div>
+<div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-xl">
+<i class="fa-solid fa-ban"></i>
+</div>
+</div>
+<div class="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between shadow-sm">
+<div>
+<div class="text-gray-500 mb-1">自定义模型</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-2xl font-semibold">18</span>
+<span class="text-gray-500 text-xs">个</span>
+</div>
+<div class="text-xs text-gray-500 mt-2">较上月 <span class="text-green-500"><i class="fa-solid fa-arrow-up text-[10px]"></i> 12.5%</span></div>
+</div>
+<div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 text-xl">
+<i class="fa-solid fa-code"></i>
+</div>
+</div>
+</div>
+<!-- END: Stats Cards -->
+<!-- BEGIN: Main Content Area -->
+<div class="bg-white rounded-lg border border-gray-200 flex-1 flex flex-col shadow-sm">
+<!-- Filter Bar -->
+<div class="p-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center space-x-3 flex-1">
+<div class="w-48">
+<input class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-primary focus:border-primary" placeholder="请输入模型名称" type="text"/>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-gray-600 whitespace-nowrap">适用范围:</span>
+<select class="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-primary focus:border-primary w-32">
+<option>全部</option>
+</select>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-gray-600 whitespace-nowrap">状态:</span>
+<select class="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-primary focus:border-primary w-32">
+<option>全部</option>
+</select>
+</div>
+</div>
+<div class="flex space-x-2">
+<button class="px-4 py-1.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">重置</button>
+<button class="px-4 py-1.5 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors flex items-center" onclick="document.getElementById('add-model-modal').classList.remove('hidden')">
+<i class="fa-solid fa-plus mr-1"></i> 新增模型
+          </button>
+</div>
+</div>
+<div class="flex flex-1 overflow-hidden">
+<!-- BEGIN: Left Tree -->
+<div class="w-64 border-r border-gray-200 flex flex-col">
+<div class="flex-1 overflow-y-auto p-2">
+<div class="px-2 py-3 text-sm text-gray-400">正在读取边界分类</div>
+</div>
+</div>
+<!-- END: Left Tree -->
+<!-- BEGIN: Right Table -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<div class="flex items-center justify-between p-4 border-b border-gray-100">
+<span class="font-medium text-gray-800">模型列表</span>
+<div class="flex space-x-2 text-gray-500">
+<button class="p-1 hover:text-gray-700 border border-gray-200 rounded px-2"><i class="fa-solid fa-rotate-right"></i></button>
+<button class="p-1 hover:text-gray-700 border border-gray-200 rounded px-2"><i class="fa-solid fa-gear"></i></button>
+<button class="p-1 hover:text-gray-700 border border-gray-200 rounded px-2"><i class="fa-solid fa-table-cells-large"></i></button>
+</div>
+</div>
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="table-header sticky top-0 bg-[#fafafa] z-10">
+<tr>
+<th class="py-3 px-4 font-medium">模型名称</th>
+<th class="py-3 px-4 font-medium">适用范围</th>
+<th class="py-3 px-4 font-medium">排放类别</th>
+<th class="py-3 px-4 font-medium">引用标准</th>
+<th class="py-3 px-4 font-medium">核算方法</th>
+<th class="py-3 px-4 font-medium">版本号</th>
+<th class="py-3 px-4 font-medium">状态</th>
+<th class="py-3 px-4 font-medium w-40">操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="py-10 px-4 text-center text-gray-400" colspan="8">正在读取共享模型数据</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-end px-4 py-3 border-t border-gray-200 bg-white">
+<span class="text-gray-500 mr-4">共 56 条</span>
+<div class="flex space-x-1 items-center">
+<button class="px-2 py-1 border border-gray-300 rounded text-gray-400 hover:bg-gray-50" disabled=""><i class="fa-solid fa-chevron-left text-xs"></i></button>
+<button class="px-3 py-1 border border-primary bg-blue-50 text-primary rounded">1</button>
+<button class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">2</button>
+<button class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">3</button>
+<button class="px-2 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+</div>
+<div class="ml-4 flex items-center space-x-2 text-gray-600">
+<select class="border border-gray-300 rounded py-1 pl-2 pr-6 focus:ring-primary focus:border-primary">
+<option>10 条/页</option>
+</select>
+</div>
+</div>
+</div>
+<!-- END: Right Table -->
+</div>
+</div>
+<!-- END: Main Content Area -->
+<!-- BEGIN: Bottom Detail Drawer (Preview) -->
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-medium text-gray-900 text-base">模型详情</h3>
+<button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-chevron-up"></i></button>
+</div>
+<div class="grid grid-cols-3 gap-x-8 gap-y-4 text-sm"><div class="text-gray-400 col-span-3">请选择列表中的共享模型查看详情</div></div>
+</div>
+<!-- END: Bottom Detail Drawer -->
+<!-- BEGIN: Embedded Version Workspace -->
+<div id="embedded-version-workspace" class="hidden bg-white rounded-lg border border-gray-200 shadow-sm p-6 space-y-6">
+  <div class="flex justify-between items-end gap-4">
+    <div>
+      <button id="version-back-button" type="button" class="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-2">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+        <span class="text-sm">返回模型列表</span>
+      </button>
+      <h2 id="version-workspace-title" class="text-2xl font-bold text-gray-900">版本管理</h2>
+      <p id="version-workspace-subtitle" class="text-sm text-gray-500 mt-1">请选择模型查看版本记录与版本对比</p>
+    </div>
+    <div class="flex flex-col items-end gap-3">
+      <div class="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 text-sm">
+        <button id="version-tab-compare" type="button" data-version-tab="versions" class="px-4 py-1.5 rounded-md bg-white text-primary shadow-sm font-medium">版本对比</button>
+        <button id="version-tab-records" type="button" data-version-tab="changes" class="px-4 py-1.5 rounded-md text-gray-600 hover:text-primary font-medium">变更记录</button>
+      </div>
+      <button id="version-show-publish" type="button" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors text-sm font-medium flex items-center gap-2">
+        <i class="fa-solid fa-pen-to-square"></i> 编辑并发布新版本
+      </button>
+    </div>
+  </div>
+  <div id="version-publish-panel" class="hidden bg-blue-50/40 border border-blue-100 rounded-lg p-5">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-semibold text-gray-900">发布新版本</h3>
+        <p class="text-xs text-gray-500 mt-1">修改后会写回共享数据库的 AccountingModels，并记录到 changeLog / versionHistory。</p>
+      </div>
+      <button id="version-cancel-publish" type="button" class="text-gray-400 hover:text-gray-600"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">新版本号</label><input id="version-form-version" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="text" placeholder="v1.0.1"/></div>
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">引用标准</label><select id="version-form-standard" class="w-full h-10 border border-gray-300 rounded px-3 py-2 text-sm bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none"></select><input id="version-form-standard-custom" class="hidden mt-2 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none" placeholder="请输入自定义标准名称" type="text"/></div>
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">状态</label><select id="version-form-status" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"><option>启用</option><option>草稿</option><option>停用</option></select></div>
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">核算方法</label><select id="version-form-method" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"><option>排放因子法</option><option>物料平衡法</option><option>实测法</option></select></div>
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">生效时间</label><input id="version-form-effective" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="date"/></div>
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">失效时间</label><input id="version-form-expire" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="date"/></div>
+      <div class="space-y-1.5"><label class="text-xs text-gray-500">计算精度</label><select id="version-form-precision" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"><option>小数点后 2 位</option><option selected>小数点后 4 位</option><option>小数点后 6 位</option></select></div>
+      <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">标准附件</label><div class="flex items-center gap-4"><label class="flex items-center px-5 h-10 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50 transition-colors"><span class="material-symbols-outlined text-primary mr-2 text-sm">upload</span><span class="text-sm text-gray-600">上传标准文件</span><input id="version-form-standard-file" class="hidden" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"/></label><div id="version-standard-file-name" class="flex items-center bg-blue-50 px-3 h-10 rounded border border-blue-100 text-primary text-xs"><span class="material-symbols-outlined text-sm mr-1">description</span><span>未上传文件</span><button type="button" class="ml-2 text-gray-400 hover:text-red-500" data-standard-file-clear><span class="material-symbols-outlined text-xs">close</span></button></div></div></div>
+      <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">计算公式</label><textarea id="version-form-formula" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-20 font-mono bg-white" placeholder="CO2e = 活动数据 × 排放因子"></textarea></div>
+      <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">变更说明</label><textarea id="version-form-description" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-20 bg-white" placeholder="请描述本次版本变更内容"></textarea></div>
+    </div>
+    <div class="flex justify-end gap-3 mt-4">
+      <button id="version-save-new" type="button" class="px-5 py-2 bg-primary text-white rounded text-sm font-medium hover:bg-primary/90">保存为新版本</button>
+    </div>
+  </div>
+  <div id="version-compare-section" class="grid grid-cols-12 gap-6 items-start">
+    <div class="col-span-12 lg:col-span-9 space-y-6">
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200">
+              <th class="w-1/4 p-4 text-left font-semibold text-gray-900">属性</th>
+              <th class="w-3/8 p-4 text-left">
+                <div class="flex flex-col gap-1">
+                  <span id="version-current-title" class="font-semibold text-gray-900">当前版本</span>
+                  <span class="px-2 py-0.5 bg-green-50 text-green-600 border border-green-200 text-[10px] font-bold rounded w-fit uppercase">当前启用</span>
+                </div>
+              </th>
+              <th class="w-3/8 p-4 text-left">
+                <div class="flex flex-col gap-1">
+                  <span id="version-history-title" class="font-semibold text-gray-900">历史版本</span>
+                  <select id="version-history-select" class="mt-1 w-48 border border-gray-300 rounded px-2 py-1 text-xs focus:ring-primary focus:border-primary"></select>
+                  <button id="version-rollback-selected" type="button" class="mt-2 w-fit px-3 py-1.5 bg-primary text-white rounded text-xs font-medium hover:bg-primary/90">回滚到该版本</button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="version-compare-body" class="divide-y divide-gray-200 text-sm">
+            <tr><td colspan="3" class="p-8 text-center text-gray-400">请选择模型查看版本对比</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <aside class="col-span-12 lg:col-span-3 space-y-6">
+      <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+        <h3 class="text-[10px] text-gray-400 mb-3 uppercase tracking-widest font-bold">版本影响分析</h3>
+        <div class="flex items-baseline gap-1">
+          <span id="version-impact-value" class="text-3xl font-bold text-primary">—</span>
+          <span class="text-xs text-gray-500">配置项变化</span>
+        </div>
+        <p id="version-impact-desc" class="text-xs text-gray-500 mt-3 leading-relaxed">系统会根据当前版本与历史版本的差异，识别标准、公式、精度、生效期等变化。</p>
+        <div class="mt-4">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-medium text-gray-500">模型合规性评分</span>
+            <span id="version-compliance-score" class="text-xs font-bold text-primary">—</span>
+          </div>
+          <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div id="version-compliance-bar" class="h-full bg-primary" style="width: 0%;"></div></div>
+        </div>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+        <h3 class="text-[10px] text-gray-400 mb-5 uppercase tracking-widest font-bold">核心变更日志</h3>
+        <div id="version-change-timeline" class="space-y-6 relative before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-100">
+          <div class="text-sm text-gray-400">暂无变更记录</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <div id="version-record-section" class="hidden grid grid-cols-12 gap-6 items-start">
+    <div class="col-span-12 lg:col-span-8 bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">变更记录时间线</h3>
+          <p id="record-subtitle" class="text-xs text-gray-500 mt-1">按版本发布、状态切换、编辑发布等操作记录模型变更。</p>
+        </div>
+        <span id="record-total-badge" class="px-3 py-1 bg-blue-50 text-primary border border-blue-100 rounded-full text-xs">0 条记录</span>
+      </div>
+      <div id="record-timeline-full" class="space-y-5 relative before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-100"></div>
+    </div>
+    <aside class="col-span-12 lg:col-span-4 space-y-4">
+      <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+        <h3 class="text-[10px] text-gray-400 mb-3 uppercase tracking-widest font-bold">记录摘要</h3>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="bg-gray-50 rounded-lg p-3"><div class="text-gray-500 text-xs">当前版本</div><div id="record-current-version" class="font-semibold text-gray-900 mt-1">—</div></div>
+          <div class="bg-gray-50 rounded-lg p-3"><div class="text-gray-500 text-xs">当前状态</div><div id="record-current-status" class="font-semibold text-gray-900 mt-1">—</div></div>
+          <div class="bg-gray-50 rounded-lg p-3 col-span-2"><div class="text-gray-500 text-xs">当前引用标准</div><div id="record-current-standard" class="font-semibold text-gray-900 mt-1 line-clamp-2">—</div></div>
+        </div>
+      </div>
+      <div class="bg-amber-50 border border-amber-100 rounded-lg p-5 text-xs text-amber-700 leading-relaxed">
+        变更记录只负责审计和追踪，不做版本对比。需要比较版本差异时，可直接使用上方“版本对比”标签切换查看。
+      </div>
+    </aside>
+  </div>
+</div>
+<!-- END: Embedded Version Workspace -->
+</div>
+</main>
+<!-- BEGIN: Add Model Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center hidden" id="add-model-modal">
+<div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="document.getElementById('add-model-modal').classList.add('hidden')"></div>
+<div class="relative bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-lg font-semibold text-gray-900">新增核算模型</h3>
+<button class="text-gray-400 hover:text-gray-600 transition-colors" onclick="document.getElementById('add-model-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<section>
+<h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>基本信息</h4>
+<div class="text-sm text-gray-400">表单字段将从共享边界与标准数据读取</div>
+</section>
+<section>
+<h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>核算逻辑</h4>
+<div class="grid grid-cols-2 gap-4"><div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">核算方法</label><select class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" id="accounting-method-select" onchange="const formulas = {'排放因子法': 'CO₂e = 活动数据 × 排放因子 × GWP', '物料平衡法': 'CO₂e = [原料投入量 × 原料含碳量 - 产品产出量 × 产品含碳量] × 44/12', '实测法': 'CO₂e = ∑(浓度 × 流速 × 时间)'}; document.getElementById('calculation-formula-textarea').value = formulas[this.value] || '';"><option>排放因子法</option><option>物料平衡法</option><option>实测法</option></select></div><div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">计算公式</label><textarea class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-20 font-mono bg-gray-50" id="calculation-formula-textarea" placeholder="如：E = AD * EF * GWP" readonly="true"></textarea></div><div class="space-y-1.5"><label class="text-xs text-gray-500">核算单位</label><input class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="text" value="tCO₂e"/></div><div class="space-y-1.5"><label class="text-xs text-gray-500">计量单位</label><input class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="如：Nm3, kWh" type="text"/></div><div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">计算精度</label><select class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" id="accounting-method-select" onchange="const formulas = {'排放因子法': 'CO₂e = 活动数据 × 排放因子 × GWP', '物料平衡法': 'CO₂e = [原料投入量 × 原料含碳量 - 产品产出量 × 产品含碳量] × 44/12', '实测法': 'CO₂e = ∑(浓度 × 流速 × 时间)'}; document.getElementById('calculation-formula-textarea').value = formulas[this.value] || '';"><option>小数点后 2 位</option><option selected="">小数点后 4 位</option><option>小数点后 6 位</option></select></div></div>
+</section>
+<!-- New Change Log Field -->
+<section>
+<h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>版本变更</h4>
+<div class="space-y-1.5">
+<label class="text-xs text-gray-500">变更内容说明</label>
+<textarea class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-24" placeholder="请描述此版本相较于前一版本的具体变更内容..."></textarea>
+</div>
+</section>
+</div>
+<div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3 bg-gray-50">
+<button class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-white transition-colors text-sm" onclick="document.getElementById('add-model-modal').classList.add('hidden')">取消</button>
+<button class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors text-sm font-medium">保存</button>
+</div>
+</div>
+</div>
+<!-- END: Add Model Modal -->
+<!-- BEGIN: Version Management Drawer -->
+<div class="fixed inset-0 z-50 flex justify-end hidden" id="version-management-drawer">
+<div class="absolute inset-0 bg-black/40 backdrop-blur-xs" onclick="document.getElementById('version-management-drawer').classList.add('hidden')"></div>
+<div class="relative bg-white h-full shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out bg-[#f8fafc]" style="width: 560px;">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+<h3 class="text-lg font-semibold text-gray-900">版本管理</h3>
+<button class="text-gray-400 hover:text-gray-600 transition-colors" onclick="document.getElementById('version-management-drawer').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-4">
+<div class="text-sm text-gray-400">请选择模型查看版本记录</div>
+</div>
+<div class="px-6 py-4 border-t border-gray-200 bg-white flex justify-end">
+<button class="px-6 py-2 bg-primary text-white rounded font-medium text-sm hover:opacity-90 transition-colors" onclick="document.getElementById('version-management-drawer').classList.add('hidden')">关闭</button>
+</div>
+</div>
+</div>
+<!-- END: Version Management Drawer -->
+<!-- BEGIN: Model Detail Popup -->
+<div class="fixed inset-0 z-[70] flex items-center justify-center hidden" id="model-detail-popup">
+<div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="document.getElementById('model-detail-popup').classList.add('hidden')"></div>
+<div class="relative bg-white w-full max-w-2xl rounded-lg shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-lg font-semibold text-gray-900">核算模型详情</h3>
+<button class="text-gray-400 hover:text-gray-600 transition-colors" onclick="document.getElementById('model-detail-popup').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6 text-sm">
+<section>
+<h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>基础信息</h4>
+<div class="grid grid-cols-2 gap-y-3 gap-x-8">
+<div class="flex"><span class="text-gray-500 w-24 shrink-0">模型名称：</span><span class="text-gray-900">共享模型</span></div>
+<div class="flex"><span class="text-gray-500 w-24 shrink-0">版本号：</span><span class="text-gray-900">v1.0.1</span></div>
+<div class="flex"><span class="text-gray-500 w-24 shrink-0">核算范围：</span><span class="text-gray-900">范围一</span></div>
+<div class="flex"><span class="text-gray-500 w-24 shrink-0">状态：</span><span class="text-green-600">启用中</span></div>
+</div>
+</section>
+<section>
+<h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>核算逻辑</h4>
+<div class="space-y-3">
+<div class="flex"><span class="text-gray-500 w-24 shrink-0">计算公式：</span><span class="text-gray-900 font-mono text-xs">E = AD * EF * GWP</span></div>
+<div class="flex"><span class="text-gray-500 w-24 shrink-0">因子来源：</span><span class="text-gray-900">2024 国家温室气体排放因子数据库</span></div>
+</div>
+</section>
+<section>
+<h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>版本变更说明</h4>
+<div class="bg-gray-50 p-4 rounded text-gray-600 leading-relaxed">
+          优化燃气低位热值计算方式，调整部分碳因子默认值，确保与最新发布的GB/T行业标准对齐。
+        </div>
+</section>
+</div>
+<div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3 bg-gray-50">
+<button class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-white transition-colors text-sm" onclick="document.getElementById('model-detail-popup').classList.add('hidden')">关闭</button>
+<button class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors text-sm font-medium">编辑模型</button>
+</div>
+</div>
+</div>
+<!-- END: Model Detail Popup -->
+<!-- BEGIN: Rollback Version Modal -->
+<div class="fixed inset-0 z-[80] flex items-center justify-center hidden" id="rollback-version-modal">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-rollback-close></div>
+  <div class="relative bg-white w-full max-w-lg rounded-lg shadow-xl overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">回滚为新版本</h3>
+        <p id="rollback-source-version" class="text-xs text-gray-500 mt-1">请选择历史版本后回滚。</p>
+      </div>
+      <button class="text-gray-400 hover:text-gray-600 transition-colors" data-rollback-close><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="p-6 space-y-4 text-sm">
+      <div class="bg-amber-50 border border-amber-100 rounded-lg p-3 text-xs text-amber-700 leading-relaxed">
+        回滚不会直接覆盖当前版本，需要重新填写新版本号和生效时间，保存后作为一个新的版本写入共享数据。
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="space-y-1.5"><label class="text-xs text-gray-500">新版本号</label><input id="rollback-version-input" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="如：v1.0.2" type="text"/></div>
+        <div class="space-y-1.5"><label class="text-xs text-gray-500">新生效时间</label><input id="rollback-effective-input" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="date"/></div>
+        <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">回滚说明</label><textarea id="rollback-description-input" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-20" placeholder="请说明回滚原因"></textarea></div>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3 bg-gray-50">
+      <button class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-white transition-colors text-sm" data-rollback-close>取消</button>
+      <button id="rollback-confirm-button" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors text-sm font-medium">保存为新版本</button>
+    </div>
+  </div>
+</div>
+<!-- END: Rollback Version Modal -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const Mock = window.CarbonAccountingMock || {};
+    const sharedMockReady = Boolean(window.CarbonAccountingMock);
+    function notifyParentLocation(pageName = "") {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({
+      type: "model-location",
+      pageName
+    }, "*");
+  }
+}
+    let models = [];
+    let activeVersionModel = null;
+    let versionWorkspaceMode = 'versions';
+    let editingModel = null;
+    let rollbackTargetEntry = null;
+
+    const state = {
+      keyword: '',
+      scope: '全部',
+      status: '全部',
+      treeFilter: null,
+      expandedTree: new Set(),
+      page: 1,
+      pageSize: 3
+    };
+
+    const tbody = document.querySelector('tbody');
+    const filterInput = document.querySelector('input[placeholder*="模型名称"]');
+    const filterSelects = document.querySelectorAll('.p-4.border-b select');
+    const resetButton = Array.from(document.querySelectorAll('button')).find((button) => button.textContent.trim() === '重置');
+    const pager = document.querySelector('.border-t .flex.space-x-1');
+    const totalText = document.querySelector('.border-t .text-gray-500');
+    const pageSizeSelect = document.querySelector('.border-t select');
+    const statsCards = document.querySelectorAll('.grid.grid-cols-4 > div');
+    const treeArea = document.querySelector('.w-64.border-r .flex-1');
+    const addModelModal = document.getElementById('add-model-modal');
+    const mainContentArea = document.querySelector('.bg-white.rounded-lg.border.border-gray-200.flex-1.flex.flex-col.shadow-sm');
+    const statsArea = document.querySelector('.grid.grid-cols-4.gap-4');
+    const detailPanel = Array.from(document.querySelectorAll('div.bg-white.rounded-lg.border.border-gray-200.shadow-sm.p-4')).pop();
+    const detailGrid = detailPanel?.querySelector('.grid');
+    const detailCloseButton = detailPanel?.querySelector('button');
+    const versionWorkspace = document.getElementById('embedded-version-workspace');
+    const versionBackButton = document.getElementById('version-back-button');
+    const versionHistorySelect = document.getElementById('version-history-select');
+    const versionPublishPanel = document.getElementById('version-publish-panel');
+    const versionCompareSection = document.getElementById('version-compare-section');
+    const versionRecordSection = document.getElementById('version-record-section');
+    const rollbackModal = document.getElementById('rollback-version-modal');
+    const rollbackConfirmButton = document.getElementById('rollback-confirm-button');
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function todayString() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function normalizeDateText(value) {
+      const text = String(value || '').trim();
+      if (!text || text === '长期有效' || text === '—') return '';
+      const matched = text.match(/\d{4}-\d{2}-\d{2}|\d{4}-\d{2}/);
+      if (!matched) return '';
+      return matched[0].length === 7 ? `${matched[0]}-01` : matched[0];
+    }
+
+    function versionStatusByDate(snapshot = {}, fallbackStatus = '启用') {
+      if (fallbackStatus === '停用' || snapshot.status === '停用') return '停用';
+      if (fallbackStatus === '草稿' || snapshot.status === '草稿') return '草稿';
+      const today = todayString();
+      const start = normalizeDateText(snapshot.effectiveAt || snapshot.effectiveDate || snapshot.periodStart);
+      const end = normalizeDateText(snapshot.expiredAt || snapshot.expireDate || snapshot.periodEnd);
+      if (start && start > today) return '待生效';
+      if (end && end < today) return '已失效';
+      return '启用';
+    }
+
+    function getEntryDateValue(entry = {}) {
+      return normalizeDateText(entry.snapshot?.effectiveAt || entry.snapshot?.effectiveDate || entry.date || '');
+    }
+
+    function getActiveVersionEntry(modelLike) {
+      const entries = getVersionEntries(modelLike);
+      const today = todayString();
+      const candidates = entries.filter((entry) => {
+        const snapshot = entry.snapshot || {};
+        const status = versionStatusByDate(snapshot, snapshot.manualStatus || snapshot.rawStatus || '启用');
+        const start = normalizeDateText(snapshot.effectiveAt || entry.date);
+        const end = normalizeDateText(snapshot.expiredAt);
+        return status === '启用' && (!start || start <= today) && (!end || end >= today);
+      });
+      return sortEntriesByEffectiveDate(candidates)[0] || null;
+    }
+
+    function getEntryDisplayStatus(entry = {}, activeEntry = null) {
+      const snapshot = entry.snapshot || {};
+      if (activeEntry && entry.version === activeEntry.version) return '当前版本';
+      const status = versionStatusByDate(snapshot, snapshot.manualStatus || snapshot.rawStatus || entry.status || '启用');
+      if (status === '待生效') return '待生效';
+      if (status === '停用') return '停用';
+      if (status === '草稿') return '草稿';
+      if (status === '已失效') return '历史版本';
+      return '历史版本';
+    }
+
+    function sortEntriesByEffectiveDate(entries = []) {
+      return entries.slice().sort((left, right) => normalizeDateText(right.snapshot?.effectiveAt || right.date).localeCompare(normalizeDateText(left.snapshot?.effectiveAt || left.date)));
+    }
+
+    function getEffectiveVersionEntry(modelLike) {
+      const entries = getVersionEntries(modelLike);
+      const active = getActiveVersionEntry(modelLike);
+      if (active) return active;
+      const future = entries
+        .filter((entry) => versionStatusByDate(entry.snapshot || {}, entry.snapshot?.manualStatus || entry.status || '启用') === '待生效')
+        .sort((left, right) => getEntryDateValue(left).localeCompare(getEntryDateValue(right)))[0];
+      return future || sortEntriesByEffectiveDate(entries)[0] || entries[0];
+    }
+
+    function nextVersion(version = 'v1.0.0') {
+      const matched = String(version).match(/v?(\d+)\.(\d+)\.(\d+)/i);
+      if (!matched) return 'v1.0.1';
+      return `v${matched[1]}.${matched[2]}.${Number(matched[3]) + 1}`;
+    }
+
+    const formulaTemplates = {
+      '排放因子法': 'CO₂e = 活动数据 × 排放因子 × GWP',
+      '物料平衡法': 'CO₂e = [原料投入量 × 原料含碳量 - 产品产出量 × 产品含碳量] × 44/12',
+      '实测法': 'CO₂e = ∑(浓度 × 流速 × 时间)'
+    };
+
+    function normalizeAccountingMethod(method) {
+      const text = String(method || '').trim();
+      if (formulaTemplates[text]) return text;
+      if (text.includes('物料')) return '物料平衡法';
+      if (text.includes('实测')) return '实测法';
+      return '排放因子法';
+    }
+
+    function formulaByMethod(method) {
+      return formulaTemplates[normalizeAccountingMethod(method)] || formulaTemplates['排放因子法'];
+    }
+
+    function formatPrecisionText(precision) {
+      return String(precision || '小数点后 4 位').replace('小数点后', '十进制后');
+    }
+
+    function formatUnitText(unit) {
+      return String(unit || '-').replace(/Nm[3鲁]/g, 'Nm3');
+    }
+
+    function applyFormulaByMethod(targetMethodId = 'version-form-method', targetFormulaId = 'version-form-formula', force = false) {
+      const methodSelect = document.getElementById(targetMethodId);
+      const formulaInput = document.getElementById(targetFormulaId);
+      if (!methodSelect || !formulaInput) return;
+      if (force || !formulaInput.value.trim() || Object.values(formulaTemplates).includes(formulaInput.value.trim())) {
+        formulaInput.value = formulaByMethod(methodSelect.value);
+      }
+    }
+
+    function scopeMeta(scopeCode) {
+      return Mock.BoundaryScopeMeta?.[scopeCode] || {};
+    }
+
+    function standardForModel(model) {
+      return (Mock.FactorStandards || []).find((standard) => standard.id === (model?.standardId || model?.rawModel?.standardId)) || null;
+    }
+
+    function getStandardName(standardId, fallback = '') {
+      const standard = (Mock.FactorStandards || []).find((item) => item.id === standardId);
+      return standard?.name || fallback || standardId || '未配置标准';
+    }
+
+    function boundaryNodeFor(model) {
+      return (Mock.BoundaryCategories || []).find((node) => node.scope === model.scope && node.category === model.category) || null;
+    }
+
+    function getDefaultActivitySeedByCategory(category) {
+      const defaults = {
+        stationary_combustion: {
+          activityDataType: 'fuel_consumption',
+          unit: 'Nm³',
+          accountingParams: { fuelType: 'natural_gas' }
+        },
+        purchased_electricity: {
+          activityDataType: 'electricity_consumption',
+          unit: 'kWh',
+          accountingParams: { electricityRegion: 'east_china_grid' }
+        },
+        fugitive_emission: {
+          activityDataType: 'replenishment_amount',
+          unit: 'kg',
+          accountingParams: { refrigerantType: 'r410a' }
+        }
+      };
+      return defaults[category] || { activityDataType: '', unit: '', accountingParams: {} };
+    }
+
+    function buildSourceSeedForModel(model) {
+      const raw = model.rawModel || model || {};
+      const categoryCode = raw.categoryCode || raw.category || '';
+      const defaultSeed = getDefaultActivitySeedByCategory(categoryCode);
+      const matchedSource = (Mock.EmissionSources || []).find((source) =>
+        source.scope === raw.scope &&
+        (source.category === raw.category || source.categoryCode === categoryCode) &&
+        (!raw.activityDataType || source.activityDataType === raw.activityDataType)
+      ) || {};
+      const activityDataType = raw.activityDataType || raw.factorMatchRule?.activityDataType || matchedSource.activityDataType || defaultSeed.activityDataType || '';
+      const accountingParams = {
+        ...(defaultSeed.accountingParams || {}),
+        ...(matchedSource.accountingParams || {}),
+        ...(raw.accountingParams || {})
+      };
+      return {
+        scope: raw.scope || matchedSource.scope || '',
+        category: raw.category || matchedSource.category || categoryCode,
+        categoryCode,
+        activityDataType,
+        unit: raw.measureUnit || matchedSource.unit || defaultSeed.unit || '',
+        accountingParams
+      };
+    }
+
+    function getSourceSeedForModel(model) {
+      const matchedSource = (Mock.EmissionSources || []).find((source) =>
+        source.scope === model.scope &&
+        source.category === model.category &&
+        (!model.activityDataType || source.activityDataType === model.activityDataType)
+      );
+      return matchedSource || buildSourceSeedForModel(model);
+    }
+
+    function getMeasureUnitForModel(model) {
+      const raw = model.rawModel || model;
+      if (raw.measureUnit && !String(raw.measureUnit).includes('_')) return formatUnitText(raw.measureUnit);
+      const source = (Mock.EmissionSources || []).find((item) =>
+        item.scope === raw.scope &&
+        item.category === raw.category &&
+        (!raw.activityDataType || item.activityDataType === raw.activityDataType)
+      );
+      if (source?.unit) return formatUnitText(source.unit);
+      const datasource = (Mock.DataSources || []).find((item) => item.activityDataType === raw.activityDataType);
+      if (datasource?.unit) return formatUnitText(datasource.unit);
+      const unitByActivityType = {
+        electricity_consumption: 'kWh',
+        fuel_consumption: 'Nm3',
+        replenishment_amount: 'kg',
+        steam_consumption: 'GJ',
+        cooling_consumption: 'GJ'
+      };
+      return formatUnitText(unitByActivityType[raw.activityDataType] || raw.measureUnit || '-');
+    }
+
+    function standardReferenceForSnapshot(snapshot = {}) {
+      const standard = (Mock.FactorStandards || []).find((item) => item.id === snapshot.standardId) || null;
+      const attachmentName = snapshot.standardAttachmentName && snapshot.standardAttachmentName !== '未上传'
+        ? snapshot.standardAttachmentName
+        : (standard?.code ? `${standard.code}.pdf` : '查看标准.pdf');
+      return {
+        name: attachmentName,
+        url: snapshot.standardAttachmentUrl || standard?.referenceUrl || '#'
+      };
+    }
+
+    function renderStandardReferenceLink(snapshot = {}) {
+      const reference = standardReferenceForSnapshot(snapshot);
+      if (!reference.name || reference.name === '未上传') return '<span class="text-gray-900 flex-1">未上传</span>';
+      const href = escapeHtml(reference.url || '#');
+      const targetAttrs = reference.url && reference.url !== '#' ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a class="text-primary flex items-center hover:underline" href="${href}"${targetAttrs}><span class="material-symbols-outlined text-sm mr-1">download</span><span>${escapeHtml(reference.name)}</span></a>`;
+    }
+
+    function factorForModel(model) {
+      const raw = model.rawModel || model;
+      const sourceSeed = buildSourceSeedForModel(raw);
+      return Mock.matchFactorSetByModelAndSource?.(raw, sourceSeed, '') ||
+             Mock.matchFactorByModelAndSource?.(raw, sourceSeed, '') ||
+             null;
+    }
+
+    function factorTypeText(factor) {
+      const rawType = factor?.factorType || '';
+      if (rawType === '因子组' || rawType.includes('组')) return '因子组';
+      if (rawType === '单因子' || rawType.includes('单')) return '单因子';
+      if (Array.isArray(factor?.factors) && factor.factors.length > 1) return '因子组';
+      return factor ? '单因子' : '未命中';
+    }
+
+    function factorReferenceCount(factor) {
+      if (!factor) return 0;
+      if (Array.isArray(factor.factorIds) && factor.factorIds.length) return factor.factorIds.length;
+      if (Array.isArray(factor.factors) && factor.factors.length) return factor.factors.length;
+      if (Array.isArray(factor.gases) && factor.gases.length) return factor.gases.length;
+      return 1;
+    }
+
+    function factorGwpVersionText(factor) {
+      return factor?.gwpVersionCode || factor?.gwpVersionName || factor?.gwp || factor?.gwpVersion || '未配置';
+    }
+
+    function getModelFactorMatchFields(category) {
+      const fieldsByCategory = {
+        stationary_combustion: ['categoryCode', 'activityDataType', 'standardId', 'fuelType'],
+        purchased_electricity: ['categoryCode', 'activityDataType', 'standardId', 'electricityRegion'],
+        fugitive_emission: ['categoryCode', 'activityDataType', 'standardId', 'refrigerantType']
+      };
+      return fieldsByCategory[category] || Array.from(new Set(['categoryCode', 'activityDataType', 'standardId', ...(Mock.getDefaultFactorMatchFields?.(category) || [])]));
+    }
+
+    function sourceNamesForModel(model) {
+      const raw = model.rawModel || model;
+      const names = (Mock.EmissionSources || [])
+        .filter((source) =>
+          source.scope === raw.scope &&
+          source.category === raw.category &&
+          (!raw.sourceType || source.sourceType === raw.sourceType) &&
+          (!raw.activityDataType || source.activityDataType === raw.activityDataType)
+        )
+        .map((source) => source.name);
+      return names.join('、') || '未绑定排放源';
+    }
+
+    function dataSourceNamesForModel(model) {
+      const raw = model.rawModel || model;
+      const datasourceIds = (Mock.EmissionSources || [])
+        .filter((source) =>
+          source.scope === raw.scope &&
+          source.category === raw.category &&
+          (!raw.sourceType || source.sourceType === raw.sourceType)
+        )
+        .flatMap((source) => source.datasourceIds || []);
+      const datasources = Mock.getDatasourceByIds?.(Array.from(new Set(datasourceIds))) || [];
+      return datasources.map((item) => item.name).join('、') || '未绑定数据源';
+    }
+
+    function latestPeriodForModel(model) {
+      const raw = model.rawModel || model;
+      const sources = (Mock.EmissionSources || []).filter((source) => source.scope === raw.scope && source.category === raw.category);
+      const records = sources.flatMap((source) => Mock.getActivityRecordsBySource?.(source.id) || []);
+      return records[0]?.period || '暂无活动数据';
+    }
+
+    function formatFactorMatchRule(model) {
+      const raw = model.rawModel || model;
+      const rule = raw.factorMatchRule || {};
+      const fieldsText = Array.isArray(rule.fields) && rule.fields.length ? `字段：${rule.fields.join(' + ')}` : '';
+      const conditionText = Object.entries(rule.conditions || {}).map(([key, value]) => `${key}=${value}`).join('；');
+      return [
+        rule.standardId ? `标准：${getStandardName(rule.standardId)}` : '',
+        rule.activityDataType ? `活动数据：${rule.activityDataType}` : '',
+        fieldsText,
+        conditionText ? `条件：${conditionText}` : ''
+      ].filter(Boolean).join('；') || '按模型标准与排放源活动参数匹配。';
+    }
+
+    function formulaFor(model, factorGroup) {
+      if (model?.formula) return model.formula;
+      const factorName = factorGroup?.name || '匹配排放因子';
+      if (model?.activityDataType === 'electricity_consumption') return `CO₂e = 用电量 × ${factorName}`;
+      if (model?.activityDataType === 'fuel_consumption') return `CO₂e = 燃料消耗量 × ${factorName}`;
+      if (model?.activityDataType === 'replenishment_amount') return `CO₂e = 补充量 × ${factorName}`;
+      return `CO₂e = 活动数据 × ${factorName}`;
+    }
+
+    function modelSnapshot(modelLike) {
+      const raw = modelLike.rawModel || modelLike;
+      const standard = (Mock.FactorStandards || []).find((item) => item.id === raw.standardId) || null;
+      const boundary = boundaryNodeFor(raw);
+      const matchedFactor = factorForModel(raw);
+      const sourceSeed = buildSourceSeedForModel(raw);
+      return {
+        id: raw.id,
+        name: raw.name,
+        version: raw.version || 'v1.0.0',
+        scope: raw.scope,
+        category: raw.category,
+        scopeLabel: Mock.toScopeLabel?.(raw.scope) || raw.scope || '未分类范围',
+        scopeFullLabel: scopeMeta(raw.scope).label || Mock.toScopeLabel?.(raw.scope) || raw.scope || '未分类范围',
+        categoryLabel: raw.categoryLabel || boundary?.categoryLabel || Mock.toCategoryLabel?.(raw.category) || raw.category || '未分类类别',
+        status: raw.status || '启用',
+        type: raw.type || '共享模型',
+        method: normalizeAccountingMethod(raw.method),
+        formula: formulaByMethod(raw.method),
+        standardId: raw.standardId || '',
+        standard: raw.standard || standard?.name || '未配置标准',
+        standardCode: standard?.code || raw.standardCode || '—',
+        standardIssuer: standard?.issuer || raw.standardIssuer || '—',
+        standardAttachmentName: raw.standardAttachment?.name || raw.standardFileName || '未上传',
+        standardAttachmentUrl: raw.standardAttachment?.url || raw.standardAttachment?.href || raw.standardReferenceUrl || standard?.referenceUrl || '',
+        effectiveAt: raw.effectiveDate || raw.effectiveAt || raw.periodStart || '2024-01-01',
+        expiredAt: raw.expireDate || raw.expiredAt || raw.periodEnd || '长期有效',
+        precision: formatPrecisionText(raw.precision),
+        unit: formatUnitText(raw.unit || 'tCO2e'),
+        measureUnit: getMeasureUnitForModel(raw),
+        factorName: factorForModel(raw)?.name || '未匹配因子',
+        factorMatchRule: raw.factorMatchRule || {},
+        activityDataType: sourceSeed.activityDataType || raw.activityDataType || raw.factorMatchRule?.activityDataType || '',
+        factorName: matchedFactor?.name || '未命中因子',
+        factorType: factorTypeText(matchedFactor),
+        factorReferenceCount: factorReferenceCount(matchedFactor),
+        gwpVersion: factorGwpVersionText(matchedFactor),
+        factorMatchRuleText: formatFactorMatchRule(raw),
+        changeDescription: raw.changeDescription || raw.description || '初始化共享模型配置。'
+      };
+    }
+
+    function buildModelsFromSharedData() {
+      const sourceModels = Mock.getAccountingModels?.() || Mock.AccountingModels || [];
+      return sourceModels.map((model, index) => {
+        const factorGroup = factorForModel(model);
+        const standard = standardForModel(model) || Mock.getFactorStandard?.(model.standardId || factorGroup?.standardId) || null;
+        const boundaryNode = boundaryNodeFor(model);
+        const scopeLabel = Mock.toScopeLabel?.(model.scope) || model.scope || '未分类范围';
+        const scopeLabelFull = scopeMeta(model.scope).label || scopeLabel;
+        const categoryLabel = model.categoryLabel || boundaryNode?.categoryLabel || Mock.toCategoryLabel?.(model.category) || model.category || '未分类类别';
+        const effectiveEntry = getEffectiveVersionEntry({ rawModel: model });
+        const display = effectiveEntry?.snapshot || modelSnapshot(model);
+        const derivedStatus = model.status === '停用' ? '停用' : versionStatusByDate(display, display.status || model.status || '启用');
+        return {
+          id: model.id || `model-${index}`,
+          rawModel: model,
+          effectiveEntry,
+          latestVersion: model.version || 'v1.0.0',
+          name: display.name || model.name || `${categoryLabel}核算模型`,
+          scope: model.scope,
+          category: model.category,
+          standardId: display.standardId || model.standardId || standard?.id || '',
+          standardCode: display.standardCode || standard?.code || '',
+          standardIssuer: display.standardIssuer || standard?.issuer || '',
+          standard: display.standard || model.standard || standard?.name || factorGroup?.source || '未配置标准',
+          formula: display.formula || model.formula || formulaFor(model, factorGroup),
+          factorMatchRule: model.factorMatchRule || {},
+          accountingScope: scopeLabel,
+          accountingScopeLabel: scopeLabelFull,
+          accountingCategory: categoryLabel,
+          factorGroupId: model.factorGroupId || factorGroup?.id || '',
+          defaultFactorName: factorGroup?.name || '未匹配因子',
+          activityDataType: display.activityDataType || model.activityDataType || model.factorMatchRule?.activityDataType || '',
+          factorType: display.factorType || factorTypeText(factorGroup),
+          factorReferenceCount: display.factorReferenceCount || factorReferenceCount(factorGroup),
+          gwpVersion: display.gwpVersion || factorGwpVersionText(factorGroup),
+          factorMatchRuleText: display.factorMatchRuleText || formatFactorMatchRule(model),
+          sourceName: sourceNamesForModel(model),
+          dataSourceNames: dataSourceNamesForModel(model),
+          type: model.type || '共享模型',
+          method: display.method || model.method || '排放因子法',
+          version: display.version || model.version || 'v1.0.0',
+          status: derivedStatus,
+          createdAt: model.createdAt || '共享数据',
+          unit: display.unit || model.unit || 'tCO2e',
+          measureUnit: display.measureUnit || model.measureUnit || model.activityDataType || '-',
+          effectiveAt: display.effectiveAt || model.effectiveDate || model.effectiveAt || model.periodStart || '2024-01-01',
+          expiredAt: display.expiredAt || model.expireDate || model.expiredAt || model.periodEnd || '长期有效',
+          precision: display.precision || model.precision || '小数点后 4 位',
+          changeLog: model.changeLog || [],
+          versionHistory: model.versionHistory || []
+        };
+      });
+    }
+
+    function countWhere(predicate) {
+      return models.filter(predicate).length;
+    }
+
+    function getFilteredModels() {
+      return models.filter((model) => {
+        const text = [model.name, model.accountingScope, model.accountingCategory, model.standard, model.formula, formatFactorMatchRule(model), model.type, model.method, model.status].join(' ').toLowerCase();
+        const matchesKeyword = !state.keyword || text.includes(state.keyword.toLowerCase());
+        const matchesScope = state.scope === '全部' || model.accountingScope === state.scope;
+        const matchesStatus = state.status === '全部' || model.status === state.status;
+        const matchesTree = !state.treeFilter || (state.treeFilter.key === 'scopeCategory'
+          ? `${model.scope}|${model.category}` === state.treeFilter.value
+          : model[state.treeFilter.key] === state.treeFilter.value);
+        return matchesKeyword && matchesScope && matchesStatus && matchesTree;
+      });
+    }
+
+    function getPageCount(total) {
+      return Math.ceil(total / state.pageSize);
+    }
+
+    function statusClass(status) {
+      if (status === '启用') return 'px-2 py-0.5 bg-green-50 text-green-600 border border-green-200 rounded text-xs';
+      if (status === '停用') return 'px-2 py-0.5 bg-gray-100 text-gray-500 border border-gray-300 rounded text-xs';
+      if (status === '待生效') return 'px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-200 rounded text-xs';
+      if (status === '已失效') return 'px-2 py-0.5 bg-red-50 text-red-600 border border-red-200 rounded text-xs';
+      return 'px-2 py-0.5 bg-orange-50 text-orange-600 border border-orange-200 rounded text-xs';
+    }
+
+    function renderTopStats() {
+      const values = [models.length, countWhere((model) => model.status === '启用'), countWhere((model) => model.status === '停用'), countWhere((model) => model.type === '自定义模型')];
+      statsCards.forEach((card, index) => {
+        const valueEl = card.querySelector('.text-2xl.font-semibold');
+        if (valueEl && values[index] !== undefined) valueEl.textContent = values[index];
+      });
+    }
+
+    function renderRows(sourceModels) {
+      const filtered = sourceModels || getFilteredModels();
+      const totalPages = getPageCount(filtered.length);
+      state.page = totalPages ? Math.min(state.page, totalPages) : 1;
+      const start = (state.page - 1) * state.pageSize;
+      const rows = filtered.slice(start, start + state.pageSize);
+      tbody.innerHTML = rows.length ? rows.map((model) => {
+        const index = models.indexOf(model);
+        const toggleText = model.status === '停用' ? '启用' : '停用';
+        const toggleIcon = model.status === '停用' ? 'play_circle' : 'pause_circle';
+        return `
+        <tr class="table-row" data-model-index="${index}">
+          <td class="py-3 px-4 text-primary cursor-pointer hover:underline" data-action="detail">${escapeHtml(model.name)}</td>
+          <td class="py-3 px-4 text-gray-600">${escapeHtml(model.accountingScope)}</td>
+          <td class="py-3 px-4 text-gray-600">${escapeHtml(model.accountingCategory)}</td>
+          <td class="py-3 px-4 text-gray-600 model-standard-cell" title="${escapeHtml(model.standard)}"><span>${escapeHtml(model.standard)}</span></td>
+          <td class="py-3 px-4 text-gray-600">${escapeHtml(model.method)}</td>
+          <td class="py-3 px-4 text-gray-600">${escapeHtml(model.version)}</td>
+          <td class="py-3 px-4"><span class="${statusClass(model.status)}">${escapeHtml(model.status)}</span></td>
+          <td class="py-3 px-4 space-x-2 whitespace-nowrap">
+            <a class="text-primary hover:text-primary/80" href="#" data-action="detail">详情</a>
+            <a class="text-primary hover:text-primary/80" href="#" data-action="edit">编辑</a>
+            <div class="inline-block relative">
+              <button class="text-primary hover:text-primary/80 flex items-center space-x-1" data-action="more"><span>更多</span><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+              <div class="hidden absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg border border-gray-100 z-50 py-1 overflow-hidden">
+                <a class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors" href="#" data-action="versions"><span class="material-symbols-outlined text-sm mr-2">history</span><span>版本管理</span></a>
+                <a class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors" href="#" data-action="changes"><span class="material-symbols-outlined text-sm mr-2">list_alt</span><span>变更记录</span></a>
+                <a class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors" href="#" data-action="toggle-status"><span class="material-symbols-outlined text-sm mr-2">${toggleIcon}</span><span>${toggleText}</span></a>
+                <div class="border-t border-gray-100 my-1"></div>
+                <a class="flex items-center px-4 py-2 text-red-500 hover:bg-red-50 transition-colors" href="#" data-action="delete"><span class="material-symbols-outlined text-sm mr-2">delete</span><span>删除</span></a>
+              </div>
+            </div>
+          </td>
+        </tr>`;
+      }).join('') : `<tr><td class="py-10 px-4 text-center text-gray-400" colspan="8">暂无匹配的模型</td></tr>`;
+      if (totalText) totalText.textContent = `共 ${filtered.length} 条`;
+      renderPager(totalPages);
+    }
+
+    function renderPager(totalPages) {
+      if (!pager) return;
+      const pageButtons = Array.from({ length: totalPages }, (_, index) => {
+        const page = index + 1;
+        const active = page === state.page;
+        return `<button class="px-3 py-1 border rounded ${active ? 'border-primary bg-blue-50 text-primary' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}" data-page="${page}">${page}</button>`;
+      }).join('');
+      pager.innerHTML = `
+        <button class="px-2 py-1 border border-gray-300 rounded ${state.page <= 1 ? 'text-gray-400' : 'text-gray-600 hover:bg-gray-50'}" data-page="prev" ${state.page <= 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left text-xs"></i></button>
+        ${pageButtons}
+        <button class="px-2 py-1 border border-gray-300 rounded ${!totalPages || state.page >= totalPages ? 'text-gray-400' : 'text-gray-600 hover:bg-gray-50'}" data-page="next" ${!totalPages || state.page >= totalPages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right text-xs"></i></button>`;
+    }
+
+    function renderTree() {
+      if (!treeArea) return;
+      if (!sharedMockReady) {
+        treeArea.innerHTML = `<div class="px-2 py-3 text-sm text-red-500">共享边界数据未加载，请确认 shared-mock-data.js 与 model.html 位于同一目录。</div>`;
+        return;
+      }
+      const categoryTree = Mock.buildModelCategoryTree?.() || [];
+      const boundaryNodes = categoryTree.map((scope) => {
+        const categories = (scope.children || []).map((category) => treeLeaf(category.categoryLabel || Mock.toCategoryLabel?.(category.category) || category.category, countWhere((model) => model.scope === scope.scope && model.category === category.category), 'scopeCategory', `${scope.scope}|${category.category}`)).join('');
+        const scopeNodeId = `scope:${scope.scope}`;
+        return treeBranch(scope.treeLabel || scope.scopeLabel || scope.scope, countWhere((model) => model.scope === scope.scope), 'scope', scope.scope, categories, state.expandedTree.has(scopeNodeId) || Boolean(categories), scopeNodeId);
+      }).join('');
+      treeArea.innerHTML = `<div class="mb-4"><div class="px-2 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">按核算边界分类</div><ul class="space-y-1 mt-1">${boundaryNodes}${treeLeaf('已停用模型', countWhere((model) => model.status === '停用'), 'status', '停用')}</ul></div>`;
+    }
+
+    function treeBranch(label, count, key, value, children, expanded, nodeId) {
+      return `<li><div class="flex items-center py-2 px-2 cursor-pointer hover:bg-gray-50 rounded text-gray-700" data-tree-key="${escapeHtml(key)}" data-tree-value="${escapeHtml(value)}" data-tree-id="${escapeHtml(nodeId)}"><i class="fa-solid ${expanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-xs w-4 mr-1 text-gray-400"></i><span class="flex-1">${escapeHtml(label)}</span><span class="text-gray-400 text-xs">(${count})</span></div><ul class="${expanded ? '' : 'hidden'} pl-7 space-y-1 mt-1">${children}</ul></li>`;
+    }
+
+    function treeLeaf(label, count, key, value) {
+      return `<li class="py-1 px-2 text-gray-600 cursor-pointer hover:bg-gray-50 rounded" data-tree-key="${escapeHtml(key)}" data-tree-value="${escapeHtml(value)}"><span>${escapeHtml(label)}</span><span class="text-xs">(${count})</span></li>`;
+    }
+
+    function selectTreeNode(node) {
+      treeArea?.querySelectorAll('.tree-node-selected').forEach((selected) => {
+        selected.classList.remove('tree-node-selected', 'text-primary');
+        selected.classList.add(selected.tagName === 'LI' ? 'text-gray-600' : 'text-gray-700');
+      });
+      node.classList.add('tree-node-selected', 'text-primary');
+      node.classList.remove('text-gray-700', 'text-gray-600');
+    }
+
+    function showAllModels() {
+      state.keyword = '';
+      state.scope = '全部';
+      state.status = '全部';
+      state.treeFilter = null;
+      state.expandedTree.clear();
+      state.page = 1;
+      if (filterInput) filterInput.value = '';
+      if (filterSelects[0]) filterSelects[0].value = '全部';
+      if (filterSelects[1]) filterSelects[1].value = '全部';
+      renderRows(models);
+    }
+
+    function getModelCategoryTree() {
+      return Mock.buildModelCategoryTree?.() || [];
+    }
+
+    function getEnabledStandards() {
+      return (Mock.FactorStandards || []).filter((standard) => standard.status !== '停用');
+    }
+
+    const referenceStandardOptions = ['请选择引用标准', 'ISO 14064-1:2018', 'GHG Protocol', 'GB/T 32150-2015', 'IPCC AR6', '自定义'];
+
+    function referenceStandardOptionsHtml() {
+      return referenceStandardOptions.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+    }
+
+    function resolveReferenceStandardSelection(raw = {}, snapshot = null) {
+      const currentName = snapshot?.standard || raw.standard || raw.standardId || '';
+      if (referenceStandardOptions.includes(currentName)) return { value: currentName, customName: '' };
+      return currentName ? { value: '自定义', customName: currentName } : { value: '请选择引用标准', customName: '' };
+    }
+
+    function toggleCustomStandardInput(selectId, inputId) {
+      const select = document.getElementById(selectId);
+      const input = document.getElementById(inputId);
+      if (!select || !input) return;
+      input.classList.toggle('hidden', select.value !== '自定义');
+    }
+
+    function getReferenceStandardFromForm(selectId, inputId, baseRaw = null) {
+      const selected = document.getElementById(selectId)?.value || baseRaw?.standard || '请选择引用标准';
+      const customName = document.getElementById(inputId)?.value.trim() || '';
+      const standardName = selected === '自定义' ? (customName || baseRaw?.standard || '自定义') : selected;
+      const standardId = standardName === '请选择引用标准' ? '' : standardName;
+      const sharedStandard = (Mock.FactorStandards || []).find((item) => item.id === standardId || item.name === standardName) || null;
+      return {
+        standardId,
+        standard: sharedStandard || (standardId ? { id: standardId, name: standardName, code: standardName, issuer: '' } : null)
+      };
+    }
+
+    function standardFileBadgeHtml(fileName = '未上传文件') {
+      return `
+        <span class="material-symbols-outlined text-sm mr-1">description</span>
+        <span>${escapeHtml(fileName || '未上传文件')}</span>
+        <button type="button" class="ml-2 text-gray-400 hover:text-red-500" data-standard-file-clear><span class="material-symbols-outlined text-xs">close</span></button>`;
+    }
+
+    function updateStandardFileBadge(targetId, fileName) {
+      const target = document.getElementById(targetId);
+      if (target) target.innerHTML = standardFileBadgeHtml(fileName);
+    }
+
+    function renderAddModelForm(modelToEdit = null) {
+      editingModel = modelToEdit || null;
+      if (!addModelModal) return;
+      const modalTitle = addModelModal.querySelector('h3.text-lg');
+      if (modalTitle) modalTitle.textContent = editingModel ? '编辑当前版本' : '新增核算模型';
+      const body = addModelModal.querySelector('.flex-1.overflow-y-auto');
+      const saveButton = Array.from(addModelModal.querySelectorAll('button')).find((button) => button.textContent.trim() === '保存');
+      const tree = getModelCategoryTree();
+      const raw = editingModel?.rawModel || editingModel || {};
+      const activeEditEntry = editingModel ? (editingModel.effectiveEntry || getEffectiveVersionEntry(editingModel)) : null;
+      const currentSnapshot = editingModel ? (activeEditEntry?.snapshot || modelSnapshot(raw)) : null;
+      const standardSelection = resolveReferenceStandardSelection(raw, currentSnapshot);
+      const defaultScope = raw.scope || tree[0]?.scope || '';
+      const defaultCategory = raw.category || tree.find((scope) => scope.scope === defaultScope)?.children?.[0]?.category || '';
+      if (body) {
+        body.innerHTML = `
+          <section><h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>基本信息</h4><div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">模型名称</label><input id="model-form-name" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="请输入模型名称" type="text"/></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">版本号</label><input id="model-form-version" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="text"/><p class="text-[11px] text-gray-400 mt-1">${editingModel ? '编辑会更新当前按生效日期命中的版本配置。' : '请输入初始版本号。'}</p></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">适用范围</label><select id="model-form-scope" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">${tree.map((scope) => `<option value="${escapeHtml(scope.scope)}">${escapeHtml(scope.treeLabel || scope.scopeLabel || scope.scope)}</option>`).join('')}</select></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">排放类别</label><select id="model-form-category" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"></select></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">引用标准</label><select id="model-form-standard" class="w-full h-10 border border-gray-300 rounded px-3 py-2 text-sm bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">${referenceStandardOptionsHtml()}</select><input id="model-form-standard-custom" class="hidden mt-2 w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none" placeholder="请输入自定义标准名称" type="text"/></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">状态</label><select id="model-form-status" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"><option value="草稿">草稿</option><option value="启用">生效</option><option value="停用">停用</option></select></div>
+            <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">标准附件</label><div class="flex items-center gap-4"><label class="flex items-center px-5 h-10 bg-white border border-gray-300 rounded cursor-pointer hover:bg-gray-50 transition-colors"><span class="material-symbols-outlined text-primary mr-2 text-sm">upload</span><span class="text-sm text-gray-600">上传标准文件</span><input id="model-form-standard-file" class="hidden" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"/></label><div id="model-standard-file-name" class="flex items-center bg-blue-50 px-3 h-10 rounded border border-blue-100 text-primary text-xs">${standardFileBadgeHtml(raw.standardAttachment?.name || raw.standardFileName || '未上传文件')}</div></div></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">生效时间</label><input id="model-form-effective" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="date"/></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">失效时间</label><input id="model-form-expire" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" type="date"/></div>
+          </div></section>
+          <section><h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>核算逻辑</h4><div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">核算方法</label><select id="model-form-method" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"><option>排放因子法</option><option>物料平衡法</option><option>实测法</option></select></div>
+            <div class="space-y-1.5 col-span-2"><label class="text-xs text-gray-500">计算公式</label><textarea id="model-form-formula" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-20 font-mono bg-gray-50"></textarea></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">核算单位</label><input id="model-form-unit" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none" value="tCO2e" type="text"/></div>
+            <div class="space-y-1.5"><label class="text-xs text-gray-500">计算精度</label><select id="model-form-precision" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"><option>小数点后 2 位</option><option>小数点后 4 位</option><option>小数点后 6 位</option></select></div>
+          </div></section>
+          <section><h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center"><span class="w-1 h-4 bg-primary mr-2 rounded-full"></span>版本变更</h4><textarea id="model-form-change" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-24" placeholder="请描述此版本的变更内容..."></textarea></section>`;
+      }
+      function refreshCategoryOptions() {
+        const selectedScope = document.getElementById('model-form-scope')?.value || defaultScope;
+        const categories = tree.find((scope) => scope.scope === selectedScope)?.children || [];
+        const categorySelect = document.getElementById('model-form-category');
+        if (categorySelect) {
+          categorySelect.innerHTML = categories.map((category) => `<option value="${escapeHtml(category.category)}">${escapeHtml(category.categoryLabel)}</option>`).join('');
+          if (categories.some((category) => category.category === defaultCategory)) categorySelect.value = defaultCategory;
+        }
+      }
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
+      set('model-form-name', currentSnapshot?.name || raw.name || '');
+      set('model-form-version', editingModel ? (currentSnapshot?.version || raw.version || 'v1.0.0') : 'v1.0.0');
+      set('model-form-scope', defaultScope);
+      refreshCategoryOptions();
+      set('model-form-category', defaultCategory);
+      set('model-form-standard', standardSelection.value);
+      set('model-form-standard-custom', standardSelection.customName);
+      toggleCustomStandardInput('model-form-standard', 'model-form-standard-custom');
+      set('model-form-effective', editingModel ? normalizeDateText(currentSnapshot?.effectiveAt || raw.effectiveDate || raw.effectiveAt) : '');
+      set('model-form-expire', editingModel ? normalizeDateText(currentSnapshot?.expiredAt || raw.expireDate || raw.expiredAt) : '');
+      set('model-form-status', raw.status === '停用' ? '停用' : (raw.status === '草稿' ? '草稿' : '启用'));
+      set('model-form-method', currentSnapshot?.method || raw.method || '排放因子法');
+      set('model-form-formula', currentSnapshot?.formula || raw.formula || formulaByMethod(currentSnapshot?.method || raw.method));
+      set('model-form-unit', currentSnapshot?.unit || raw.unit || 'tCO2e');
+      set('model-form-precision', currentSnapshot?.precision || raw.precision || '小数点后 4 位');
+      set('model-form-change', editingModel ? `修改当前版本 ${currentSnapshot?.version || raw.version || 'v1.0.0'} 的配置。` : '');
+      document.getElementById('model-form-scope')?.addEventListener('change', refreshCategoryOptions);
+      document.getElementById('model-form-standard')?.addEventListener('change', () => toggleCustomStandardInput('model-form-standard', 'model-form-standard-custom'));
+      document.getElementById('model-form-method')?.addEventListener('change', () => applyFormulaByMethod('model-form-method', 'model-form-formula', true));
+      document.getElementById('model-form-standard-file')?.addEventListener('change', (event) => {
+        const file = event.target.files?.[0];
+        updateStandardFileBadge('model-standard-file-name', file ? file.name : (raw.standardAttachment?.name || raw.standardFileName || '未上传文件'));
+      });
+      if (saveButton) {
+        saveButton.id = 'model-form-save';
+        saveButton.textContent = editingModel ? '保存为新版本' : '保存';
+        saveButton.onclick = null;
+      }
+    }
+
+    function closeAddModelModal() {
+      addModelModal?.classList.add('hidden');
+      editingModel = null;
+      renderAddModelForm(null);
+    }
+
+    function collectModelFormPayload(baseRaw = null) {
+      const scope = document.getElementById('model-form-scope')?.value || baseRaw?.scope || '';
+      const category = document.getElementById('model-form-category')?.value || baseRaw?.category || '';
+      const { standardId, standard } = getReferenceStandardFromForm('model-form-standard', 'model-form-standard-custom', baseRaw);
+      const standardFile = document.getElementById('model-form-standard-file')?.files?.[0] || null;
+      const standardAttachment = standardFile ? { name: standardFile.name, size: standardFile.size, type: standardFile.type || 'unknown', uploadedAt: todayString() } : (baseRaw?.standardAttachment || (baseRaw?.standardFileName ? { name: baseRaw.standardFileName } : null));
+      const version = document.getElementById('model-form-version')?.value.trim() || nextVersion(baseRaw?.version || 'v1.0.0');
+      const effectiveDate = document.getElementById('model-form-effective')?.value || todayString();
+      const expireDate = document.getElementById('model-form-expire')?.value || '';
+      const status = document.getElementById('model-form-status')?.value || baseRaw?.status || '启用';
+      const precision = document.getElementById('model-form-precision')?.value || baseRaw?.precision || '小数点后 4 位';
+      const method = document.getElementById('model-form-method')?.value || baseRaw?.method || '排放因子法';
+      const formula = document.getElementById('model-form-formula')?.value.trim() || formulaByMethod(method);
+      const changeDescription = document.getElementById('model-form-change')?.value.trim() || (baseRaw ? `发布 ${version}。` : '新增模型。');
+      const rulePreset = { ...getDefaultActivitySeedByCategory(category), ...(Mock.getModelStandardRule?.(category) || {}) };
+      return { scope, category, standardId, standard, standardAttachment, version, effectiveDate, expireDate, status, precision, method, formula, changeDescription, rulePreset };
+    }
+
+    function saveNewModel() {
+      if (editingModel) {
+        saveEditedCurrentVersion();
+        return;
+      }
+      const payload = collectModelFormPayload(null);
+      const modelName = document.getElementById('model-form-name')?.value.trim() || `${Mock.toCategoryLabel?.(payload.category) || payload.category}核算模型`;
+      const snapshot = {
+        version: payload.version,
+        name: modelName,
+        scope: payload.scope,
+        category: payload.category,
+        categoryCode: payload.category,
+        activityDataType: payload.rulePreset.activityDataType || '',
+        factorMatchRule: { standardId: payload.standardId, activityDataType: payload.rulePreset.activityDataType || '', fields: getModelFactorMatchFields(payload.category) },
+        standardId: payload.standardId,
+        standard: payload.standard?.name || '',
+        method: payload.method,
+        formula: payload.formula,
+        precision: payload.precision,
+        effectiveAt: payload.effectiveDate,
+        expiredAt: payload.expireDate || '长期有效',
+        status: payload.status === '启用' ? versionStatusByDate({ effectiveAt: payload.effectiveDate, expiredAt: payload.expireDate }, '启用') : payload.status
+      };
+      const model = {
+        id: `am-${Date.now()}`,
+        name: modelName,
+        scope: payload.scope,
+        category: payload.category,
+        categoryCode: payload.category,
+        standardId: payload.standardId,
+        standard: payload.standard?.name || '',
+        standardAttachment: payload.standardAttachment,
+        standardFileName: payload.standardAttachment?.name || '',
+        method: payload.method,
+        formula: payload.formula,
+        activityDataType: payload.rulePreset.activityDataType || '',
+        unit: document.getElementById('model-form-unit')?.value || 'tCO2e',
+        precision: payload.precision,
+        factorMatchRule: { standardId: payload.standardId, activityDataType: payload.rulePreset.activityDataType || '', fields: getModelFactorMatchFields(payload.category) },
+        matchRule: { scope: payload.scope, categoryCode: payload.category, periodField: 'period', periodStart: payload.effectiveDate.slice(0, 7), periodEnd: payload.expireDate.slice(0, 7), description: '按排放源推导范围、排放类别和活动数据期间匹配模型。' },
+        periodStart: payload.effectiveDate.slice(0, 7),
+        periodEnd: payload.expireDate.slice(0, 7),
+        version: payload.version,
+        effectiveDate: payload.effectiveDate,
+        expireDate: payload.expireDate,
+        status: payload.status,
+        type: '自定义模型',
+        changeLog: [{ version: payload.version, operator: '当前用户', date: todayString(), status: snapshot.status, description: payload.changeDescription }],
+        versionHistory: [{ version: payload.version, date: payload.effectiveDate, status: snapshot.status, description: payload.changeDescription, snapshot }]
+      };
+      Mock.addAccountingModel?.(model) || Mock.upsertAccountingModel?.(model);
+      refreshFromSharedData();
+      closeAddModelModal();
+    }
+
+    function saveEditedCurrentVersion() {
+      const raw = editingModel.rawModel || editingModel;
+      const activeEntry = editingModel.effectiveEntry || getEffectiveVersionEntry(editingModel) || { snapshot: modelSnapshot(raw), version: raw.version };
+      const activeSnapshot = activeEntry.snapshot || modelSnapshot(raw);
+      const payload = collectModelFormPayload(raw);
+      const nextSnapshot = {
+        ...activeSnapshot,
+        name: document.getElementById('model-form-name')?.value.trim() || activeSnapshot.name || raw.name,
+        version: payload.version,
+        scope: payload.scope,
+        category: payload.category,
+        categoryCode: payload.category,
+        scopeLabel: Mock.toScopeLabel?.(payload.scope) || payload.scope,
+        scopeFullLabel: scopeMeta(payload.scope).label || Mock.toScopeLabel?.(payload.scope) || payload.scope,
+        categoryLabel: Mock.toCategoryLabel?.(payload.category) || payload.category,
+        activityDataType: payload.rulePreset.activityDataType || raw.activityDataType || '',
+        factorMatchRule: { standardId: payload.standardId, activityDataType: payload.rulePreset.activityDataType || raw.activityDataType || '', fields: getModelFactorMatchFields(payload.category) },
+        standardId: payload.standardId,
+        standard: payload.standard?.name || raw.standard || '',
+        standardCode: payload.standard?.code || activeSnapshot.standardCode,
+        standardIssuer: payload.standard?.issuer || activeSnapshot.standardIssuer,
+        standardAttachmentName: payload.standardAttachment?.name || activeSnapshot.standardAttachmentName,
+        method: payload.method,
+        formula: payload.formula,
+        precision: payload.precision,
+        unit: document.getElementById('model-form-unit')?.value || activeSnapshot.unit || raw.unit || 'tCO2e',
+        effectiveAt: payload.effectiveDate,
+        expiredAt: payload.expireDate || '长期有效',
+        status: payload.status === '启用' ? versionStatusByDate({ effectiveAt: payload.effectiveDate, expiredAt: payload.expireDate }, '启用') : payload.status,
+        changeDescription: payload.changeDescription
+      };
+      const versionHistory = Array.isArray(raw.versionHistory) ? raw.versionHistory.slice() : [];
+      const rawVersion = raw.version || '';
+      const activeIsRaw = activeEntry.version === rawVersion;
+      let nextModel;
+      if (activeIsRaw) {
+        if (payload.version !== activeSnapshot.version && !versionHistory.some((item) => (item.version || item.snapshot?.version) === activeSnapshot.version)) {
+          versionHistory.unshift({ version: activeSnapshot.version, date: activeSnapshot.effectiveAt, status: versionStatusByDate(activeSnapshot, raw.status), description: '编辑当前版本前自动归档。', snapshot: activeSnapshot });
+        }
+        nextModel = {
+          ...raw,
+          name: nextSnapshot.name,
+          scope: payload.scope,
+          category: payload.category,
+          categoryCode: payload.category,
+          activityDataType: payload.rulePreset.activityDataType || raw.activityDataType || '',
+          version: payload.version,
+          standardId: payload.standardId,
+          standard: payload.standard?.name || raw.standard || '',
+          method: payload.method,
+          formula: payload.formula,
+          precision: payload.precision,
+          unit: nextSnapshot.unit,
+          status: payload.status,
+          standardAttachment: payload.standardAttachment,
+          standardFileName: payload.standardAttachment?.name || '',
+          effectiveDate: payload.effectiveDate,
+          expireDate: payload.expireDate,
+          periodStart: payload.effectiveDate.slice(0, 7),
+          periodEnd: payload.expireDate.slice(0, 7),
+          matchRule: { ...(raw.matchRule || {}), scope: payload.scope, categoryCode: payload.category, periodField: 'period', periodStart: payload.effectiveDate.slice(0, 7), periodEnd: payload.expireDate.slice(0, 7), description: '按排放源推导范围、排放类别和活动数据期间匹配模型。' },
+          factorMatchRule: { standardId: payload.standardId, activityDataType: payload.rulePreset.activityDataType || raw.activityDataType || '', fields: getModelFactorMatchFields(payload.category) },
+          changeLog: [{ version: payload.version, operator: '当前用户', date: todayString(), status: nextSnapshot.status, description: payload.changeDescription }, ...(raw.changeLog || [])],
+          versionHistory
+        };
+      } else {
+        const updatedHistory = versionHistory.map((item) => {
+          const itemVersion = item.version || item.snapshot?.version;
+          if (itemVersion !== activeEntry.version) return item;
+          return {
+            ...item,
+            version: payload.version,
+            date: payload.effectiveDate,
+            status: nextSnapshot.status,
+            description: payload.changeDescription,
+            snapshot: nextSnapshot
+          };
+        });
+        if (!updatedHistory.some((item) => (item.version || item.snapshot?.version) === payload.version)) {
+          updatedHistory.unshift({ version: payload.version, date: payload.effectiveDate, status: nextSnapshot.status, description: payload.changeDescription, snapshot: nextSnapshot });
+        }
+        nextModel = {
+          ...raw,
+          changeLog: [{ version: payload.version, operator: '当前用户', date: todayString(), status: nextSnapshot.status, description: payload.changeDescription }, ...(raw.changeLog || [])],
+          versionHistory: updatedHistory
+        };
+      }
+      Mock.updateAccountingModel?.(raw.id, nextModel) || Mock.upsertAccountingModel?.(nextModel);
+      refreshFromSharedData();
+      closeAddModelModal();
+    }
+
+    function showDetail(model) {
+      if (!detailPanel || !detailGrid) return;
+      const snapshot = modelSnapshot(model.rawModel || model);
+      const standardAttachmentHtml = renderStandardReferenceLink(snapshot);
+      detailPanel.classList.remove('hidden');
+      detailGrid.innerHTML = `
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">模型名称：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.name || model.name)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">核算方法：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.method)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">核算单位：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.unit)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">生效时间：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.effectiveAt)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">失效时间：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.expiredAt)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">计量单位：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.measureUnit)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">引用标准：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.standard)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">标准附件：</span>${standardAttachmentHtml}</div>
+        <div class="flex col-span-3"><span class="text-gray-500 w-24 shrink-0">匹配规则：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.factorMatchRuleText || formatFactorMatchRule(snapshot))}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">活动数据类型：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.activityDataType || '-')}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">默认命中因子：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.factorName || '未命中因子')}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">命中类型：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.factorType || '未命中')}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">引用因子数：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.factorReferenceCount ?? 0)}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">GWP版本：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.gwpVersion || '未配置')}</span></div>
+        <div class="flex"><span class="text-gray-500 w-24 shrink-0">计算精度：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.precision)}</span></div>
+        <div class="flex col-span-3"><span class="text-gray-500 w-24 shrink-0">计算公式：</span><span class="text-gray-900 flex-1">${escapeHtml(snapshot.formula)}</span></div>`;
+      detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function setupFilters() {
+      if (filterSelects[0]) {
+        filterSelects[0].innerHTML = '<option>全部</option><option>范围一</option><option>范围二</option><option>范围三</option>';
+        filterSelects[0].addEventListener('change', (event) => { state.scope = event.target.value; state.page = 1; renderRows(); });
+      }
+      if (filterSelects[1]) {
+        filterSelects[1].innerHTML = '<option>全部</option><option>启用</option><option>待生效</option><option>已失效</option><option>草稿</option><option>停用</option>';
+        filterSelects[1].addEventListener('change', (event) => { state.status = event.target.value; state.page = 1; renderRows(); });
+      }
+      if (pageSizeSelect) {
+        pageSizeSelect.innerHTML = '<option value="3">3 条/页</option><option value="5">5 条/页</option><option value="10">10 条/页</option>';
+        pageSizeSelect.value = String(state.pageSize);
+        pageSizeSelect.addEventListener('change', (event) => { state.pageSize = Number(event.target.value); state.page = 1; renderRows(); });
+      }
+      filterInput?.addEventListener('input', (event) => { state.keyword = event.target.value.trim(); state.page = 1; renderRows(); });
+      resetButton?.addEventListener('click', () => { showAllModels(); renderTree(); });
+    }
+
+    function getVersionEntries(model) {
+      const raw = model.rawModel || model;
+      const currentSnapshot = modelSnapshot(raw);
+      const history = Array.isArray(raw.versionHistory) ? raw.versionHistory : [];
+      const byVersion = new Map();
+      const addEntry = (entry = {}) => {
+        const snapshot = { ...currentSnapshot, ...(entry.snapshot || entry), version: entry.version || entry.snapshot?.version || currentSnapshot.version };
+        snapshot.method = normalizeAccountingMethod(snapshot.method);
+        snapshot.formula = formulaByMethod(snapshot.method);
+        snapshot.measureUnit = getMeasureUnitForModel({ ...raw, ...snapshot });
+        const snapshotModel = { ...raw, ...snapshot };
+        const snapshotSourceSeed = buildSourceSeedForModel(snapshotModel);
+        const snapshotFactor = factorForModel(snapshotModel);
+        snapshot.activityDataType = snapshot.activityDataType || snapshotSourceSeed.activityDataType || snapshotModel.factorMatchRule?.activityDataType || '';
+        snapshot.factorName = snapshotFactor?.name || snapshot.factorName || '未命中因子';
+        snapshot.factorType = factorTypeText(snapshotFactor);
+        snapshot.factorReferenceCount = factorReferenceCount(snapshotFactor);
+        snapshot.gwpVersion = factorGwpVersionText(snapshotFactor);
+        snapshot.factorMatchRuleText = formatFactorMatchRule(snapshotModel);
+        snapshot.status = versionStatusByDate(snapshot, raw.status === '停用' && snapshot.version === currentSnapshot.version ? '停用' : '启用');
+        const key = snapshot.version || `version-${byVersion.size}`;
+        byVersion.set(key, {
+          version: snapshot.version,
+          date: entry.date || snapshot.effectiveAt || currentSnapshot.effectiveAt,
+          status: snapshot.status,
+          description: entry.description || snapshot.changeDescription || '版本配置记录。',
+          snapshot
+        });
+      };
+      addEntry({ version: currentSnapshot.version, date: currentSnapshot.effectiveAt, description: raw.changeLog?.[0]?.description || '当前配置。', snapshot: currentSnapshot });
+      history.forEach(addEntry);
+      (raw.changeLog || []).forEach((log) => {
+        if (!byVersion.has(log.version)) addEntry({ ...log, snapshot: makeFallbackHistoricalSnapshot(currentSnapshot, log) });
+      });
+      if (byVersion.size === 1) {
+        const fallback = makeFallbackHistoricalSnapshot(currentSnapshot, { version: 'v1.0.0', description: '初始版本配置。' });
+        if (fallback.version !== currentSnapshot.version) addEntry({ version: fallback.version, date: fallback.effectiveAt, description: fallback.changeDescription, snapshot: fallback });
+      }
+      return sortEntriesByEffectiveDate(Array.from(byVersion.values()));
+    }
+
+    function makeFallbackHistoricalSnapshot(current, log = {}) {
+      return {
+        ...current,
+        version: log.version || 'v1.0.0',
+        status: '归档',
+        precision: current.precision === '十进制后 4 位' ? '十进制后 2 位' : current.precision,
+        formula: formulaByMethod(current.method),
+        effectiveAt: log.date || current.effectiveAt,
+        expiredAt: current.effectiveAt || '长期有效',
+        changeDescription: log.description || '初始版本配置。'
+      };
+    }
+
+    function updateVersionTabs(mode = 'versions') {
+      const compareTab = document.getElementById('version-tab-compare');
+      const recordTab = document.getElementById('version-tab-records');
+      [compareTab, recordTab].forEach((tab) => {
+        if (!tab) return;
+        const active = tab.dataset.versionTab === mode;
+        tab.className = active
+          ? 'px-4 py-1.5 rounded-md bg-white text-primary shadow-sm font-medium'
+          : 'px-4 py-1.5 rounded-md text-gray-600 hover:text-primary font-medium';
+      });
+    }
+
+    function setVersionWorkspaceMode(mode = 'versions') {
+      notifyParentLocation(mode === 'changes' ? '变更记录' : '版本管理');
+      versionWorkspaceMode = mode;
+      updateVersionTabs(mode);
+      const title = document.getElementById('version-workspace-title');
+      const subtitle = document.getElementById('version-workspace-subtitle');
+      const publishButton = document.getElementById('version-show-publish');
+
+      if (mode === 'changes') {
+        versionCompareSection?.classList.add('hidden');
+        versionRecordSection?.classList.remove('hidden');
+        versionPublishPanel?.classList.add('hidden');
+        if (title) title.textContent = '变更记录';
+        if (subtitle && activeVersionModel) subtitle.textContent = `${activeVersionModel.name}：按时间线展示版本发布、状态切换与配置变更，不和版本对比页面重复。`;
+        if (publishButton) publishButton.classList.add('hidden');
+        if (activeVersionModel) renderChangeRecordPage(activeVersionModel);
+        return;
+      }
+
+      versionRecordSection?.classList.add('hidden');
+      versionCompareSection?.classList.remove('hidden');
+      if (title) title.textContent = '版本管理';
+      if (subtitle && activeVersionModel) subtitle.textContent = `${activeVersionModel.name}：仅进行版本对比，可选择历史版本并回滚为新版本。`;
+      if (publishButton) publishButton.classList.add('hidden');
+      if (activeVersionModel) renderVersionCompare(activeVersionModel);
+    }
+function renderVersionWorkspace(model, mode = 'versions') {
+  notifyParentLocation(mode === 'changes' ? '变更记录' : '版本管理');
+
+  activeVersionModel = model;
+  versionWorkspaceMode = mode;
+
+  mainContentArea?.classList.add('hidden');
+  statsArea?.classList.add('hidden');
+  detailPanel?.classList.add('hidden');
+  versionWorkspace?.classList.remove('hidden');
+
+  setVersionWorkspaceMode(mode);
+}
+
+    function hideVersionWorkspace() {
+  versionWorkspace?.classList.add('hidden');
+  mainContentArea?.classList.remove('hidden');
+  statsArea?.classList.remove('hidden');
+  detailPanel?.classList.add('hidden');
+
+  activeVersionModel = null;
+  versionWorkspaceMode = 'versions';
+
+  notifyParentLocation("");
+}
+
+    function populateVersionForm(model) {
+      const raw = model.rawModel || model;
+      const standardSelection = resolveReferenceStandardSelection(raw, model);
+      const standardSelect = document.getElementById('version-form-standard');
+      if (standardSelect) {
+        standardSelect.innerHTML = referenceStandardOptionsHtml();
+        standardSelect.value = standardSelection.value;
+      }
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
+      set('version-form-standard-custom', standardSelection.customName);
+      toggleCustomStandardInput('version-form-standard', 'version-form-standard-custom');
+      set('version-form-version', nextVersion(model.version || raw.version));
+      set('version-form-effective', todayString());
+      set('version-form-expire', model.expiredAt === '长期有效' ? '' : model.expiredAt);
+      set('version-form-precision', model.precision || raw.precision || '小数点后 4 位');
+      set('version-form-status', '启用');
+      set('version-form-method', normalizeAccountingMethod(model.method || raw.method));
+      set('version-form-formula', formulaByMethod(model.method || raw.method));
+      set('version-form-description', `基于 ${model.version || raw.version || '当前版本'} 修改配置并发布新版本。`);
+      const fileInput = document.getElementById('version-form-standard-file');
+      if (fileInput) fileInput.value = '';
+      updateStandardFileBadge('version-standard-file-name', raw.standardAttachment?.name || raw.standardFileName || '未上传文件');
+    }
+
+    function renderVersionCompare(model) {
+      const entries = getVersionEntries(model);
+      const realActiveEntry = getActiveVersionEntry(model);
+      const activeEntry = realActiveEntry || getEffectiveVersionEntry(model) || entries[0];
+      const current = activeEntry.snapshot;
+      const selectableEntries = entries.filter((entry) => entry.version !== activeEntry.version);
+      const select = versionHistorySelect;
+      const previousValue = select?.value || '0';
+      if (select) {
+        select.innerHTML = selectableEntries.map((entry, index) => `<option value="${index}">${escapeHtml(entry.version)}｜${escapeHtml(getEntryDisplayStatus(entry, realActiveEntry))}｜${escapeHtml(entry.date || '')}</option>`).join('') || `<option value="0">暂无可对比版本</option>`;
+        if (Array.from(select.options).some((option) => option.value === previousValue)) select.value = previousValue;
+      }
+      const selectedIndex = Number(select?.value || 0);
+      const historyEntry = selectableEntries[selectedIndex] || selectableEntries[0] || activeEntry;
+      rollbackTargetEntry = historyEntry === activeEntry ? null : historyEntry;
+      const rollbackButton = document.getElementById('version-rollback-selected');
+      if (rollbackButton) rollbackButton.disabled = !rollbackTargetEntry;
+      if (rollbackButton) rollbackButton.classList.toggle('opacity-50', !rollbackTargetEntry);
+      const history = historyEntry.snapshot;
+      const rows = [
+        ['模型名称', current.name, history.name],
+        ['模型版本', current.version, history.version],
+        ['生效时间', current.effectiveAt, history.effectiveAt],
+        ['失效时间', current.expiredAt, history.expiredAt],
+        ['状态', current.status, history.status],
+        ['核算方法', current.method, history.method],
+        ['核算单位', current.unit, history.unit],
+        ['计量单位', current.measureUnit, history.measureUnit],
+        ['计算公式', current.formula, history.formula],
+        ['计算精度', current.precision, history.precision],
+        ['引用标准', current.standard, history.standard],
+        ['标准编号', current.standardCode, history.standardCode],
+        ['标准附件', current.standardAttachmentName, history.standardAttachmentName],
+        ['核算范围', current.scopeFullLabel, history.scopeFullLabel],
+        ['排放类别', current.categoryLabel, history.categoryLabel],
+        ['默认命中因子', current.factorName, history.factorName],
+        ['活动数据类型', current.activityDataType, history.activityDataType],
+        ['命中类型', current.factorType, history.factorType],
+        ['GWP版本', current.gwpVersion, history.gwpVersion]
+      ];
+      const changedCount = rows.filter(([, left, right]) => String(left) !== String(right)).length;
+      document.getElementById('version-current-title').textContent = realActiveEntry ? `当前生效版本 (${current.version})` : `暂无已生效版本，展示最近待生效版本 (${current.version})`;
+      document.getElementById('version-history-title').textContent = `${getEntryDisplayStatus(historyEntry, activeEntry)} (${history.version})`;
+      const body = document.getElementById('version-compare-body');
+      if (body) {
+        body.innerHTML = rows.map(([label, left, right]) => {
+          const changed = String(left) !== String(right);
+          const leftHtml = label === '标准附件' ? renderStandardReferenceLink(current) : escapeHtml(left || '—');
+          const rightHtml = label === '标准附件' ? renderStandardReferenceLink(history) : escapeHtml(right || '—');
+          return `<tr class="hover:bg-gray-50 transition-colors ${changed ? 'version-compare-highlight' : ''}"><td class="p-4 font-medium text-gray-500 bg-gray-50/30">${escapeHtml(label)}</td><td class="p-4 text-gray-900 ${label === '计算公式' ? 'font-mono text-xs' : ''}"><div class="flex items-start gap-2"><span class="flex-1">${leftHtml}</span></div></td><td class="p-4 text-gray-500 ${label === '计算公式' ? 'font-mono text-xs' : ''}">${rightHtml}</td></tr>`;
+        }).join('');
+      }
+      const score = Math.max(72, 100 - changedCount * 3);
+      document.getElementById('version-impact-value').textContent = `${changedCount} 项`;
+      document.getElementById('version-impact-desc').textContent = changedCount ? `当前版本相较 ${history.version} 存在 ${changedCount} 项配置变化，需关注引用标准、公式和生效期间是否符合核算口径。` : '当前版本与所选历史版本配置基本一致。';
+      document.getElementById('version-compliance-score').textContent = `${score}%`;
+      document.getElementById('version-compliance-bar').style.width = `${score}%`;
+      renderChangeTimeline(model, entries);
+    }
+
+    function renderChangeTimeline(model, entries = getVersionEntries(model)) {
+      const timeline = document.getElementById('version-change-timeline');
+      if (!timeline) return;
+      const activeEntry = getActiveVersionEntry(model);
+      timeline.innerHTML = entries.map((entry) => {
+        const displayStatus = getEntryDisplayStatus(entry, activeEntry);
+        const current = displayStatus === '当前版本';
+        return `<div class="relative pl-8"><div class="absolute left-0 top-1 w-6 h-6 bg-white border-2 ${current ? 'border-primary' : 'border-gray-200'} rounded-full z-10 flex items-center justify-center"><div class="w-2 h-2 ${current ? 'bg-primary' : 'bg-gray-200'} rounded-full"></div></div><h4 class="text-sm text-gray-900 font-bold">${escapeHtml(entry.version || '未命名版本')}</h4><p class="text-xs text-gray-500 mt-1">${escapeHtml(entry.description || '暂无变更说明')}</p><p class="text-[11px] text-gray-400 mt-1">${escapeHtml(entry.date || '—')} ｜ ${escapeHtml(displayStatus)}</p></div>`;
+      }).join('') || '<div class="text-sm text-gray-400">暂无变更记录</div>';
+    }
+
+    function renderChangeRecordPage(model) {
+      const entries = getVersionEntries(model);
+      const fullTimeline = document.getElementById('record-timeline-full');
+      const totalBadge = document.getElementById('record-total-badge');
+      const subtitle = document.getElementById('record-subtitle');
+      const currentVersion = document.getElementById('record-current-version');
+      const currentStatus = document.getElementById('record-current-status');
+      const currentStandard = document.getElementById('record-current-standard');
+      if (totalBadge) totalBadge.textContent = `${entries.length} 条记录`;
+      if (subtitle) subtitle.textContent = `${model.name} 的版本发布、状态调整与配置修改记录。`;
+      const activeEntry = getActiveVersionEntry(model);
+      const activeSnapshot = activeEntry?.snapshot || getEffectiveVersionEntry(model)?.snapshot || model;
+      if (currentVersion) currentVersion.textContent = activeSnapshot.version || model.version || '—';
+      if (currentStatus) currentStatus.textContent = activeEntry ? '当前版本' : (model.status || '—');
+      if (currentStandard) currentStandard.textContent = activeSnapshot.standard || model.standard || '—';
+      if (!fullTimeline) return;
+      fullTimeline.innerHTML = entries.map((entry, index) => {
+        const displayStatus = getEntryDisplayStatus(entry, activeEntry);
+        const current = displayStatus === '当前版本';
+        const snapshot = entry.snapshot || {};
+        return `
+          <div class="relative pl-8 bg-white">
+            <div class="absolute left-0 top-1 w-6 h-6 bg-white border-2 ${current ? 'border-primary' : 'border-gray-200'} rounded-full z-10 flex items-center justify-center">
+              <div class="w-2 h-2 ${current ? 'bg-primary' : 'bg-gray-200'} rounded-full"></div>
+            </div>
+            <div class="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow">
+              <div class="flex items-center justify-between gap-3 mb-2">
+                <h4 class="text-sm text-gray-900 font-bold">${escapeHtml(entry.version || '未命名版本')}</h4>
+                <span class="px-2 py-0.5 ${current ? 'bg-green-50 text-green-600 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'} border text-[10px] rounded">${escapeHtml(displayStatus)}</span>
+              </div>
+              <p class="text-xs text-gray-600 leading-relaxed">${escapeHtml(entry.description || '暂无变更说明')}</p>
+              <div class="grid grid-cols-2 gap-3 mt-3 text-[11px] text-gray-500">
+                <div>操作时间：<span class="text-gray-800">${escapeHtml(entry.date || '—')}</span></div>
+                <div>引用标准：<span class="text-gray-800">${escapeHtml(snapshot.standard || model.standard || '—')}</span></div>
+                <div>生效时间：<span class="text-gray-800">${escapeHtml(snapshot.effectiveAt || '—')}</span></div>
+                <div>失效时间：<span class="text-gray-800">${escapeHtml(snapshot.expiredAt || '—')}</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="text-sm text-gray-400">暂无变更记录</div>';
+    }
+
+    function publishNewVersion() {
+      if (!activeVersionModel) return;
+      const raw = activeVersionModel.rawModel || activeVersionModel;
+      const oldSnapshot = modelSnapshot(raw);
+      const { standardId, standard } = getReferenceStandardFromForm('version-form-standard', 'version-form-standard-custom', raw);
+      const version = document.getElementById('version-form-version')?.value.trim() || nextVersion(raw.version);
+      const effectiveDate = document.getElementById('version-form-effective')?.value || todayString();
+      const expireDate = document.getElementById('version-form-expire')?.value || '';
+      const precision = document.getElementById('version-form-precision')?.value || raw.precision || '小数点后 4 位';
+      const status = document.getElementById('version-form-status')?.value || '启用';
+      const method = document.getElementById('version-form-method')?.value || raw.method || '排放因子法';
+      const formula = document.getElementById('version-form-formula')?.value.trim() || formulaByMethod(method);
+      const description = document.getElementById('version-form-description')?.value.trim() || `发布 ${version}。`;
+      const file = document.getElementById('version-form-standard-file')?.files?.[0] || null;
+      const standardAttachment = file
+        ? { name: file.name, size: file.size, type: file.type || 'unknown', uploadedAt: todayString() }
+        : (raw.standardAttachment || (raw.standardFileName ? { name: raw.standardFileName } : null));
+      const versionHistory = Array.isArray(raw.versionHistory) ? raw.versionHistory.slice() : [];
+      if (!versionHistory.some((item) => item.version === oldSnapshot.version)) {
+        versionHistory.unshift({ version: oldSnapshot.version, date: oldSnapshot.effectiveAt, status: '历史版本', description: raw.changeLog?.[0]?.description || '版本归档。', snapshot: oldSnapshot });
+      }
+      const nextModel = {
+        ...raw,
+        version,
+        standardId,
+        standard: standard?.name || raw.standard || '',
+        method,
+        formula,
+        precision,
+        status,
+        standardAttachment,
+        standardFileName: standardAttachment?.name || '',
+        effectiveDate,
+        expireDate,
+        periodStart: effectiveDate.slice(0, 7),
+        periodEnd: expireDate.slice(0, 7),
+        matchRule: { ...(raw.matchRule || {}), scope: raw.scope, categoryCode: raw.category || raw.categoryCode, periodField: 'period', periodStart: effectiveDate.slice(0, 7), periodEnd: expireDate.slice(0, 7), description: '按排放源推导范围、排放类别和活动数据期间匹配模型。' },
+        factorMatchRule: { standardId, activityDataType: raw.activityDataType || raw.factorMatchRule?.activityDataType || getDefaultActivitySeedByCategory(raw.category || raw.categoryCode).activityDataType || '', fields: getModelFactorMatchFields(raw.category || raw.categoryCode) },
+        changeLog: [{ version, operator: '当前用户', date: effectiveDate, status: '当前版本', description }, ...(raw.changeLog || []).map((log) => ({ ...log, status: log.status === '当前版本' ? '历史版本' : log.status }))],
+        versionHistory
+      };
+      Mock.upsertAccountingModel?.(nextModel);
+      refreshFromSharedData();
+      const updated = models.find((item) => item.id === raw.id) || models[0];
+      renderVersionWorkspace(updated, 'versions');
+    }
+
+    function openRollbackModal() {
+      if (!activeVersionModel || !rollbackTargetEntry) return;
+      const raw = activeVersionModel.rawModel || activeVersionModel;
+      rollbackModal?.classList.remove('hidden');
+      const sourceText = document.getElementById('rollback-source-version');
+      if (sourceText) sourceText.textContent = `将 ${rollbackTargetEntry.version} 的配置回滚为 ${raw.name || activeVersionModel.name} 的新版本。`;
+      const versionInput = document.getElementById('rollback-version-input');
+      const effectiveInput = document.getElementById('rollback-effective-input');
+      const descInput = document.getElementById('rollback-description-input');
+      if (versionInput) versionInput.value = nextVersion(raw.version || activeVersionModel.latestVersion || activeVersionModel.version);
+      if (effectiveInput) effectiveInput.value = todayString();
+      if (descInput) descInput.value = `基于历史版本 ${rollbackTargetEntry.version} 回滚并发布新版本。`;
+    }
+
+    function closeRollbackModal() {
+      rollbackModal?.classList.add('hidden');
+    }
+
+    function confirmRollbackVersion() {
+      if (!activeVersionModel || !rollbackTargetEntry) return;
+      const raw = activeVersionModel.rawModel || activeVersionModel;
+      const oldSnapshot = modelSnapshot(raw);
+      const sourceSnapshot = rollbackTargetEntry.snapshot || {};
+      const version = document.getElementById('rollback-version-input')?.value.trim() || nextVersion(raw.version || activeVersionModel.version);
+      const effectiveDate = document.getElementById('rollback-effective-input')?.value || todayString();
+      const description = document.getElementById('rollback-description-input')?.value.trim() || `基于历史版本 ${rollbackTargetEntry.version} 回滚并发布新版本。`;
+      const versionHistory = Array.isArray(raw.versionHistory) ? raw.versionHistory.slice() : [];
+      if (!versionHistory.some((item) => item.version === oldSnapshot.version)) {
+        versionHistory.unshift({ version: oldSnapshot.version, date: oldSnapshot.effectiveAt, status: versionStatusByDate(oldSnapshot, raw.status), description: raw.changeLog?.[0]?.description || '回滚前版本归档。', snapshot: oldSnapshot });
+      }
+      const standardId = sourceSnapshot.standardId || raw.standardId || '';
+      const standard = (Mock.FactorStandards || []).find((item) => item.id === standardId) || null;
+      const expireDate = normalizeDateText(sourceSnapshot.expiredAt) || '';
+      const nextSnapshot = { ...sourceSnapshot, version, effectiveAt: effectiveDate, expiredAt: expireDate || '长期有效', status: versionStatusByDate({ effectiveAt: effectiveDate, expiredAt: expireDate }, '启用'), changeDescription: description };
+      const nextModel = {
+        ...raw,
+        version,
+        name: sourceSnapshot.name || raw.name,
+        scope: sourceSnapshot.scope || raw.scope,
+        category: sourceSnapshot.category || raw.category,
+        categoryCode: sourceSnapshot.category || raw.category || raw.categoryCode,
+        standardId,
+        standard: sourceSnapshot.standard || standard?.name || raw.standard || '',
+        method: sourceSnapshot.method || raw.method || '排放因子法',
+        formula: sourceSnapshot.formula || raw.formula || formulaByMethod(sourceSnapshot.method || raw.method),
+        precision: sourceSnapshot.precision || raw.precision || '小数点后 4 位',
+        status: '启用',
+        effectiveDate,
+        expireDate,
+        periodStart: effectiveDate.slice(0, 7),
+        periodEnd: expireDate.slice(0, 7),
+        standardFileName: sourceSnapshot.standardAttachmentName === '未上传' ? (raw.standardFileName || '') : sourceSnapshot.standardAttachmentName,
+        matchRule: { ...(raw.matchRule || {}), scope: sourceSnapshot.scope || raw.scope, categoryCode: sourceSnapshot.category || raw.category || raw.categoryCode, periodField: 'period', periodStart: effectiveDate.slice(0, 7), periodEnd: expireDate.slice(0, 7), description: '回滚历史版本后重新发布的新版本。' },
+        factorMatchRule: { standardId, activityDataType: sourceSnapshot.activityDataType || raw.activityDataType || raw.factorMatchRule?.activityDataType || getDefaultActivitySeedByCategory(sourceSnapshot.category || raw.category || raw.categoryCode).activityDataType || '', fields: getModelFactorMatchFields(sourceSnapshot.category || raw.category || raw.categoryCode) },
+        changeLog: [{ version, operator: '当前用户', date: todayString(), status: nextSnapshot.status, description }, ...(raw.changeLog || []).map((log) => ({ ...log, status: log.status === '当前版本' ? '历史版本' : log.status }))],
+        versionHistory: [{ version, date: effectiveDate, status: nextSnapshot.status, description, snapshot: nextSnapshot }, ...versionHistory]
+      };
+      Mock.updateAccountingModel?.(raw.id, nextModel) || Mock.upsertAccountingModel?.(nextModel);
+      closeRollbackModal();
+      refreshFromSharedData();
+      const updated = models.find((item) => item.id === raw.id) || models[0];
+      if (updated) renderVersionWorkspace(updated, 'versions');
+    }
+
+    function updateModelStatus(model, status) {
+      const raw = model.rawModel || model;
+      const next = { ...raw, status, changeLog: [{ version: raw.version || model.version, operator: '当前用户', date: todayString(), status: '当前版本', description: `模型状态调整为${status}。` }, ...(raw.changeLog || [])] };
+      Mock.updateAccountingModel?.(raw.id, next) || Mock.upsertAccountingModel?.(next);
+      refreshFromSharedData();
+    }
+
+    function editModelVersion(model) {
+      renderAddModelForm(model);
+      addModelModal?.classList.remove('hidden');
+      setTimeout(() => document.getElementById('model-form-version')?.focus(), 0);
+    }
+
+    function deleteModel(model) {
+      const raw = model.rawModel || model;
+      Mock.removeAccountingModel?.(raw.id);
+      refreshFromSharedData();
+    }
+
+    function refreshFromSharedData() {
+      models = buildModelsFromSharedData();
+      state.page = 1;
+      renderTopStats();
+      renderTree();
+      renderRows();
+    }
+
+    function setupEvents() {
+      treeArea?.addEventListener('click', (event) => {
+        const node = event.target.closest('[data-tree-key]');
+        if (!node) return;
+        const childList = node.nextElementSibling?.tagName === 'UL' ? node.nextElementSibling : null;
+        const icon = node.querySelector('i');
+        if (childList) {
+          childList.classList.toggle('hidden');
+          if (node.dataset.treeId) {
+            if (childList.classList.contains('hidden')) state.expandedTree.delete(node.dataset.treeId);
+            else state.expandedTree.add(node.dataset.treeId);
+          }
+          icon?.classList.toggle('fa-chevron-down', !childList.classList.contains('hidden'));
+          icon?.classList.toggle('fa-chevron-right', childList.classList.contains('hidden'));
+        }
+        state.treeFilter = { key: node.dataset.treeKey, value: node.dataset.treeValue };
+        state.page = 1;
+        selectTreeNode(node);
+        renderRows();
+      });
+
+      document.addEventListener('click', (event) => {
+        const clearStandardFileButton = event.target.closest('[data-standard-file-clear]');
+        if (clearStandardFileButton) {
+          event.preventDefault();
+          const badge = clearStandardFileButton.closest('[id$="standard-file-name"]');
+          const inputId = badge?.id === 'version-standard-file-name' ? 'version-form-standard-file' : 'model-form-standard-file';
+          const input = document.getElementById(inputId);
+          if (input) input.value = '';
+          if (badge?.id) updateStandardFileBadge(badge.id, '未上传文件');
+          return;
+        }
+        const addModelOpener = event.target.closest('[onclick*="add-model-modal"][onclick*="remove"]');
+        if (addModelOpener) { renderAddModelForm(null); return; }
+        const saveModelButton = event.target.closest('#model-form-save');
+        if (saveModelButton) { event.preventDefault(); saveNewModel(); return; }
+        const addModelCloser = event.target.closest('#add-model-modal [onclick*="add-model-modal"][onclick*="hidden"]');
+        if (addModelCloser) { event.preventDefault(); event.stopPropagation(); closeAddModelModal(); return; }
+        const row = event.target.closest('tr[data-model-index]');
+        const model = row ? models[Number(row.dataset.modelIndex)] : null;
+        const actionNode = event.target.closest('[data-action]');
+        const action = actionNode?.dataset.action;
+        if (!action) return;
+        if (action === 'detail' && model) { event.preventDefault(); showDetail(model); return; }
+        if (action === 'more') { event.preventDefault(); actionNode.nextElementSibling?.classList.toggle('hidden'); return; }
+        if (action === 'versions' && model) { event.preventDefault(); renderVersionWorkspace(model, 'versions'); return; }
+        if (action === 'changes' && model) { event.preventDefault(); renderVersionWorkspace(model, 'changes'); return; }
+        if (action === 'edit' && model) { event.preventDefault(); editModelVersion(model); return; }
+        if (action === 'toggle-status' && model) { event.preventDefault(); updateModelStatus(model, model.status === '停用' ? '启用' : '停用'); return; }
+        if (action === 'delete' && model) { event.preventDefault(); deleteModel(model); return; }
+      });
+
+      pager?.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-page]');
+        if (!button || button.disabled) return;
+        const totalPages = getPageCount(getFilteredModels().length);
+        if (button.dataset.page === 'prev') state.page = Math.max(1, state.page - 1);
+        else if (button.dataset.page === 'next') state.page = Math.min(totalPages, state.page + 1);
+        else state.page = Number(button.dataset.page);
+        renderRows();
+      });
+      detailCloseButton?.addEventListener('click', () => detailPanel?.classList.add('hidden'));
+      versionBackButton?.addEventListener('click', hideVersionWorkspace);
+      document.getElementById('version-show-publish')?.addEventListener('click', () => activeVersionModel && editModelVersion(activeVersionModel));
+      document.getElementById('version-cancel-publish')?.addEventListener('click', () => versionPublishPanel?.classList.add('hidden'));
+      document.getElementById('version-save-new')?.addEventListener('click', publishNewVersion);
+      document.getElementById('version-rollback-selected')?.addEventListener('click', openRollbackModal);
+      rollbackConfirmButton?.addEventListener('click', confirmRollbackVersion);
+      document.querySelectorAll('[data-rollback-close]').forEach((node) => node.addEventListener('click', closeRollbackModal));
+      versionHistorySelect?.addEventListener('change', () => activeVersionModel && renderVersionCompare(activeVersionModel));
+      document.querySelectorAll('[data-version-tab]').forEach((tab) => {
+        tab.addEventListener('click', () => activeVersionModel && setVersionWorkspaceMode(tab.dataset.versionTab || 'versions'));
+      });
+      document.getElementById('version-form-method')?.addEventListener('change', () => applyFormulaByMethod('version-form-method', 'version-form-formula', true));
+      document.getElementById('version-form-standard')?.addEventListener('change', () => toggleCustomStandardInput('version-form-standard', 'version-form-standard-custom'));
+      document.getElementById('version-form-standard-file')?.addEventListener('change', (event) => {
+        const file = event.target.files?.[0];
+        updateStandardFileBadge('version-standard-file-name', file ? file.name : '未上传文件');
+      });
+    }
+
+    if (detailCloseButton) {
+      detailCloseButton.innerHTML = '<span class="material-symbols-outlined text-lg">close</span>';
+      detailCloseButton.setAttribute('title', '关闭详情');
+    }
+    detailPanel?.classList.add('hidden');
+    models = buildModelsFromSharedData();
+    renderAddModelForm(null);
+    window.addEventListener('carbon-mock-updated', () => {
+      models = buildModelsFromSharedData();
+      renderTopStats();
+      renderTree();
+      renderRows();
+      if (activeVersionModel) {
+        const updated = models.find((item) => item.id === activeVersionModel.id);
+        if (updated && !versionWorkspace?.classList.contains('hidden')) { activeVersionModel = updated; setVersionWorkspaceMode(versionWorkspaceMode); }
+      }
+    });
+
+    renderTopStats();
+    renderTree();
+    setupFilters();
+    setupEvents();
+    showAllModels();
+  });
+</script>
+</body></html>

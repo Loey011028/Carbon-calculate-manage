@@ -1,0 +1,1494 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>碳核算管理平台 - 模块整合</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1890ff",
+            sidebar: "#1e293b",
+            surface: "#f7f9fc",
+            "outline-variant": "#c0c7d6",
+            "on-surface": "#191c1e",
+            "on-surface-variant": "#404753"
+          },
+          fontFamily: {
+            sans: ["Inter", "Microsoft YaHei", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: Inter, "Microsoft YaHei", sans-serif;
+      background: #f7f9fc;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      vertical-align: middle;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c0c7d6;
+      border-radius: 999px;
+    }
+
+    .sidebar-link {
+      color: #cbd5e1;
+      transition: background-color 160ms ease, color 160ms ease;
+    }
+
+    .sidebar-link:hover {
+      color: #fff;
+      background: #334155;
+    }
+
+    .sidebar-link.active {
+      color: #fff;
+      background: #1890ff;
+      font-weight: 600;
+    }
+
+    #content-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #f7f9fc;
+    }
+
+    .frame-loading #content-frame {
+      opacity: 0.35;
+    }
+  </style>
+<script src="./shared-mock-data.js"></script>
+</head>
+<body class="h-screen overflow-hidden text-on-surface">
+  <div class="flex h-full">
+    <aside class="w-64 bg-sidebar text-white flex flex-col shrink-0">
+      <div class="h-16 flex items-center px-6 gap-3 border-b border-slate-700">
+        <i class="fa-solid fa-leaf text-primary text-xl"></i>
+        <span class="font-bold text-lg tracking-tight">碳排放管理平台</span>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto custom-scrollbar py-4 px-3 space-y-1">
+        <a class="flex items-center px-4 py-3 rounded-md text-slate-400 hover:text-white hover:bg-slate-700" href="javascript:void(0)">
+          <i class="fa-solid fa-house w-6 text-center mr-3 text-sm"></i>
+          首页
+        </a>
+
+        <div class="space-y-1">
+          <button class="w-full flex items-center justify-between px-4 py-3 text-white bg-slate-800 rounded-md">
+            <span class="flex items-center">
+              <i class="fa-solid fa-calculator w-6 text-center mr-3 text-sm text-primary"></i>
+              碳核算管理
+            </span>
+            <i class="fa-solid fa-chevron-up text-[10px]"></i>
+          </button>
+
+          <div class="pl-10 space-y-1 py-1" id="sidebar-tabs">
+            <button class="sidebar-link active block w-full text-left px-4 py-2 rounded-md text-sm" data-key="boundary" type="button">
+              核算边界管理
+            </button>
+            <button class="sidebar-link block w-full text-left px-4 py-2 rounded-md text-sm" data-key="source" type="button">
+              排放源管理
+            </button>
+            <button class="sidebar-link block w-full text-left px-4 py-2 rounded-md text-sm" data-key="datasource" type="button">
+              数据源管理
+            </button>
+            <button class="sidebar-link block w-full text-left px-4 py-2 rounded-md text-sm" data-key="model" type="button">
+              核算模型管理
+            </button>
+            <button class="sidebar-link block w-full text-left px-4 py-2 rounded-md text-sm" data-key="factor" type="button">
+              因子库管理
+            </button>
+            <button class="sidebar-link block w-full text-left px-4 py-2 rounded-md text-sm" data-key="gwp" type="button">
+              GWP管理
+            </button>
+          </div>
+        </div>
+
+        <a class="flex items-center justify-between px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-700 rounded-md" href="javascript:void(0)">
+          <span class="flex items-center">
+            <i class="fa-solid fa-database w-6 text-center mr-3 text-sm"></i>
+            碳数据管理
+          </span>
+          <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        </a>
+        <a class="flex items-center justify-between px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-700 rounded-md" href="javascript:void(0)">
+          <span class="flex items-center">
+            <i class="fa-solid fa-chart-line w-6 text-center mr-3 text-sm"></i>
+            碳分析与洞察
+          </span>
+          <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        </a>
+        <a class="flex items-center justify-between px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-700 rounded-md" href="javascript:void(0)">
+          <span class="flex items-center">
+            <i class="fa-solid fa-file-invoice w-6 text-center mr-3 text-sm"></i>
+            碳报表与披露
+          </span>
+          <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 min-w-0 flex flex-col bg-surface">
+      <header class="h-16 bg-white border-b border-outline-variant flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center gap-4">
+          <i class="fa-solid fa-bars text-slate-500"></i>
+          <nav class="flex items-center text-sm gap-2 text-on-surface-variant">
+            <span>碳核算管理</span>
+            <span class="text-xs text-slate-300">/</span>
+            <span class="text-on-surface font-semibold" id="current-title">核算边界管理</span>
+            <span class="text-xs text-slate-300 hidden" id="current-subtitle-separator">/</span>
+            <span class="text-on-surface font-semibold hidden" id="current-subtitle"></span>
+          </nav>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="relative cursor-pointer">
+            <span class="material-symbols-outlined text-slate-500">notifications</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">12</span>
+          </div>
+          <div class="flex items-center gap-2 border-l border-slate-200 pl-4 cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">管</div>
+            <span class="text-sm text-slate-700">管理员</span>
+            <span class="material-symbols-outlined text-slate-400 text-[16px]">arrow_drop_down</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="flex-1 min-h-0 relative" id="frame-shell">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none" id="loading-mask">
+          <div class="px-4 py-2 rounded bg-white border border-slate-200 shadow-sm text-sm text-slate-500">正在加载模块...</div>
+        </div>
+        <iframe id="content-frame" title="碳核算管理模块内容"></iframe>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const modules = {
+      boundary: {
+        title: "核算边界管理",
+     
+        url: "./boundary.html"
+      },
+      source: {
+        title: "排放源管理",
+      
+        url: "./source.html"
+      },
+      datasource: {
+        title: "数据源管理",
+      
+        url: "./datasource.html"
+      },
+      model: {
+        title: "核算模型管理",
+      
+        url: "./model.html"
+      },
+      factor: {
+        title: "因子库管理",
+      
+        url: "./factor.html"
+      },
+      gwp: {
+        title: "GWP管理",
+       
+        url: "./gwp.html"
+      }
+    };
+
+    const frame = document.getElementById("content-frame");
+    const frameShell = document.getElementById("frame-shell");
+    const loadingMask = document.getElementById("loading-mask");
+    const titleNode = document.getElementById("current-title");
+    const subtitleNode = document.getElementById("current-subtitle");
+    const subtitleSeparator = document.getElementById("current-subtitle-separator");
+    const tabContainer = document.getElementById("sidebar-tabs");
+    let currentModuleKey = "boundary";
+
+  function setCurrentSubtitle(title = "") {
+  const show = Boolean(title) && ["gwp", "model"].includes(currentModuleKey);
+
+  subtitleNode.textContent = show ? title : "";
+  subtitleNode.classList.toggle("hidden", !show);
+  subtitleSeparator.classList.toggle("hidden", !show);
+
+  titleNode.classList.toggle("font-semibold", !show);
+  titleNode.classList.toggle("text-on-surface", !show);
+  titleNode.classList.toggle("text-on-surface-variant", show);
+
+  if (show && currentModuleKey === "model") {
+    titleNode.classList.add("cursor-pointer", "hover:text-primary");
+    titleNode.dataset.breadcrumbAction = "model-list";
+  } else {
+    titleNode.classList.remove("cursor-pointer", "hover:text-primary");
+    titleNode.removeAttribute("data-breadcrumb-action");
+  }
+}
+
+    function switchModule(key) {
+      currentModuleKey = modules[key] ? key : "boundary";
+      const module = modules[currentModuleKey];
+
+      titleNode.textContent = module.title;
+      setCurrentSubtitle("");
+
+      tabContainer.querySelectorAll("[data-key]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.key === currentModuleKey);
+      });
+
+      frameShell.classList.add("frame-loading");
+      loadingMask.classList.remove("hidden");
+      frame.removeAttribute("srcdoc");
+      frame.src = module.url;
+      history.replaceState(null, "", "#" + currentModuleKey);
+    }
+
+
+    function installInteractionEnhancements(doc, moduleKey) {
+      if (!doc || doc.__integratedInteractionsInstalled) return;
+      doc.__integratedInteractionsInstalled = true;
+
+      const moduleLabels = {
+        boundary: "核算边界",
+        source: "排放源",
+        datasource: "数据源",
+        model: "核算模型",
+        factor: "排放因子",
+        gwp: "GWP参数"
+      };
+
+      const formFields = {
+        boundary: ["类别名称", "核算范围", "负责人", "状态", "说明"],
+        source: ["排放源名称", "所属类别", "来源类型", "核算方法", "状态"],
+        datasource: ["数据源名称", "数据源类型", "所属组织", "采集频率", "状态"],
+        model: ["模型名称", "版本号", "适用边界", "核算方法", "状态"],
+        factor: ["因子名称", "因子编码", "因子值", "单位", "来源标准"],
+        gwp: ["版本名称/气体名称", "来源标准", "GWP值", "时间尺度", "状态"]
+      };
+
+      const textOf = (node) => (node?.textContent || "").replace(/\s+/g, " ").trim();
+      const hasAny = (text, words) => words.some((word) => text.includes(word));
+      const normalizeFilter = (value) => {
+        const normalized = (value || "").replace(/^[^:：]{1,16}[:：\s]*/, "").trim();
+        if (!normalized || normalized === "全部" || normalized.includes("全部") || normalized.startsWith("请选择")) return "";
+        return normalized;
+      };
+      const inModal = (node) => !!node.closest('[id*="modal"], [class*="modal"], .fixed.inset-0, #integrated-generic-form');
+      const visible = (node) => {
+        if (!node) return false;
+        const style = doc.defaultView.getComputedStyle(node);
+        return style.display !== "none" && style.visibility !== "hidden" && !node.classList.contains("hidden");
+      };
+
+      function flash(message) {
+        let toast = doc.getElementById("integrated-interaction-toast");
+        if (!toast) {
+          toast = doc.createElement("div");
+          toast.id = "integrated-interaction-toast";
+          toast.className = "fixed right-6 bottom-6 z-[9999] bg-slate-900 text-white text-xs px-4 py-2 rounded shadow-lg transition-opacity";
+          doc.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.style.opacity = "1";
+        clearTimeout(toast.__timer);
+        toast.__timer = setTimeout(() => { toast.style.opacity = "0"; }, 1500);
+      }
+
+      function ensureNoDataRow(table) {
+        let row = table.querySelector("tr[data-integrated-empty]");
+        if (!row) {
+          const cols = Math.max(1, table.querySelectorAll("thead th").length || table.querySelector("tr")?.children.length || 1);
+          row = doc.createElement("tr");
+          row.dataset.integratedEmpty = "true";
+          row.className = "hidden";
+          row.innerHTML = '<td colspan="' + cols + '" class="px-4 py-8 text-center text-slate-400 text-sm">暂无匹配数据</td>';
+          table.querySelector("tbody")?.appendChild(row);
+        }
+        return row;
+      }
+
+      function isInPagination(el) {
+        return !!el.closest("[data-integrated-pagination], [data-integrated-page-list]");
+      }
+
+      function isFilterControl(el) {
+        if (!el || inModal(el) || isInPagination(el) || !visible(el)) return false;
+        const type = (el.type || "").toLowerCase();
+        if (["button", "submit", "reset", "date", "file", "password", "checkbox", "radio", "hidden"].includes(type)) return false;
+        if (el.closest("table, tbody, thead, tfoot")) return false;
+        if (el.tagName === "SELECT" && /条\s*\/\s*页|条\/页/.test(textOf(el))) return false;
+        return true;
+      }
+
+      function getFilterControls() {
+        return Array.from(doc.querySelectorAll("main input, main select")).filter(isFilterControl);
+      }
+
+      function getOriginalRows(table) {
+        const body = table.querySelector("tbody");
+        if (!body) return [];
+        return Array.from(body.querySelectorAll("tr:not([data-integrated-empty])"));
+      }
+
+      function getMatchedRows(table) {
+        const rows = getOriginalRows(table);
+        const terms = getFilterControls().map((el) => normalizeFilter(el.value)).filter(Boolean);
+        const category = table.dataset.integratedCategory || "";
+        return rows.filter((row) => {
+          const text = (row.dataset.integratedSearchText || textOf(row)).toLowerCase();
+          return terms.every((term) => text.includes(term.toLowerCase())) && (!category || text.includes(category.toLowerCase()));
+        });
+      }
+
+      function updatePageButtons(table, totalPages, page) {
+        const pageList = table.__integratedPagination?.querySelector("[data-integrated-page-list]");
+        if (!pageList) return;
+        pageList.innerHTML = "";
+        const maxVisible = 7;
+        let first = Math.max(1, page - Math.floor(maxVisible / 2));
+        let last = Math.min(totalPages, first + maxVisible - 1);
+        first = Math.max(1, last - maxVisible + 1);
+        for (let pageNo = first; pageNo <= last; pageNo += 1) {
+          const button = doc.createElement("button");
+          button.type = "button";
+          button.dataset.integratedPage = String(pageNo);
+          button.className = "w-8 h-8 flex items-center justify-center rounded text-xs " +
+            (pageNo === page ? "bg-primary text-on-primary" : "border border-outline-variant hover:bg-surface-variant/10");
+          button.textContent = String(pageNo);
+          pageList.appendChild(button);
+        }
+      }
+
+      function applyTableState(table) {
+        const body = table.querySelector("tbody");
+        if (!body) return;
+        const rows = getOriginalRows(table);
+        const emptyRow = ensureNoDataRow(table);
+        const pageSize = Number(table.dataset.integratedPageSize || 10);
+        const matched = getMatchedRows(table);
+        const totalPages = Math.max(1, Math.ceil(matched.length / pageSize));
+        let page = Number(table.dataset.integratedPage || 1);
+        page = Math.min(Math.max(1, page), totalPages);
+        table.dataset.integratedPage = String(page);
+        table.dataset.integratedTotalPages = String(totalPages);
+        rows.forEach((row) => { row.style.display = "none"; });
+        matched.slice((page - 1) * pageSize, page * pageSize).forEach((row) => { row.style.display = row.dataset.integratedOriginalDisplay || ""; });
+        emptyRow.classList.toggle("hidden", matched.length > 0);
+        const pagination = table.__integratedPagination;
+        if (!pagination) return;
+        const pageInfo = pagination.querySelector("[data-integrated-page-info]");
+        if (pageInfo) pageInfo.textContent = "共 " + totalPages + " 页";
+        updatePageButtons(table, totalPages, page);
+        const goto = pagination.querySelector("[data-integrated-goto]");
+        if (goto) goto.value = String(page);
+        const prev = pagination.querySelector("[data-integrated-prev]");
+        const next = pagination.querySelector("[data-integrated-next]");
+        if (prev) prev.disabled = page <= 1;
+        if (next) next.disabled = page >= totalPages;
+      }
+
+      function setupPagination(table) {
+        let container = table.closest(".flex.flex-col, .rounded-xl, .rounded-lg, .border")?.querySelector(".border-t, [class*='pagination']");
+        if (!container || (!container.textContent.includes("条") && !container.querySelector("select"))) {
+          container = doc.createElement("div");
+          container.className = "p-md border-t border-outline-variant flex items-center justify-between text-sm text-outline";
+          table.closest(".flex.flex-col, .rounded-xl, .rounded-lg, .border")?.appendChild(container);
+        }
+        if (!container) return;
+        table.__integratedPagination = container;
+        container.dataset.integratedPagination = "true";
+        const oldSelect = Array.from(container.querySelectorAll("select")).find((select) => /条\s*\/\s*页|条\/页/.test(textOf(select))) || container.querySelector("select");
+        const preservedTotal = Array.from(container.children).find((child) => /共\s*\d+\s*条/.test(textOf(child)))?.outerHTML || "";
+        const selectHtml = oldSelect ? oldSelect.outerHTML : '<select class="px-2 py-1 border border-outline-variant rounded text-xs"><option>10 条/页</option><option>20 条/页</option><option>50 条/页</option></select>';
+        container.innerHTML = [
+          '<div class="flex items-center gap-4 min-w-0">', preservedTotal,
+          '<span data-integrated-page-info class="whitespace-nowrap">共 1 页</span></div>',
+          '<div class="flex items-center space-x-2">',
+          '<button type="button" data-integrated-prev class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-variant/10 disabled:opacity-40 disabled:cursor-not-allowed">‹</button>',
+          '<span data-integrated-page-list class="flex items-center space-x-2"></span>',
+          '<button type="button" data-integrated-next class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-variant/10 disabled:opacity-40 disabled:cursor-not-allowed">›</button>',
+          '<span class="ml-4">' + selectHtml + '</span>',
+          '<span class="ml-2 whitespace-nowrap">前往</span>',
+          '<input data-integrated-goto class="w-10 h-8 text-center border border-outline-variant rounded text-xs p-0 focus:ring-primary" type="text" value="1"/>',
+          '<span>页</span></div>'
+        ].join("");
+        const pageSizeSelect = container.querySelector("select");
+        table.dataset.integratedPageSize = String(parseInt(textOf(pageSizeSelect?.options[pageSizeSelect.selectedIndex]), 10) || 10);
+        table.dataset.integratedPage = table.dataset.integratedPage || "1";
+        container.addEventListener("click", (event) => {
+          const pageButton = event.target.closest("[data-integrated-page]");
+          if (pageButton) table.dataset.integratedPage = pageButton.dataset.integratedPage;
+          else if (event.target.closest("[data-integrated-prev]")) table.dataset.integratedPage = String(Math.max(1, Number(table.dataset.integratedPage || 1) - 1));
+          else if (event.target.closest("[data-integrated-next]")) table.dataset.integratedPage = String(Math.min(Number(table.dataset.integratedTotalPages || 1), Number(table.dataset.integratedPage || 1) + 1));
+          else return;
+          applyTableState(table);
+        });
+        container.querySelector("[data-integrated-goto]")?.addEventListener("change", (event) => {
+          const totalPages = Number(table.dataset.integratedTotalPages || 1);
+          table.dataset.integratedPage = String(Math.min(totalPages, Math.max(1, parseInt(event.target.value, 10) || 1)));
+          applyTableState(table);
+        });
+        pageSizeSelect?.addEventListener("change", () => {
+          table.dataset.integratedPageSize = String(parseInt(textOf(pageSizeSelect.options[pageSizeSelect.selectedIndex]), 10) || 10);
+          table.dataset.integratedPage = "1";
+          applyTableState(table);
+        });
+      }
+
+      function setupTables() {
+        Array.from(doc.querySelectorAll("table")).forEach((table) => {
+          const body = table.querySelector("tbody");
+          if (!body || table.__integratedReady) return;
+          table.__integratedReady = true;
+          const rows = getOriginalRows(table);
+          rows.forEach((row) => {
+            row.dataset.integratedOriginalDisplay = row.style.display || "";
+            row.dataset.integratedSearchText = textOf(row);
+            row.classList.add("cursor-pointer");
+            row.addEventListener("click", (event) => {
+              if (event.target.closest("button, a, input, select")) return;
+              rows.forEach((r) => r.classList.remove("bg-blue-50", "ring-1", "ring-primary/20"));
+              row.classList.add("bg-blue-50", "ring-1", "ring-primary/20");
+              updateDetailFromRow(row);
+            });
+          });
+          setupPagination(table);
+          applyTableState(table);
+        });
+      }
+
+      function setupFilters() {
+        getFilterControls().forEach((control) => {
+          if (control.__integratedFilterReady) return;
+          control.__integratedFilterReady = true;
+          control.addEventListener(control.tagName === "SELECT" ? "change" : "input", () => {
+            doc.querySelectorAll("table").forEach((table) => {
+              table.dataset.integratedPage = "1";
+              applyTableState(table);
+            });
+          });
+        });
+        Array.from(doc.querySelectorAll("button")).forEach((button) => {
+          if (button.__integratedResetReady) return;
+          const label = textOf(button);
+          if (!["重置", "清空"].includes(label)) return;
+          button.__integratedResetReady = true;
+          button.addEventListener("click", () => {
+            getFilterControls().forEach((control) => {
+              if (control.tagName === "SELECT") control.selectedIndex = 0;
+              else control.value = "";
+            });
+            doc.querySelectorAll("table").forEach((table) => {
+              table.dataset.integratedPage = "1";
+              table.dataset.integratedCategory = "";
+              applyTableState(table);
+            });
+            flash("筛选条件已重置");
+          });
+        });
+      }
+
+      function setupSelectOptions() {
+        const labelFor = (control) => {
+          const container = control.closest("label, .space-y-1, .flex, div");
+          if (!container) return "";
+          const clone = container.cloneNode(true);
+          clone.querySelectorAll("select, input, button, table, option").forEach((node) => node.remove());
+          return textOf(clone).replace(/[：:]/g, "").trim();
+        };
+        const matchColumn = (label, headers) => {
+          const pairs = [
+            ["状态", ["状态", "同步状态", "当前状态", "通信状态"]],
+            ["范围", ["范围", "核算范围", "适用边界", "边界"]],
+            ["类别", ["类别", "排放类别", "所属类别", "分类"]],
+            ["组织", ["组织", "所属组织", "部门", "车间"]],
+            ["类型", ["类型", "来源类型", "数据源类型", "异常类型", "操作类型"]],
+            ["来源", ["来源", "来源标准", "来源名称"]],
+            ["频率", ["频率", "采集频率", "发生频率"]],
+            ["方法", ["方法", "核算方法"]],
+            ["标准", ["标准", "来源标准"]],
+            ["版本", ["版本", "版本号", "版本名称"]],
+            ["等级", ["等级", "质量等级"]]
+          ];
+          const keywords = pairs.find(([key]) => label.includes(key))?.[1] || [label];
+          let index = headers.findIndex((header) => keywords.some((keyword) => header.includes(keyword) || keyword.includes(header)));
+          if (index < 0 && label) index = headers.findIndex((header) => label.includes(header) || header.includes(label));
+          return index;
+        };
+
+        getFilterControls().forEach((select) => {
+          if (select.tagName !== "SELECT" || select.__integratedOptionsReady) return;
+          select.__integratedOptionsReady = true;
+          const existing = Array.from(select.options).map((option) => textOf(option)).filter(Boolean);
+          if (existing.length > 1 && existing.some((value) => !value.includes("全部") && !value.startsWith("请选择"))) return;
+
+          const label = labelFor(select);
+          const optionSet = new Set();
+          Array.from(doc.querySelectorAll("table")).forEach((table) => {
+            const headers = Array.from(table.querySelectorAll("thead th")).map(textOf);
+            const columnIndex = matchColumn(label, headers);
+            if (columnIndex < 0) return;
+            getOriginalRows(table).forEach((row) => {
+              const value = textOf(row.children[columnIndex]);
+              if (!value || value.length > 28 || /编辑|删除|详情|查看|操作/.test(value)) return;
+              optionSet.add(value);
+            });
+          });
+          if (!optionSet.size) return;
+
+          select.innerHTML = "";
+          const first = doc.createElement("option");
+          first.value = "";
+          first.textContent = existing[0]?.includes("全部") || existing[0]?.startsWith("请选择") ? existing[0] : "全部";
+          select.appendChild(first);
+          Array.from(optionSet).slice(0, 24).forEach((value) => {
+            const option = doc.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+          });
+        });
+      }
+      function setupCategorySwitching() {
+        const candidates = Array.from(doc.querySelectorAll("main .cursor-pointer, main li, main [class*='hover:bg']"))
+          .filter((el) => !inModal(el) && !el.closest("tbody"))
+          .filter((el) => textOf(el).length > 0 && textOf(el).length < 40);
+        candidates.forEach((item) => {
+          if (item.__integratedCategoryReady) return;
+          item.__integratedCategoryReady = true;
+          item.addEventListener("click", (event) => {
+            if (event.target.closest("button, input, select, a")) return;
+            const label = textOf(item).replace(/[()（）]\d+.*$/, "").replace(/[•·]/g, "").trim();
+            if (!label) return;
+            const hasMatchingRows = Array.from(doc.querySelectorAll("table tbody tr:not([data-integrated-empty])")).some((row) => textOf(row).includes(label));
+            if (!hasMatchingRows) return;
+            const scope = item.closest(".rounded-xl, .rounded-lg, .border, aside, main") || doc.body;
+            scope.querySelectorAll(".bg-primary\\/10, .bg-primary\\/5, .tree-item-active").forEach((active) => {
+              if (active !== item) active.classList.remove("bg-primary/10", "bg-primary/5", "tree-item-active", "text-primary", "font-medium");
+            });
+            item.classList.add("bg-primary/10", "text-primary", "font-medium");
+            doc.querySelectorAll("table").forEach((table) => {
+              table.dataset.integratedCategory = label;
+              table.dataset.integratedPage = "1";
+              applyTableState(table);
+            });
+          });
+        });
+      }
+
+      function updateDetailFromRow(row) {
+        const cells = Array.from(row.children).map(textOf).filter(Boolean);
+        if (!cells.length) return;
+        const titleTargets = [doc.getElementById("aside-title"), doc.querySelector("[data-purpose='detail-drawer'] h2, [data-purpose='detail-drawer'] h3"), doc.querySelector("aside h2, aside h3"), doc.querySelector("main h2")].filter(Boolean);
+        if (titleTargets[0]) titleTargets[0].textContent = cells[0] + " 详情";
+        const detailArea = doc.querySelector("[data-purpose='detail-drawer'], aside.w-80, aside.w-\\[420px\\]");
+        if (!detailArea) return;
+        const values = detailArea.querySelectorAll("span, p, div");
+        let cursor = 1;
+        values.forEach((node) => {
+          if (cursor >= cells.length) return;
+          const current = textOf(node);
+          if (current && current.length < 40 && !/[：:*]/.test(current) && !node.querySelector("*")) node.textContent = cells[cursor++];
+        });
+      }
+
+      function modalIsOpen() {
+        return Array.from(doc.querySelectorAll('[id*="modal"], [class*="modal"], .fixed.inset-0, #integrated-generic-form')).some((el) => visible(el));
+      }
+
+      function openGenericForm(mode) {
+        let overlay = doc.getElementById("integrated-generic-form");
+        const label = moduleLabels[moduleKey] || "记录";
+        if (!overlay) {
+          overlay = doc.createElement("div");
+          overlay.id = "integrated-generic-form";
+          overlay.className = "fixed inset-0 z-[9998] hidden items-center justify-center bg-black/40";
+          const fields = (formFields[moduleKey] || ["名称", "类型", "状态", "说明"]).map((field, index) => {
+            if (field.includes("状态")) return '<div class="space-y-1"><label class="text-xs font-medium text-slate-500">' + field + '</label><select class="w-full border border-slate-300 rounded px-3 py-2 text-sm"><option>启用</option><option>停用</option><option>草稿</option></select></div>';
+            if (field.includes("说明")) return '<div class="space-y-1 col-span-2"><label class="text-xs font-medium text-slate-500">' + field + '</label><textarea class="w-full border border-slate-300 rounded px-3 py-2 text-sm h-20" placeholder="请输入' + field + '"></textarea></div>';
+            return '<div class="space-y-1"><label class="text-xs font-medium text-slate-500">' + field + (index < 2 ? " *" : "") + '</label><input class="w-full border border-slate-300 rounded px-3 py-2 text-sm" placeholder="请输入' + field + '" /></div>';
+          }).join("");
+          overlay.innerHTML = [
+            '<div class="bg-white rounded-lg shadow-2xl w-[640px] max-h-[86vh] overflow-hidden flex flex-col">',
+            '<div class="px-6 py-4 border-b flex items-center justify-between bg-slate-50">',
+            '<h3 class="text-lg font-bold" data-form-title>新增' + label + '</h3>',
+            '<button class="text-slate-400 hover:text-slate-700" data-close-form type="button"><span class="material-symbols-outlined">close</span></button></div>',
+            '<div class="p-6 grid grid-cols-2 gap-4 overflow-y-auto">' + fields + '</div>',
+            '<div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3">',
+            '<button class="px-5 py-2 border border-slate-300 rounded text-sm" data-close-form type="button">取消</button>',
+            '<button class="px-6 py-2 bg-primary text-white rounded text-sm" data-save-form type="button">保存</button></div></div>'
+          ].join("");
+          doc.body.appendChild(overlay);
+          overlay.querySelectorAll("[data-close-form]").forEach((button) => button.addEventListener("click", () => {
+            overlay.classList.add("hidden");
+            overlay.classList.remove("flex");
+          }));
+          overlay.querySelector("[data-save-form]").addEventListener("click", () => {
+            overlay.classList.add("hidden");
+            overlay.classList.remove("flex");
+            flash("已保存" + label);
+          });
+        }
+        overlay.querySelector("[data-form-title]").textContent = (mode === "edit" ? "编辑" : "新增") + label;
+        overlay.classList.remove("hidden");
+        overlay.classList.add("flex");
+      }
+
+      function setupButtons() {
+        Array.from(doc.querySelectorAll("button, a")).forEach((button) => {
+          if (button.__integratedButtonReady || inModal(button) || isInPagination(button)) return;
+          const label = textOf(button);
+          if (!label) return;
+          button.__integratedButtonReady = true;
+          if (hasAny(label, ["查询", "搜索", "筛选"])) {
+            button.addEventListener("click", () => {
+              doc.querySelectorAll("table").forEach((table) => {
+                table.dataset.integratedPage = "1";
+                applyTableState(table);
+              });
+              flash("已按当前条件筛选");
+            });
+            return;
+          }
+          if (hasAny(label, ["新增", "添加", "新建", "编辑"])) {
+            button.addEventListener("click", () => setTimeout(() => {
+              if (!modalIsOpen()) openGenericForm(label.includes("编辑") ? "edit" : "add");
+            }, 80));
+            return;
+          }
+          if (hasAny(label, ["详情", "查看"])) {
+            button.addEventListener("click", () => {
+              const row = button.closest("tr");
+              if (row) updateDetailFromRow(row);
+              flash("已打开详情");
+            });
+            return;
+          }
+          if (hasAny(label, ["导出", "下载"])) {
+            button.addEventListener("click", () => flash("已生成导出任务"), true);
+            return;
+          }
+          if (label.includes("删除")) {
+            button.addEventListener("click", () => flash("已触发删除确认，演示模式不清除数据"), true);
+            return;
+          }
+          if (hasAny(label, ["启用", "停用", "禁用", "完善", "发布", "复制", "回滚", "对比", "日志", "版本管理"])) {
+            button.addEventListener("click", () => flash("已触发" + label.replace(/\s+/g, "")));
+          }
+        });
+      }
+
+      function setupActionDelegation() {
+        if (doc.__integratedActionDelegationReady) return;
+        doc.__integratedActionDelegationReady = true;
+        doc.addEventListener("click", (event) => {
+          const target = event.target.closest("button, a");
+          if (!target || inModal(target) || isInPagination(target)) return;
+          const label = textOf(target);
+          if (!label) return;
+          if (label.includes("删除")) flash("已触发删除确认，演示模式不清除数据");
+          else if (hasAny(label, ["导出", "下载"])) flash("已生成导出任务");
+          else if (hasAny(label, ["启用", "停用", "禁用", "完善", "发布", "复制", "回滚", "对比", "日志", "版本管理"])) flash("已触发" + label.replace(/\s+/g, ""));
+        }, true);
+      }
+
+      function setupDatasourceDataFlow() {
+        if (moduleKey !== "datasource" || doc.__datasourceDataFlowReady) return;
+        doc.__datasourceDataFlowReady = true;
+
+        let datasourceList = [
+          { id: 1, name: "办公楼总电表", type: "smart-meter", meterType: "electric", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:30", unit: "kWh", meterId: "MTR-001", gateway: "GW-HQ-01", check: true, related: "外购电力-办公楼" },
+          { id: 2, name: "生产车间A电表", type: "smart-meter", meterType: "electric", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:29", unit: "kWh", meterId: "MTR-002", gateway: "GW-HQ-01", check: true, related: "外购电力-生产车间" },
+          { id: 3, name: "R410a充注记录", type: "manual", meterType: "refrigerant", org: "华东园区", frequency: "月度", status: "离线", time: "2026-06-28 18:00", unit: "kg", person: "张三", period: "每月", related: "制冷剂逸散" },
+          { id: 4, name: "采购系统数据", type: "api", meterType: "api", org: "华东园区", frequency: "日", status: "同步中", time: "2026-06-29 10:25", unit: "t", url: "https://api.factory.com/v1", token: "secret123", mapping: "data.val", related: "采购活动数据" },
+          { id: 5, name: "综合楼冷水表", type: "smart-meter", meterType: "water", org: "华南分公司", frequency: "1小时", status: "在线", time: "2026-06-29 10:18", unit: "m3", meterId: "MTR-W012", gateway: "GW-SC-02", check: true, related: "办公用水" },
+          { id: 6, name: "锅炉房天然气表", type: "smart-meter", meterType: "gas", org: "华东园区", frequency: "15分钟", status: "在线", time: "2026-06-29 10:27", unit: "Nm3", meterId: "MTR-G008", gateway: "GW-BOILER-01", check: true, related: "固定燃烧-天然气" },
+          { id: 7, name: "园区蒸汽热量表", type: "smart-meter", meterType: "heat", org: "西北生产基地", frequency: "1小时", status: "离线", time: "2026-06-29 08:10", unit: "GJ", meterId: "MTR-H021", gateway: "GW-NW-HEAT", check: false, related: "外购蒸汽" },
+          { id: 8, name: "污水站IoT流量计", type: "iot", meterType: "iot", org: "华南分公司", frequency: "5分钟", status: "在线", time: "2026-06-29 10:31", unit: "m3", protocol: "MQTT", deviceId: "DEV-WW-8829", heartbeat: "60", related: "污水处理设施" },
+          { id: 9, name: "员工通勤Excel台账", type: "excel", meterType: "excel", org: "华东园区", frequency: "月度", status: "离线", time: "2026-06-25 17:40", unit: "人次", template: "数据上报模板.xlsx", related: "员工通勤" },
+          { id: 10, name: "柴油加注手工台账", type: "manual", meterType: "gas", org: "西北生产基地", frequency: "每周", status: "在线", time: "2026-06-29 09:20", unit: "L", person: "李四", period: "每周", related: "移动燃烧-柴油" }
+        ];
+        let currentTreeCategory = "";
+        let editingDatasourceId = null;
+        doc.__datasourceList = datasourceList;
+
+        const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
+        const typeLabels = { "smart-meter": "智能表计", manual: "手工填报", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
+        const meterLabels = { electric: "电表", water: "水表", gas: "燃气/燃料", heat: "热表", refrigerant: "制冷剂", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
+        const statusClasses = { "在线": "bg-green-50 text-green-600 border-green-200", "离线": "bg-gray-100 text-gray-500 border-gray-200", "同步中": "bg-blue-50 text-blue-600 border-blue-200" };
+        const tbody = doc.querySelector("tbody");
+        const addBtn = doc.getElementById("add-datasource-btn") || Array.from(doc.querySelectorAll("button")).find((btn) => textOf(btn).includes("新增数据源"));
+        const toolbar = addBtn?.closest(".flex");
+        const modal = doc.getElementById("add-datasource-modal");
+        const typeSelect = doc.getElementById("datasource-type-select");
+        const modalTitle = modal?.querySelector("h2");
+        const saveBtn = modal ? Array.from(modal.querySelectorAll("button")).find((btn) => textOf(btn).includes("保存") || textOf(btn).includes("提交")) || modal.querySelector(".border-t button:last-child") : null;
+
+        function toast(message) { flash(message); }
+        function optionHtml(items, label) { return '<option value="">' + label + '：全部</option>' + items.map((item) => '<option value="' + esc(item.value) + '">' + esc(item.label) + '</option>').join(""); }
+
+        function setupDatasourceFilters() {
+          if (!toolbar) return;
+          const input = toolbar.querySelector("input");
+          const selects = Array.from(toolbar.querySelectorAll("select"));
+          if (input) input.id = "search-input";
+          if (selects[0]) selects[0].id = "filter-status";
+          if (selects[1]) selects[1].id = "filter-org";
+          if (selects[2]) selects[2].id = "filter-meter-type";
+          let typeFilter = doc.getElementById("filter-type");
+          if (!typeFilter) {
+            typeFilter = doc.createElement("select");
+            typeFilter.id = "filter-type";
+            typeFilter.className = "px-3 py-1.5 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary";
+            toolbar.insertBefore(typeFilter, selects[1] || addBtn);
+          }
+          typeFilter.innerHTML = optionHtml([{ value: "smart-meter", label: "智能表计" }, { value: "manual", label: "手工填报" }, { value: "api", label: "API接口" }, { value: "iot", label: "IoT设备" }, { value: "excel", label: "Excel导入" }], "接入类型");
+          if (selects[0]) selects[0].innerHTML = optionHtml([{ value: "在线", label: "在线" }, { value: "离线", label: "离线" }, { value: "同步中", label: "同步中" }], "状态");
+          if (selects[1]) selects[1].innerHTML = optionHtml([{ value: "华东园区", label: "华东园区" }, { value: "华南分公司", label: "华南分公司" }, { value: "西北生产基地", label: "西北生产基地" }], "所属组织");
+          if (selects[2]) selects[2].innerHTML = optionHtml(Object.entries(meterLabels).map(([value, label]) => ({ value, label })), "数据源分类");
+          const resetBtn = Array.from(toolbar.querySelectorAll("button")).find((btn) => textOf(btn).includes("重置"));
+          if (resetBtn) {
+            resetBtn.id = "filter-reset";
+            resetBtn.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              currentTreeCategory = "";
+              ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => { const el = doc.getElementById(id); if (el) el.value = ""; });
+              setActiveTreeNode(null);
+              renderTable();
+            }, true);
+          }
+          ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => {
+            const el = doc.getElementById(id);
+            if (el) el.addEventListener(el.tagName === "INPUT" ? "input" : "change", renderTable);
+          });
+        }
+
+        function setupDatasourceTree() {
+          const title = Array.from(doc.querySelectorAll("h3")).find((node) => textOf(node).includes("数据源分类"));
+          const panel = title?.closest(".col-span-3, .bg-surface-container-lowest, .border");
+          if (!panel) return;
+          panel.innerHTML = '<h3 class="font-bold text-sm mb-4 border-b border-surface-container-high pb-2">数据源分类</h3>' +
+            '<div class="space-y-1" data-datasource-tree>' +
+            '<button type="button" data-category="" class="w-full flex items-center py-2 px-2 text-sm rounded cursor-pointer hover:bg-surface-container"><span class="material-symbols-outlined text-sm mr-2 text-outline">dataset</span><span class="flex-1 text-left">全部数据源</span></button>' +
+            '<div class="flex items-center py-2 px-2 text-primary font-medium bg-primary/5 rounded"><span class="material-symbols-outlined text-sm mr-2">expand_more</span><span class="text-sm flex-1">智能表计</span></div>' +
+            '<div class="ml-6 space-y-1 mt-1">' +
+            treeButton("electric", "电表") + treeButton("water", "水表") + treeButton("gas", "燃气/燃料") + treeButton("heat", "热表") +
+            '</div>' + treeButton("refrigerant", "制冷剂/手工填报", true, "edit_note") + treeButton("api", "API接口", true, "api") + treeButton("iot", "IoT设备", true, "sensors") + treeButton("excel", "Excel导入", true, "description") + '</div>';
+          panel.querySelectorAll("[data-category]").forEach((node) => {
+            node.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              currentTreeCategory = node.dataset.category || "";
+              const filter = doc.getElementById("filter-meter-type");
+              if (filter) filter.value = currentTreeCategory;
+              setActiveTreeNode(node);
+              renderTable();
+            }, true);
+          });
+        }
+        function treeButton(category, label, topLevel = false, icon = "") {
+          if (topLevel) return '<button type="button" data-category="' + category + '" class="w-full flex items-center py-2 px-2 hover:bg-surface-container rounded cursor-pointer text-sm text-outline"><span class="material-symbols-outlined text-sm mr-2 text-outline">' + icon + '</span><span class="flex-1 text-left">' + label + '</span></button>';
+          return '<button type="button" data-category="' + category + '" class="w-full flex items-center py-1.5 px-3 hover:bg-surface-container text-outline text-sm rounded"><span class="w-1.5 h-1.5 bg-outline-variant rounded-full mr-3"></span><span class="flex-1 text-left">' + label + '</span></button>';
+        }
+        function setActiveTreeNode(active) {
+          doc.querySelectorAll("[data-category]").forEach((node) => {
+            node.classList.remove("bg-primary/10", "text-primary");
+            node.classList.add("text-outline");
+            node.querySelectorAll(".rounded-full").forEach((dot) => dot.classList.remove("bg-primary"));
+          });
+          if (active) {
+            active.classList.add("bg-primary/10", "text-primary");
+            active.classList.remove("text-outline");
+            active.querySelectorAll(".rounded-full").forEach((dot) => dot.classList.add("bg-primary"));
+          }
+        }
+
+        function getFilteredData() {
+          const keyword = (doc.getElementById("search-input")?.value || "").trim().toLowerCase();
+          const type = doc.getElementById("filter-type")?.value || "";
+          const status = doc.getElementById("filter-status")?.value || "";
+          const org = doc.getElementById("filter-org")?.value || "";
+          const meterType = doc.getElementById("filter-meter-type")?.value || "";
+          return datasourceList.filter((item) => {
+            const matchKeyword = !keyword || [item.name, item.org, item.related, item.meterId, item.gateway, item.url, item.deviceId].some((field) => String(field || "").toLowerCase().includes(keyword));
+            return matchKeyword && (!currentTreeCategory || item.meterType === currentTreeCategory) && (!type || item.type === type) && (!status || item.status === status) && (!org || item.org === org) && (!meterType || item.meterType === meterType);
+          });
+        }
+
+        function renderTable() {
+          if (!tbody) return;
+          const rows = getFilteredData();
+          if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-10 text-center text-outline">暂无匹配的数据源</td></tr>';
+            return;
+          }
+          tbody.innerHTML = rows.map((item) => {
+            const statusClass = statusClasses[item.status] || statusClasses["离线"];
+            return '<tr class="hover:bg-surface-container/30 transition-colors" data-id="' + item.id + '">' +
+              '<td class="px-4 py-3 font-medium">' + esc(item.name) + '</td>' +
+              '<td class="px-4 py-3 text-outline">' + esc(typeLabels[item.type] || item.type) + '-' + esc(meterLabels[item.meterType] || item.meterType) + '</td>' +
+              '<td class="px-4 py-3">' + esc(item.related || "-") + '</td>' +
+              '<td class="px-4 py-3">' + esc(item.frequency) + '</td>' +
+              '<td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-[10px] border ' + statusClass + '">' + esc(item.status) + '</span></td>' +
+              '<td class="px-4 py-3 text-outline text-xs">' + esc(item.time) + '</td>' +
+              '<td class="px-4 py-3">' + esc(item.org) + '</td>' +
+              '<td class="px-4 py-3 text-right"><div class="flex items-center justify-end space-x-3 text-primary"><button class="hover:underline" data-datasource-action="edit" data-id="' + item.id + '">编辑</button><button class="hover:underline" data-datasource-action="detail" data-id="' + item.id + '">详情</button><button class="hover:underline flex items-center" data-datasource-action="more" data-id="' + item.id + '">更多 <span class="material-symbols-outlined text-sm">expand_more</span></button></div></td></tr>';
+          }).join("");
+        }
+
+        function ensureModalFields() {
+          if (!modal) return;
+          const base = modal.querySelectorAll("section:first-of-type input, section:first-of-type select");
+          if (base[0]) base[0].id = "modal-name-input";
+          if (base[1]) base[1].id = "modal-org-select";
+          const smart = doc.querySelectorAll("#config-smart-meter input, #config-smart-meter select");
+          if (smart[0]) smart[0].id = "modal-meter-id-input";
+          if (smart[1]) smart[1].id = "modal-frequency-select";
+          if (smart[2]) smart[2].id = "modal-gateway-input";
+          const manual = doc.querySelectorAll("#config-manual input, #config-manual select");
+          if (manual[0]) manual[0].id = "modal-person-input";
+          if (manual[1]) manual[1].id = "modal-period-select";
+          const api = doc.querySelectorAll("#config-api input, #config-api select");
+          if (api[0]) api[0].id = "modal-url-input";
+          if (api[1]) api[1].id = "modal-method-select";
+          if (api[2]) api[2].id = "modal-token-input";
+          const iot = doc.querySelectorAll("#config-iot input, #config-iot select");
+          if (iot[0]) iot[0].id = "modal-protocol-select";
+          if (iot[1]) iot[1].id = "modal-device-id-input";
+          if (iot[2]) iot[2].id = "modal-heartbeat-input";
+        }
+        function switchConfigSection(type) {
+          doc.querySelectorAll(".config-section").forEach((section) => section.classList.toggle("active", section.id === "config-" + type));
+        }
+        function setModalVisible(show) { if (modal) modal.classList.toggle("hidden", !show); }
+        function setToggle(prefix, enabled) {
+          const btn = doc.getElementById(prefix + "-switch");
+          const knob = doc.getElementById(prefix + "-knob");
+          if (!btn || !knob) return;
+          btn.classList.toggle("bg-primary", enabled);
+          btn.classList.toggle("bg-outline-variant", !enabled);
+          knob.classList.toggle("translate-x-5", enabled);
+          knob.classList.toggle("translate-x-0", !enabled);
+        }
+        function setupToggle(prefix) {
+          const btn = doc.getElementById(prefix + "-switch");
+          if (btn) btn.addEventListener("click", (event) => { event.preventDefault(); event.stopImmediatePropagation(); setToggle(prefix, !btn.classList.contains("bg-primary")); }, true);
+        }
+        function clearModal() {
+          if (!modal) return;
+          modal.querySelectorAll("input").forEach((input) => { if (input.type === "checkbox") input.checked = false; else if (input.type === "number") input.value = input.defaultValue || ""; else input.value = ""; });
+          modal.querySelectorAll("select").forEach((select) => { select.selectedIndex = 0; });
+          const org = doc.getElementById("modal-org-select");
+          if (org) org.value = "";
+          if (typeSelect) typeSelect.value = "smart-meter";
+          switchConfigSection("smart-meter");
+          setToggle("quality", true);
+          setToggle("active", true);
+        }
+        function openCreateModal(event) {
+          event?.preventDefault();
+          event?.stopImmediatePropagation?.();
+          editingDatasourceId = null;
+          clearModal();
+          if (modalTitle) modalTitle.textContent = "新增数据源";
+          if (saveBtn) saveBtn.textContent = "保存并测试";
+          setModalVisible(true);
+        }
+        function openEditModal(id) {
+          const item = datasourceList.find((row) => row.id === Number(id));
+          if (!item) return;
+          editingDatasourceId = item.id;
+          clearModal();
+          if (modalTitle) modalTitle.textContent = "编辑数据源";
+          if (saveBtn) saveBtn.textContent = "提交修改";
+          const set = (id, value) => { const el = doc.getElementById(id); if (el) el.value = value || ""; };
+          set("modal-name-input", item.name);
+          set("modal-org-select", item.org);
+          if (typeSelect) typeSelect.value = item.type || "smart-meter";
+          set("modal-meter-id-input", item.meterId);
+          set("modal-frequency-select", item.frequency || "15分钟");
+          set("modal-gateway-input", item.gateway);
+          set("modal-person-input", item.person);
+          set("modal-period-select", item.period || "每月");
+          set("modal-url-input", item.url);
+          set("modal-token-input", item.token);
+          set("modal-protocol-select", item.protocol || "MQTT");
+          set("modal-device-id-input", item.deviceId);
+          set("modal-heartbeat-input", item.heartbeat || "60");
+          setToggle("quality", item.check !== false);
+          setToggle("active", item.status !== "离线");
+          switchConfigSection(item.type || "smart-meter");
+          setModalVisible(true);
+        }
+        function collectModalData() {
+          const type = typeSelect?.value || "smart-meter";
+          const get = (id) => doc.getElementById(id)?.value?.trim() || "";
+          const active = doc.getElementById("active-switch")?.classList.contains("bg-primary");
+          const base = { name: get("modal-name-input") || "未命名数据源", org: get("modal-org-select") || "华东园区", type, frequency: "日", status: active ? "在线" : "离线", time: "2026-06-29 10:35", check: doc.getElementById("quality-switch")?.classList.contains("bg-primary"), unit: "kWh", related: "待关联排放源" };
+          if (type === "smart-meter") return { ...base, meterType: "electric", frequency: get("modal-frequency-select") || "15分钟", meterId: get("modal-meter-id-input"), gateway: get("modal-gateway-input") };
+          if (type === "manual") return { ...base, meterType: "refrigerant", frequency: get("modal-period-select") || "每月", unit: "kg", person: get("modal-person-input"), period: get("modal-period-select") || "每月" };
+          if (type === "api") return { ...base, meterType: "api", unit: "t", url: get("modal-url-input"), token: get("modal-token-input"), mapping: "data.val" };
+          if (type === "iot") return { ...base, meterType: "iot", frequency: "5分钟", unit: "m3", protocol: get("modal-protocol-select") || "MQTT", deviceId: get("modal-device-id-input"), heartbeat: get("modal-heartbeat-input") || "60" };
+          return { ...base, meterType: "excel", frequency: "月度", unit: "条", template: "数据上报模板.xlsx" };
+        }
+        function saveDatasource(event) {
+          event?.preventDefault();
+          event?.stopImmediatePropagation?.();
+          const data = collectModalData();
+          if (editingDatasourceId) {
+            const index = datasourceList.findIndex((row) => row.id === editingDatasourceId);
+            if (index >= 0) datasourceList[index] = { ...datasourceList[index], ...data };
+            toast("修改成功");
+          } else {
+            datasourceList.unshift({ id: Math.max(...datasourceList.map((row) => row.id)) + 1, ...data });
+            toast("新增成功");
+          }
+          doc.__datasourceList = datasourceList;
+          setModalVisible(false);
+          renderTable();
+        }
+        function detailRows(item) {
+          const rows = [["数据源名称", item.name], ["接入类型", typeLabels[item.type] || item.type], ["分类", meterLabels[item.meterType] || item.meterType], ["所属组织", item.org], ["关联排放源", item.related], ["采集频率", item.frequency], ["状态", item.status], ["单位", item.unit], ["最后更新时间", item.time], ["质量校验", item.check === false ? "关闭" : "开启"], ["表计ID", item.meterId], ["网关", item.gateway], ["负责人", item.person], ["填报周期", item.period], ["接口地址", item.url], ["鉴权 Token/Key", item.token], ["映射路径", item.mapping], ["设备ID", item.deviceId], ["接入协议", item.protocol], ["心跳间隔", item.heartbeat ? item.heartbeat + " 秒" : ""], ["导入模板", item.template]];
+          return rows.filter(([, value]) => value !== undefined && value !== null && value !== "").map(([label, value]) => '<div class="rounded-lg border border-outline-variant bg-surface-container-lowest p-3"><div class="text-xs text-outline mb-1">' + esc(label) + '</div><div class="text-sm font-medium break-all">' + esc(value) + '</div></div>').join("");
+        }
+        function showDetails(id) {
+          const item = datasourceList.find((row) => row.id === Number(id));
+          if (!item) return;
+          let panel = doc.getElementById("datasource-detail-modal");
+          if (!panel) {
+            panel = doc.createElement("div");
+            panel.id = "datasource-detail-modal";
+            panel.className = "fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 backdrop-blur-sm";
+            panel.innerHTML = '<div class="bg-white w-[760px] max-h-[86vh] overflow-y-auto rounded-xl shadow-2xl"><div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between"><h2 class="text-lg font-bold">数据源详情</h2><button data-close class="text-outline hover:text-on-surface"><span class="material-symbols-outlined">close</span></button></div><div class="p-6 grid grid-cols-2 gap-4" data-detail-body></div><div class="px-6 py-4 border-t border-outline-variant bg-surface-container-low flex justify-end"><button data-close class="px-5 py-2 rounded-lg bg-primary text-white text-sm">关闭</button></div></div>';
+            doc.body.appendChild(panel);
+            panel.querySelectorAll("[data-close]").forEach((btn) => btn.addEventListener("click", () => panel.classList.add("hidden")));
+            panel.addEventListener("click", (event) => { if (event.target === panel) panel.classList.add("hidden"); });
+          }
+          panel.querySelector("[data-detail-body]").innerHTML = detailRows(item);
+          panel.classList.remove("hidden");
+          panel.classList.add("flex");
+        }
+
+        setupDatasourceFilters();
+        setupDatasourceTree();
+        ensureModalFields();
+        setupToggle("quality");
+        setupToggle("active");
+        if (typeSelect) typeSelect.addEventListener("change", () => switchConfigSection(typeSelect.value));
+        if (addBtn) addBtn.addEventListener("click", openCreateModal, true);
+        if (saveBtn) saveBtn.addEventListener("click", saveDatasource, true);
+        const closeBtn = doc.getElementById("close-modal-btn");
+        const cancelBtn = doc.getElementById("cancel-modal-btn");
+        [closeBtn, cancelBtn].filter(Boolean).forEach((btn) => btn.addEventListener("click", (event) => { event.preventDefault(); event.stopImmediatePropagation(); setModalVisible(false); }, true));
+        if (modal) modal.addEventListener("click", (event) => { if (event.target === modal) setModalVisible(false); });
+        if (tbody) tbody.addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-datasource-action]");
+          if (!btn) return;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          const id = btn.dataset.id;
+          if (btn.dataset.datasourceAction === "edit") openEditModal(id);
+          if (btn.dataset.datasourceAction === "detail") showDetails(id);
+          if (btn.dataset.datasourceAction === "more") toast("更多操作已展开");
+        }, true);
+        renderTable();
+      }
+
+      function setupBoundaryMatrixDemo() {
+        if (moduleKey !== "boundary" || doc.__boundaryMatrixReady) return;
+        doc.__boundaryMatrixReady = true;
+        const esc = (v) => String(v ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+        const badge = (text, tone) => '<span class="px-2 py-0.5 rounded text-xs font-medium ' + tone + '">' + esc(text) + '</span>';
+        const online = (v) => /离线|停用|禁用/.test(v) ? 'text-gray-500' : 'text-green-600';
+        const statusTone = (v) => /禁用|停用|离线/.test(v) ? 'bg-gray-100 text-gray-500' : 'bg-green-100 text-green-600';
+        const boundaryMatrix = {
+          scope1: { name: "范围一（直接排放）", short: "范围一", definition: "温室气体协议（GHG Protocol）Scope 1，指组织拥有或控制的排放源产生的直接温室气体排放。", categories: [
+            { key: "fixed", name: "固定燃烧", nodes: ["boiler", "diesel"] },
+            { key: "mobile", name: "移动燃烧", nodes: ["vehicle"] }
+          ]},
+          scope2: { name: "范围二（能源间接排放）", short: "范围二", definition: "Scope 2，指组织外购并消耗的电力、热力、蒸汽或冷气所产生的间接温室气体排放。", categories: [
+            { key: "energy", name: "外购能源", nodes: ["electricity", "steam"] }
+          ]},
+          scope3: { name: "范围三（其他间接排放）", short: "范围三", definition: "Scope 3，组织价值链中产生的所有其他间接排放（上下游非控制资产）。", categories: [
+            { key: "valuechain", name: "价值链活动", nodes: ["rawTransport", "commute"] }
+          ]}
+        };
+        const nodeData = {
+          boiler: { name: "厂区锅炉", scope: "范围一 (直接排放)", category: "固定燃烧", owner: "张三 (动力车间主管)", sourceType: "内部固定燃烧", updatedAt: "2026-04-20 14:21:33", desc: "负责 1 号、2 号车间生产线的工艺蒸汽供应及冬季全厂区中央空调供暖。主要燃料为高压管道天然气。", related: "2 个 (1号锅炉、2号锅炉)", score: "96% (极优)", status: "已启用",
+            sources: [["高压天然气主管道涡轮流量计", "IoT自动采集 (Modbus/TCP)", "5分钟/次", "在线"], ["月度天然气采购发票与结算单", "财务手动录入", "每月1次", "正常"]],
+            quality: { complete: "99.2%", accurate: "97.5%", timely: "95.0%", issues: [["3号车间锅炉流量计", "数据断传", "2次/日", "处理中"]] },
+            devices: [["智能蒸汽流量计-F01", "DVC-882103", "00:1A:2B:3C:4D:5E", "锅炉房主出汽口", "在线"], ["智能气体涡轮流量计-G02", "DVC-882104", "00:1A:2B:3C:4D:5F", "天然气进户主管道", "在线"]],
+            logs: [["2026-05-22", "张三", "资产关联", "关联新安装的智能气体涡轮流量计-G02。"], ["2026-04-20", "管理员", "修改核算模型", "将锅炉固定燃烧模型由默认通用模型改为《工业锅炉温室气体排放核算行业标准 V2.0》。"]] },
+          diesel: { name: "柴油发电机", scope: "范围一 (直接排放)", category: "固定燃烧", owner: "李四 (机电设备组)", sourceType: "备用应急能源间歇燃烧", updatedAt: "2026-05-18 09:15:00", desc: "厂区 800KW 应急备用发电机组，仅在外部电网发生故障断电时紧急启动，主要燃料为 0# 柴油。", related: "1 个 (应急发电机组)", score: "85% (良好)", status: "已启用",
+            sources: [["备用油箱液位计 (油耗折算)", "API 接口自动采集", "15分钟/次", "在线"], ["应急柴油加注离线台账", "手动填报录入", "按次同步", "正常"]],
+            quality: { complete: "91.0%", accurate: "88.2%", timely: "82.0%", issues: [["发电机油位传感器-L02", "数值漂移", "5次/周", "待排查"]] },
+            devices: [["发电机运行计时器-M01", "DVC-773102", "00:1A:2B:6F:4D:11", "配电房备用机组箱", "离线"]],
+            logs: [["2026-05-18", "李四", "状态变更", "由于设备进入半年度例行维护周期，暂时停用该核算子项 2 小时。"]] },
+          vehicle: { name: "移动燃烧 (公务与转运车)", scope: "范围一 (直接排放)", category: "移动燃烧", owner: "王五 (行政与物流)", sourceType: "内部移动燃烧", updatedAt: "2026-05-12 10:30:00", desc: "厂区物流及管理用车，消耗汽油。" },
+          electricity: { name: "生产外购电力", scope: "范围二 (能源间接排放)", category: "外购能源", owner: "赵六 (能源管理员)", sourceType: "外购电力", updatedAt: "2026-05-20 08:00:00", desc: "车间生产线主变压器外购电能。" },
+          steam: { name: "园区外购蒸汽", scope: "范围二 (能源间接排放)", category: "外购能源", owner: "张三 (动力车间主管)", sourceType: "外购热力蒸汽", updatedAt: "2026-05-19 13:40:00", desc: "外部热电厂输入的工业级热力蒸汽。" },
+          rawTransport: { name: "原材料运输 (上游)", scope: "范围三 (其他间接排放)", category: "价值链活动", owner: "钱七 (采购物流)", sourceType: "上游运输", updatedAt: "2026-05-16 16:10:00", desc: "外购原材料由供应商运至厂区的物流排放。" },
+          commute: { name: "员工通勤", scope: "范围三 (其他间接排放)", category: "价值链活动", owner: "人力行政部", sourceType: "员工通勤", updatedAt: "2026-05-15 09:00:00", desc: "全厂员工上下班交通工具排放。" }
+        };
+        const defaults = (key) => {
+          const d = nodeData[key];
+          d.related = d.related || "1 个"; d.score = d.score || "90% (良好)"; d.status = d.status || "已启用";
+          d.sources = d.sources || [[d.name + "活动数据采集点", "系统台账/人工填报", "每日1次", "正常"]];
+          d.quality = d.quality || { complete: "94.0%", accurate: "91.0%", timely: "89.0%", issues: [[d.name + "数据源", "待补充校验", "1次/周", "待排查"]] };
+          d.devices = d.devices || [[d.name + "采集终端", "DVC-DEMO", "00:1A:2B:00:00:01", "对应业务区域", "在线"]];
+          d.logs = d.logs || [["2026-05-20", d.owner.split(" ")[0], "资料维护", "更新核算边界演示数据。"]];
+          return d;
+        };
+        Object.keys(nodeData).forEach(defaults);
+        const state = doc.__boundaryRuntimeState = doc.__boundaryRuntimeState || { selected: "boiler", deleted: {}, expanded: { scope1: true, scope2: true, scope3: true } };
+        const findTreeHost = () => {
+          const h = Array.from(doc.querySelectorAll("h4")).find((n) => textOf(n).includes("核算边界管理"));
+          const panel = h?.closest(".w-80, .bg-white, .border") || doc.querySelector("main .w-80");
+          return panel ? Array.from(panel.querySelectorAll(".flex-1, [class*='overflow-y-auto']")).pop() : null;
+        };
+        const basicPane = () => doc.querySelector("#content-basic-info") || Array.from(doc.querySelectorAll(".tab-pane")).find((p) => !["content-data-source", "content-data-quality", "content-related-devices", "content-operation-log"].includes(p.id));
+        const tableBody = (paneId) => doc.querySelector("#" + paneId + " tbody");
+        const renderBoundaryTree = () => {
+          const host = findTreeHost(); if (!host) return;
+          host.innerHTML = Object.entries(boundaryMatrix).map(([scopeKey, scope]) => '<div class="mb-4" data-boundary-key="' + scopeKey + '" data-boundary-level="scope"><button type="button" class="w-full flex items-center justify-between text-sm py-2 cursor-pointer" data-boundary-action="scope" data-boundary-key="' + scopeKey + '"><span class="flex items-center"><svg class="w-3 h-3 mr-2 transition-transform ' + (state.expanded[scopeKey] ? "" : "rotate-90") + '" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path></svg><span class="font-bold">' + esc(scope.name) + '</span></span>' + badge("已启用", "bg-green-100 text-green-600") + '</button><ul class="pl-4 space-y-1 border-l ml-1.5 border-gray-100 ' + (state.expanded[scopeKey] ? "" : "hidden") + '">' + scope.categories.map((cat) => '<li data-boundary-level="category" data-boundary-key="' + cat.key + '" data-boundary-scope="' + scopeKey + '"><button type="button" class="w-full flex items-center justify-between py-2 px-2 hover:bg-gray-50 rounded cursor-pointer text-sm text-gray-700" data-boundary-action="category" data-boundary-key="' + cat.key + '" data-boundary-scope="' + scopeKey + '"><span>' + esc(cat.name) + '</span></button><ul class="pl-4 text-[11px] text-gray-500 space-y-1.5 py-1">' + cat.nodes.filter((key) => !state.deleted[key]).map((key) => '<li><button type="button" data-boundary-action="node" data-boundary-key="' + key + '" data-boundary-scope="' + scopeKey + '" data-boundary-level="node" class="w-full text-left px-2 py-1 rounded hover:text-brand-active ' + (state.selected === key ? "tree-item-active font-medium" : "") + '">• ' + esc(nodeData[key].name) + '</button></li>').join("") + '</ul></li>').join("") + '</ul></div>').join("");
+        };
+        const renderBasicInfo = (d) => {
+          const pane = basicPane(); if (!pane) return;
+          pane.innerHTML = '<div class="space-y-6"><div class="flex items-center justify-between"><h3 id="aside-title" class="text-lg font-bold">' + esc(d.name) + ' 详情</h3><div class="flex items-center gap-2"><span data-boundary-status class="px-2 py-1 rounded text-xs font-medium ' + statusTone(d.status) + '">' + esc(d.status) + '</span><button data-boundary-op="toggle" class="px-3 py-1.5 border border-outline-variant rounded text-sm hover:bg-surface-container">' + (d.status === "已启用" ? "禁用" : "启用") + '</button><button data-boundary-op="edit" class="px-3 py-1.5 bg-primary text-white rounded text-sm">编辑</button><button data-boundary-op="delete" class="px-3 py-1.5 border border-red-200 text-red-600 rounded text-sm">删除</button></div></div><section><h3 class="text-sm font-bold border-l-4 border-brand-active pl-3 mb-4">基础信息</h3><div class="grid grid-cols-2 gap-4 text-sm"><div><span class="text-gray-500">名称</span><div class="font-medium">' + esc(d.name) + '</div></div><div><span class="text-gray-500">所属范围</span><div class="font-medium">' + esc(d.scope) + '</div></div><div><span class="text-gray-500">负责人</span><div class="font-medium">' + esc(d.owner) + '</div></div><div><span class="text-gray-500">来源类型</span><div class="font-medium">' + esc(d.sourceType) + '</div></div><div><span class="text-gray-500">更新时间</span><div class="font-medium">' + esc(d.updatedAt) + '</div></div><div><span class="text-gray-500">关联排放源数</span><div class="font-medium">' + esc(d.related) + '</div></div><div><span class="text-gray-500">数据质量评分</span><div class="font-medium">' + esc(d.score) + '</div></div><div class="col-span-2"><span class="text-gray-500">类别描述</span><div class="font-medium leading-relaxed">' + esc(d.desc) + '</div></div></div></section></div>';
+        };
+        const renderDataSources = (rows) => { const body = tableBody("content-data-source"); if (body) body.innerHTML = rows.map((r) => '<tr><td class="px-6 py-4 whitespace-nowrap text-gray-800 font-medium">' + esc(r[0]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-500">' + esc(r[1]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-500">' + esc(r[2]) + '</td><td class="px-6 py-4 whitespace-nowrap"><span class="font-medium ' + online(r[3]) + '">' + esc(r[3]) + '</span></td><td class="px-6 py-4 whitespace-nowrap text-gray-400 text-xs font-mono">实时同步</td></tr>').join(""); };
+        const renderQuality = (q) => { const pane = doc.querySelector("#content-data-quality"); if (!pane) return; const cards = Array.from(pane.querySelectorAll(".text-2xl.font-bold")); [q.complete, q.accurate, q.timely].forEach((v, i) => { if (cards[i]) cards[i].textContent = v; }); const body = pane.querySelector("tbody"); if (body) body.innerHTML = q.issues.map((r) => '<tr class="hover:bg-gray-50"><td class="px-6 py-4 whitespace-nowrap text-gray-800 font-medium">' + esc(r[0]) + '</td><td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px]">' + esc(r[1]) + '</span></td><td class="px-6 py-4 whitespace-nowrap text-center font-mono">' + esc(r[2]) + '</td><td class="px-6 py-4 whitespace-nowrap text-right"><span class="px-2 py-0.5 rounded ' + (r[3] === "处理中" ? "bg-red-100 text-red-700" : "bg-orange-100 text-orange-700") + ' text-xs font-medium">' + esc(r[3]) + '</span></td></tr>').join(""); };
+        const renderDevices = (rows) => { const body = tableBody("content-related-devices"); if (body) body.innerHTML = rows.map((r) => '<tr><td class="px-6 py-4 whitespace-nowrap text-gray-800 font-medium">' + esc(r[0]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-500">' + esc(r[1]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-500 text-xs font-mono">' + esc(r[2]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-500">' + esc(r[3]) + '</td><td class="px-6 py-4 whitespace-nowrap"><span class="font-medium text-xs ' + online(r[4]) + '">' + esc(r[4]) + '</span></td></tr>').join(""); };
+        const renderOperationLogs = (rows) => { const body = tableBody("content-operation-log"); if (body) body.innerHTML = rows.map((r) => '<tr class="hover:bg-gray-50"><td class="px-6 py-4 whitespace-nowrap text-gray-400 text-xs font-mono">' + esc(r[0]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-800 font-medium">' + esc(r[1]) + '</td><td class="px-6 py-4 whitespace-nowrap text-gray-600">' + esc(r[2]) + '</td><td class="px-6 py-4 text-gray-500">' + esc(r[3]) + '</td></tr>').join(""); };
+        const renderBoundaryDetail = (key) => { if (state.deleted[key]) key = Object.keys(nodeData).find((k) => !state.deleted[k]) || "boiler"; state.selected = key; const d = defaults(key); renderBasicInfo(d); renderDataSources(d.sources); renderQuality(d.quality); renderDevices(d.devices); renderOperationLogs(d.logs); renderBoundaryTree(); };
+        const renderBoundaryOverview = (scopeKey, catKey) => { const scope = boundaryMatrix[scopeKey]; const cat = catKey && scope.categories.find((c) => c.key === catKey); const pane = basicPane(); if (pane) pane.innerHTML = '<div class="space-y-5"><h3 class="text-lg font-bold">' + esc(cat ? cat.name : scope.name) + '</h3><p class="text-sm leading-relaxed text-gray-600">' + esc(scope.definition) + '</p><div class="grid grid-cols-2 gap-4">' + (cat ? cat.nodes : scope.categories.flatMap((c) => c.nodes)).map((key) => '<button class="text-left p-4 border rounded-lg hover:border-brand-active" data-boundary-action="node" data-boundary-key="' + key + '"><div class="font-bold text-sm">' + esc(nodeData[key].name) + '</div><div class="text-xs text-gray-500 mt-1">' + esc(nodeData[key].desc) + '</div></button>').join("") + '</div></div>'; };
+        const openBoundaryEditModal = (key) => { const d = defaults(key); let f = doc.getElementById("boundary-edit-modal"); if (!f) { f = doc.createElement("div"); f.id = "boundary-edit-modal"; f.dataset.integratedModal = "true"; f.className = "fixed inset-0 z-[10030] hidden items-center justify-center bg-black/40"; f.innerHTML = '<div class="bg-white rounded-lg shadow-2xl w-[620px] overflow-hidden"><div class="px-6 py-4 border-b bg-slate-50 flex justify-between"><h3 class="font-bold text-lg">编辑核算边界</h3><button data-close type="button">关闭</button></div><div class="p-6 grid grid-cols-2 gap-4"><label class="space-y-1"><span class="text-xs text-gray-500">名称 *</span><input data-name class="w-full border rounded px-3 py-2" /></label><label class="space-y-1"><span class="text-xs text-gray-500">负责人 *</span><input data-owner class="w-full border rounded px-3 py-2" /></label><label class="space-y-1"><span class="text-xs text-gray-500">状态</span><select data-status class="w-full border rounded px-3 py-2"><option value="已启用">已启用</option><option value="已禁用">已禁用</option></select></label><label class="space-y-1 col-span-2"><span class="text-xs text-gray-500">类别描述</span><textarea data-desc class="w-full border rounded px-3 py-2 h-24"></textarea></label></div><div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3"><button data-close class="px-4 py-2 border rounded">取消</button><button data-save class="px-5 py-2 bg-primary text-white rounded">保存</button></div></div>'; doc.body.appendChild(f); f.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => f.classList.add("hidden"))); f.querySelector("[data-save]").addEventListener("click", () => { const current = defaults(f.dataset.key); current.name = f.querySelector("[data-name]").value.trim() || current.name; current.owner = f.querySelector("[data-owner]").value.trim() || current.owner; current.desc = f.querySelector("[data-desc]").value.trim() || current.desc; current.status = f.querySelector("[data-status]").value; f.classList.add("hidden"); renderBoundaryTree(); renderBoundaryDetail(f.dataset.key); flash("编辑成功"); }); } f.dataset.key = key; f.querySelector("[data-name]").value = d.name; f.querySelector("[data-owner]").value = d.owner; f.querySelector("[data-desc]").value = d.desc; f.querySelector("[data-status]").value = d.status || "已启用"; f.classList.remove("hidden"); f.classList.add("flex"); };
+        const openBoundaryDeleteConfirm = (key) => { let b = doc.getElementById("integrated-confirm-box"); if (!b) { b = doc.createElement("div"); b.id = "integrated-confirm-box"; b.dataset.integratedModal = "true"; doc.body.appendChild(b); } b.className = "fixed inset-0 z-[10040] flex items-center justify-center bg-black/50"; b.innerHTML = '<div class="bg-white rounded-xl shadow-2xl w-[460px] border-2 border-dashed border-red-400 overflow-hidden"><div class="px-6 py-5 bg-red-50 text-red-700 font-bold flex items-center gap-2"><span class="material-symbols-outlined">warning</span> 高危操作确认</div><div class="px-6 py-5 text-sm text-gray-700">删除该核算边界将导致历史核算曲线断裂，是否确认？</div><div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3"><button data-cancel class="px-4 py-2 border rounded">取消</button><button data-ok class="px-5 py-2 bg-red-600 text-white rounded">确认删除</button></div></div>'; b.querySelector("[data-cancel]").onclick = () => b.classList.add("hidden"); b.querySelector("[data-ok]").onclick = () => { state.deleted[key] = true; b.classList.add("hidden"); flash("已移除当前演示节点"); renderBoundaryDetail(Object.keys(nodeData).find((k) => !state.deleted[k]) || "boiler"); }; };
+        renderBoundaryTree(); renderBoundaryDetail(state.selected || "boiler");
+        doc.addEventListener("click", (e) => { const t = e.target.closest("[data-boundary-action], [data-boundary-op]"); if (!t) return; const action = t.dataset.boundaryAction || t.dataset.boundaryOp; if (["scope", "category", "node", "edit", "toggle", "delete"].includes(action)) { e.preventDefault(); e.stopImmediatePropagation(); } if (action === "scope") { state.expanded[t.dataset.boundaryKey] = !state.expanded[t.dataset.boundaryKey]; renderBoundaryTree(); renderBoundaryOverview(t.dataset.boundaryKey); } if (action === "category") renderBoundaryOverview(t.dataset.boundaryScope, t.dataset.boundaryKey); if (action === "node") renderBoundaryDetail(t.dataset.boundaryKey); if (action === "edit") openBoundaryEditModal(state.selected); if (action === "toggle") { const d = defaults(state.selected); d.status = d.status === "已启用" ? "已禁用" : "已启用"; renderBoundaryDetail(state.selected); flash(d.status === "已启用" ? "已启用" : "已禁用"); } if (action === "delete") openBoundaryDeleteConfirm(state.selected); }, true);
+      }
+      function setupAdvancedBoundaryInteractions() {
+        if (doc.__integratedAdvancedReady) return;
+        doc.__integratedAdvancedReady = true;
+        const scopeNames = ["范围一", "范围二", "范围三"];
+        const clean = (value) => (value || "").replace(/[•·]/g, "").replace(/[()（）]\d+.*$/, "").trim();
+        const scopeOf = (node) => {
+          const text = textOf(node || doc.body);
+          return scopeNames.find((name) => text.includes(name)) || "范围一";
+        };
+        const metric = (label) => Array.from(doc.querySelectorAll("main h3, main h4, main .text-2xl")).find((node) => {
+          const card = node.closest(".bg-white, .rounded-lg, .rounded-xl, .shadow-sm") || node.parentElement;
+          return card && textOf(card).includes(label) && /\d/.test(textOf(node));
+        });
+        const animateValue = (node, target, suffix = "") => {
+          if (!node) return;
+          const start = parseInt(textOf(node).replace(/[^\d]/g, ""), 10) || 0;
+          const began = Date.now();
+          const tick = () => {
+            const p = Math.min(1, (Date.now() - began) / 420);
+            node.textContent = String(Math.round(start + (target - start) * (1 - Math.pow(1 - p, 3)))) + suffix;
+            if (p < 1) doc.defaultView.requestAnimationFrame(tick);
+          };
+          tick();
+        };
+        const refreshCards = () => {
+          const leaves = Array.from(doc.querySelectorAll("main li, main .tree-item-active, main [data-integrated-created]"))
+            .filter((item) => !item.closest("table") && !inModal(item) && clean(textOf(item)).length > 0 && clean(textOf(item)).length < 60)
+            .filter((item) => !/^范围[一二三]/.test(clean(textOf(item))));
+          const enabled = leaves.filter((item) => item.dataset.integratedStatus !== "disabled" && !textOf(item).includes("已禁用")).length;
+          const total = Math.max(1, leaves.length);
+          const rows = Array.from(doc.querySelectorAll("table tbody tr:not([data-integrated-empty])")).filter((row) => row.dataset.integratedDeleted !== "true").length;
+          animateValue(metric("边界覆盖率"), Math.round(enabled / total * 100), "%");
+          animateValue(metric("排放源总数"), rows || total, "");
+        };
+        const headerFor = (scope) => {
+          const blocks = Array.from(doc.querySelectorAll("main .mb-4, main li, main section, main div"));
+          for (const block of blocks) {
+            if (block.closest("table") || inModal(block)) continue;
+            const direct = Array.from(block.children || []).find((child) => {
+              const text = textOf(child).replace(/\s+/g, "");
+              return text.includes(scope) && text.length < 70 && /^范围[一二三]/.test(text) && child.classList.contains("cursor-pointer");
+            });
+            if (direct) return direct;
+          }
+          return Array.from(doc.querySelectorAll("main .cursor-pointer, main .group"))
+            .filter((node) => !node.closest("table") && !inModal(node))
+            .sort((a, b) => textOf(a).length - textOf(b).length)
+            .find((node) => textOf(node).includes(scope) && textOf(node).length < 90 && /^范围[一二三]/.test(textOf(node).replace(/\s+/g, "")));
+        };
+        const listFor = (scope, create = false) => {
+          const header = headerFor(scope);
+          if (!header) return null;
+          let list = header.nextElementSibling?.tagName === "UL" ? header.nextElementSibling : header.parentElement?.querySelector(":scope > ul");
+          if (!list && create) {
+            list = doc.createElement("ul");
+            list.className = "pl-4 space-y-1 border-l ml-1.5 border-gray-100";
+            header.parentElement?.appendChild(list);
+          }
+          return list;
+        };
+        const expandScope = (scope, expanded) => {
+          const header = headerFor(scope);
+          const list = listFor(scope, false);
+          if (list) list.classList.toggle("hidden", !expanded);
+          header?.querySelector("svg")?.classList.toggle("rotate-90", !expanded);
+        };
+        const updateDetail = (name, data = {}) => {
+          const title = doc.getElementById("aside-title") || doc.querySelector("aside h2, aside h3, main h2");
+          if (title) title.textContent = name + " 详情";
+          const area = doc.querySelector("[data-purpose='detail-drawer'], aside.w-80, aside.w-\\[420px\\]");
+          if (!area) return;
+          const values = { "类别名称": name, "名称": name, "核算范围": data.scope || "范围一", "所属范围": data.scope || "范围一", "负责人": data.owner || "张三", "状态": data.status || "启用", "描述": data.desc || name + "相关核算类别" };
+          Object.keys(values).forEach((key) => {
+            const label = Array.from(area.querySelectorAll("span, p, div")).find((node) => textOf(node) === key || textOf(node).includes(key));
+            const target = label?.nextElementSibling;
+            if (target && !target.querySelector("*")) target.textContent = values[key];
+          });
+        };
+        const activateLeaf = (node) => {
+          const item = node.closest("li") || node;
+          const activeTarget = node.querySelector("div") || node;
+          const name = clean(textOf(activeTarget));
+          if (!name || /^范围[一二三]/.test(name)) return;
+          doc.querySelectorAll(".tree-item-active, .bg-primary\\/10, .bg-primary\\/5").forEach((old) => old.classList.remove("tree-item-active", "bg-primary/10", "bg-primary/5", "text-primary", "font-medium"));
+          activeTarget.classList.add("tree-item-active", "font-medium");
+          const scope = item.dataset.integratedScope || scopeOf(item.closest(".mb-4") || item);
+          doc.querySelectorAll("table").forEach((table) => { table.dataset.integratedCategory = name; table.dataset.integratedPage = "1"; applyTableState(table); });
+          updateDetail(name, { scope, owner: item.dataset.integratedOwner, desc: item.dataset.integratedDesc, status: item.dataset.integratedStatus === "disabled" ? "禁用" : "启用" });
+          refreshCards();
+        };
+        const makeLeaf = (name, scope, owner, desc, status) => {
+          const li = doc.createElement("li");
+          li.dataset.integratedCreated = "true";
+          li.dataset.integratedScope = scope;
+          li.dataset.integratedOwner = owner || "";
+          li.dataset.integratedDesc = desc || "";
+          li.dataset.integratedStatus = status === "禁用" ? "disabled" : "enabled";
+          li.innerHTML = '<div class="flex items-center justify-between py-2 px-2 hover:bg-gray-50 rounded cursor-pointer"><span class="text-sm text-gray-600">' + name + '</span><span class="text-[10px] px-1.5 py-0.5 rounded ' + (status === "禁用" ? "bg-gray-100 text-gray-500" : "bg-green-100 text-green-600") + '">' + status + '</span></div>';
+          li.addEventListener("click", (event) => { event.stopPropagation(); activateLeaf(li); });
+          return li;
+        };
+        const closeOverlay = (overlay) => { overlay.classList.add("hidden"); overlay.classList.remove("flex"); };
+        const confirmBox = (message, onConfirm) => {
+          let box = doc.getElementById("integrated-confirm-box");
+          if (!box) {
+            box = doc.createElement("div");
+            box.id = "integrated-confirm-box";
+            box.dataset.integratedModal = "true";
+            box.className = "fixed inset-0 z-[10020] hidden items-center justify-center bg-black/40";
+            box.innerHTML = '<div class="bg-white rounded-lg shadow-2xl w-[420px] overflow-hidden"><div class="px-5 py-4 border-b bg-slate-50 font-bold">确认删除</div><div class="px-5 py-5 text-sm text-slate-600" data-confirm-message></div><div class="px-5 py-4 border-t bg-slate-50 flex justify-end gap-3"><button type="button" class="px-4 py-2 border rounded text-sm" data-confirm-cancel>取消</button><button type="button" class="px-5 py-2 bg-red-600 text-white rounded text-sm" data-confirm-ok>确认删除</button></div></div>';
+            doc.body.appendChild(box);
+            box.querySelector("[data-confirm-cancel]").addEventListener("click", () => closeOverlay(box));
+          }
+          box.querySelector("[data-confirm-message]").textContent = message;
+          box.querySelector("[data-confirm-ok]").onclick = () => { closeOverlay(box); onConfirm(); };
+          box.classList.remove("hidden"); box.classList.add("flex");
+        };
+        const categoryForm = (mode, seed = {}) => {
+          let form = doc.getElementById("integrated-category-form");
+          if (!form) {
+            form = doc.createElement("div");
+            form.id = "integrated-category-form";
+            form.dataset.integratedModal = "true";
+            form.className = "fixed inset-0 z-[10010] hidden items-center justify-center bg-black/40";
+            form.innerHTML = '<div class="bg-white rounded-lg shadow-2xl w-[680px] max-h-[88vh] overflow-hidden flex flex-col"><div class="px-6 py-4 border-b flex items-center justify-between bg-slate-50"><h3 class="text-lg font-bold" data-title>添加类别</h3><button class="text-slate-400 hover:text-slate-700" data-close type="button"><span class="material-symbols-outlined">close</span></button></div><div class="p-6 grid grid-cols-2 gap-4 overflow-y-auto"><label class="space-y-1"><span class="text-xs font-medium text-slate-500">名称 *</span><input data-name class="w-full border border-slate-300 rounded px-3 py-2 text-sm" placeholder="请输入类别名称" /></label><label class="space-y-1"><span class="text-xs font-medium text-slate-500">所属范围 *</span><select data-scope class="w-full border border-slate-300 rounded px-3 py-2 text-sm"><option value="范围一">范围一</option><option value="范围二">范围二</option><option value="范围三">范围三</option></select></label><label class="space-y-1"><span class="text-xs font-medium text-slate-500">负责人</span><input data-owner class="w-full border border-slate-300 rounded px-3 py-2 text-sm" placeholder="请输入负责人" /></label><label class="space-y-1"><span class="text-xs font-medium text-slate-500">状态</span><select data-status class="w-full border border-slate-300 rounded px-3 py-2 text-sm"><option>启用</option><option>禁用</option></select></label><label class="space-y-1 col-span-2"><span class="text-xs font-medium text-slate-500">类别描述</span><textarea data-desc class="w-full border border-slate-300 rounded px-3 py-2 text-sm h-24" placeholder="请输入类别描述"></textarea></label></div><div data-error class="hidden mx-6 mb-2 text-xs text-red-600"></div><div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3"><button class="px-5 py-2 border border-slate-300 rounded text-sm" data-close type="button">取消</button><button class="px-6 py-2 bg-primary text-white rounded text-sm" data-save type="button">保存</button></div></div>';
+            doc.body.appendChild(form);
+            form.querySelectorAll("[data-close]").forEach((btn) => btn.addEventListener("click", () => closeOverlay(form)));
+            form.querySelector("[data-save]").addEventListener("click", () => {
+              const name = form.querySelector("[data-name]").value.trim();
+              const scope = form.querySelector("[data-scope]").value;
+              const owner = form.querySelector("[data-owner]").value.trim();
+              const status = form.querySelector("[data-status]").value;
+              const desc = form.querySelector("[data-desc]").value.trim();
+              const error = form.querySelector("[data-error]");
+              if (!name || !scope) { error.textContent = "请填写名称并选择所属范围"; error.classList.remove("hidden"); return; }
+              error.classList.add("hidden");
+              if (form.__editingNode) {
+                const labelNode = form.__editingNode.querySelector("span") || form.__editingNode;
+                labelNode.textContent = name;
+                form.__editingNode.dataset.integratedScope = scope;
+                form.__editingNode.dataset.integratedOwner = owner;
+                form.__editingNode.dataset.integratedDesc = desc;
+                form.__editingNode.dataset.integratedStatus = status === "禁用" ? "disabled" : "enabled";
+                activateLeaf(form.__editingNode);
+                flash("编辑成功");
+              } else {
+                const list = listFor(scope, true);
+                const leaf = makeLeaf(name, scope, owner, desc, status);
+                list?.appendChild(leaf);
+                expandScope(scope, true);
+                activateLeaf(leaf);
+                flash("添加成功");
+              }
+              closeOverlay(form); refreshCards();
+            });
+          }
+          form.querySelector("[data-title]").textContent = mode === "edit" ? "编辑类别" : "添加类别";
+          form.querySelector("[data-name]").value = seed.name || "";
+          form.querySelector("[data-scope]").value = seed.scope || "范围一";
+          form.querySelector("[data-owner]").value = seed.owner || "";
+          form.querySelector("[data-status]").value = seed.status || "启用";
+          form.querySelector("[data-desc]").value = seed.desc || "";
+          form.querySelector("[data-error]").classList.add("hidden");
+          form.__editingNode = seed.node || null;
+          form.classList.remove("hidden"); form.classList.add("flex");
+        };
+        const toggleStatus = (button) => {
+          const enable = textOf(button).includes("启用");
+          const row = button.closest("tr");
+          const target = row || doc.querySelector(".tree-item-active") || button.closest("li, .cursor-pointer");
+          const badgeHost = row ? Array.from(row.children).find((cell) => /启用|停用|禁用|待完善/.test(textOf(cell))) : target;
+          let badge = badgeHost && Array.from(badgeHost.querySelectorAll("span, div")).find((node) => /启用|禁用|停用|已启用|已禁用/.test(textOf(node)) && textOf(node).length < 12);
+          if (!badge && badgeHost && !row) { badge = doc.createElement("span"); badge.className = "ml-2 text-[10px] px-1.5 py-0.5 rounded"; badgeHost.appendChild(badge); }
+          if (badge) { badge.textContent = enable ? "已启用" : "已禁用"; badge.className = badge.className.replace(/bg-\S+|text-\S+/g, "").trim() + (enable ? " bg-green-100 text-green-600" : " bg-gray-100 text-gray-500"); }
+          if (target) target.dataset.integratedStatus = enable ? "enabled" : "disabled";
+          button.textContent = enable ? "禁用" : "启用";
+          flash(enable ? "已启用" : "已禁用"); refreshCards();
+        };
+        const qualityPanel = (row, statusNode) => {
+          let panel = doc.getElementById("integrated-quality-panel");
+          if (!panel) {
+            panel = doc.createElement("div");
+            panel.id = "integrated-quality-panel";
+            panel.dataset.integratedModal = "true";
+            panel.className = "fixed inset-0 z-[10010] hidden items-center justify-end bg-black/30";
+            panel.innerHTML = '<div class="h-full w-[420px] bg-white shadow-2xl flex flex-col"><div class="px-6 py-4 border-b flex items-center justify-between bg-slate-50"><h3 class="font-bold text-lg">异常处理</h3><button type="button" data-close class="text-slate-400 hover:text-slate-700"><span class="material-symbols-outlined">close</span></button></div><div class="p-6 space-y-4 flex-1 overflow-y-auto text-sm"><div><div class="text-xs text-slate-500 mb-1">异常来源</div><div data-source class="font-medium text-slate-800"></div></div><div><div class="text-xs text-slate-500 mb-1">异常类型</div><div data-type class="font-medium text-slate-800"></div></div><label class="block"><span class="text-xs text-slate-500">当前状态</span><select data-status class="mt-1 w-full border border-slate-300 rounded px-3 py-2"><option>处理中</option><option>待排查</option><option>已处理</option></select></label><label class="block"><span class="text-xs text-slate-500">指派人员</span><select class="mt-1 w-full border border-slate-300 rounded px-3 py-2"><option>张三</option><option>李四</option><option>王五</option></select></label><label class="block"><span class="text-xs text-slate-500">处理日志</span><textarea class="mt-1 w-full border border-slate-300 rounded px-3 py-2 h-28" placeholder="记录处理动作或排查结论"></textarea></label></div><div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3"><button type="button" data-close class="px-4 py-2 border rounded text-sm">取消</button><button type="button" data-save class="px-5 py-2 bg-primary text-white rounded text-sm">保存</button></div></div>';
+            doc.body.appendChild(panel);
+            panel.querySelectorAll("[data-close]").forEach((btn) => btn.addEventListener("click", () => closeOverlay(panel)));
+            panel.querySelector("[data-save]").addEventListener("click", () => {
+              const status = panel.querySelector("[data-status]").value;
+              if (panel.__statusNode) { panel.__statusNode.textContent = status; panel.__statusNode.className = panel.__statusNode.className.replace(/bg-\S+|text-\S+/g, "").trim() + (status === "已处理" ? " bg-green-100 text-green-700" : status === "处理中" ? " bg-red-100 text-red-700" : " bg-orange-100 text-orange-700"); }
+              closeOverlay(panel); flash("异常处理已保存");
+            });
+          }
+          const cells = Array.from(row.children).map(textOf);
+          panel.__statusNode = statusNode;
+          panel.querySelector("[data-source]").textContent = cells[0] || "异常数据源";
+          panel.querySelector("[data-type]").textContent = cells[1] || "数据异常";
+          panel.querySelector("[data-status]").value = textOf(statusNode).includes("待排查") ? "待排查" : "处理中";
+          panel.classList.remove("hidden"); panel.classList.add("flex");
+        };
+        let floatingTip = null;
+        const removeTip = () => { if (floatingTip) floatingTip.remove(); floatingTip = null; };
+        Array.from(doc.querySelectorAll(".tooltip-container")).forEach((box) => {
+          const content = box.querySelector(".tooltip-content");
+          if (!content) return;
+          content.style.display = "none";
+          box.addEventListener("mouseenter", () => {
+            removeTip();
+            floatingTip = content.cloneNode(true);
+            floatingTip.dataset.integratedFloatingTooltip = "true";
+            floatingTip.style.cssText = "position:fixed;z-index:10050;display:block;visibility:visible;opacity:1;pointer-events:none;background:#1f2937;color:white;padding:1rem;border-radius:.5rem;box-shadow:0 24px 48px rgba(15,23,42,.24);font-size:11px;line-height:1.6;width:320px;max-width:calc(100vw - 32px);";
+            doc.body.appendChild(floatingTip);
+            const rect = box.getBoundingClientRect();
+            const tip = floatingTip.getBoundingClientRect();
+            let left = Math.max(16, Math.min(rect.left + rect.width / 2 - tip.width / 2, doc.defaultView.innerWidth - tip.width - 16));
+            let top = rect.bottom + 10;
+            if (top + tip.height > doc.defaultView.innerHeight - 16) top = Math.max(16, rect.top - tip.height - 10);
+            floatingTip.style.left = left + "px"; floatingTip.style.top = top + "px";
+          });
+          box.addEventListener("mouseleave", removeTip);
+        });
+        if (moduleKey === "boundary") {
+          scopeNames.forEach((scope) => {
+            const header = headerFor(scope);
+            if (!header || header.__integratedAdvancedScope) return;
+            header.__integratedAdvancedScope = true;
+            header.addEventListener("click", (event) => { if (event.target.closest("button, input, select, a")) return; const list = listFor(scope); expandScope(scope, !list || list.classList.contains("hidden")); refreshCards(); });
+          });
+          Array.from(doc.querySelectorAll("main li, main .tree-item-active, main [class*='hover:text-brand-active']")).forEach((leaf) => {
+            if (leaf.__integratedAdvancedLeaf || leaf.closest("table") || inModal(leaf)) return;
+            const label = clean(textOf(leaf));
+            if (!label || label.length > 60 || /^范围[一二三]/.test(label)) return;
+            leaf.__integratedAdvancedLeaf = true;
+            leaf.addEventListener("click", (event) => { if (event.target.closest("button, input, select, a")) return; event.stopPropagation(); activateLeaf(leaf); });
+          });
+        }
+        doc.addEventListener("click", (event) => {
+          const target = event.target.closest("button, a, span, td");
+          if (!target || inModal(target) || isInPagination(target)) return;
+          const label = textOf(target);
+          if (moduleKey === "boundary" && hasAny(label, ["添加类别", "新增类别"])) { event.preventDefault(); event.stopImmediatePropagation(); categoryForm("add", { scope: "范围一" }); return; }
+          if (moduleKey === "boundary" && label === "编辑") { event.preventDefault(); event.stopImmediatePropagation(); const active = doc.querySelector(".tree-item-active"); categoryForm("edit", { node: active, name: clean(textOf(active)), scope: scopeOf(active?.closest(".mb-4") || active), owner: active?.dataset.integratedOwner || "", desc: active?.dataset.integratedDesc || "", status: active?.dataset.integratedStatus === "disabled" ? "禁用" : "启用" }); return; }
+          if (hasAny(label, ["导出", "下载"])) { event.preventDefault(); event.stopImmediatePropagation(); if (target.dataset.integratedLoading === "true") return; target.dataset.integratedLoading = "true"; target.dataset.integratedOriginalHtml = target.innerHTML; target.classList.add("opacity-70", "cursor-not-allowed"); if ("disabled" in target) target.disabled = true; target.innerHTML = '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>导出中...</span>'; setTimeout(() => { target.innerHTML = target.dataset.integratedOriginalHtml || label; target.classList.remove("opacity-70", "cursor-not-allowed"); if ("disabled" in target) target.disabled = false; target.dataset.integratedLoading = "false"; flash("导出成功"); }, 1000); return; }
+          if (label.includes("删除")) { event.preventDefault(); event.stopImmediatePropagation(); const row = target.closest("tr"); const active = row ? null : doc.querySelector(".tree-item-active"); confirmBox("删除后仅在当前演示页面隐藏该项，刷新后会恢复。是否继续？", () => { if (row) { row.dataset.integratedDeleted = "true"; row.style.display = "none"; row.closest("table") && applyTableState(row.closest("table")); } else { active?.closest("li")?.remove(); } refreshCards(); flash("已删除当前演示项"); }); return; }
+          if (hasAny(label, ["启用", "停用", "禁用"])) { event.preventDefault(); event.stopImmediatePropagation(); toggleStatus(target); return; }
+          if (["处理中", "待排查"].includes(label)) { const row = target.closest("tr"); if (row && /断传|漂移|异常|排查|处理/.test(textOf(row))) { event.preventDefault(); event.stopImmediatePropagation(); qualityPanel(row, target); } }
+        }, true);
+        refreshCards();
+      }
+      function setupInternalTabs() {
+        const activate = (tab) => {
+          const targetId = tab.getAttribute("data-tab") || tab.getAttribute("data-target") || tab.dataset.target;
+          if (!targetId) return;
+          const target = targetId.startsWith("#") ? targetId.slice(1) : targetId;
+          const group = tab.closest("main, .tabs, .border-b, .flex") || doc;
+          group.querySelectorAll(".tab-trigger, [data-tab], [data-target]").forEach((item) => {
+            if (!(item instanceof doc.defaultView.HTMLElement)) return;
+            const itemTarget = (item.getAttribute("data-tab") || item.getAttribute("data-target") || "").replace(/^#/, "");
+            if (!itemTarget) return;
+            const active = item === tab;
+            item.classList.toggle("active", active);
+            item.classList.toggle("text-brand-active", active);
+            item.classList.toggle("border-brand-active", active);
+            item.classList.toggle("text-gray-500", !active);
+            item.classList.toggle("border-transparent", !active);
+          });
+          doc.querySelectorAll(".tab-pane, [id^='view-'], [data-pane]").forEach((pane) => {
+            if (!pane.id && !pane.dataset.pane) return;
+            const match = pane.id === target || pane.dataset.pane === target;
+            pane.classList.toggle("active", match);
+            pane.classList.toggle("hidden", !match && (pane.id?.startsWith("view-") || pane.hasAttribute("data-pane")));
+          });
+          doc.querySelectorAll("table").forEach((table) => {
+            table.dataset.integratedPage = "1";
+            applyTableState(table);
+          });
+        };
+        Array.from(doc.querySelectorAll(".tab-trigger, [data-tab], [data-target]")).forEach((tab) => {
+          if (tab.__integratedTabReady) return;
+          tab.__integratedTabReady = true;
+          tab.addEventListener("click", () => activate(tab));
+        });
+      }
+
+      setupTables();
+      setupSelectOptions();
+      setupFilters();
+      setupCategorySwitching();
+      setupButtons();
+      setupDatasourceDataFlow();
+      setupBoundaryMatrixDemo();
+      setupAdvancedBoundaryInteractions();
+      setupActionDelegation();
+      setupInternalTabs();
+    }
+
+    function cleanupEmbeddedPage() {
+      let doc;
+      try {
+        doc = frame.contentDocument || frame.contentWindow.document;
+      } catch (error) {
+        loadingMask.classList.add("hidden");
+        frameShell.classList.remove("frame-loading");
+        return;
+      }
+
+      if (currentModuleKey === "boundary") {
+        Array.from(doc.body.childNodes).forEach((node) => {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.includes("```html")) {
+            node.remove();
+          }
+        });
+      }
+
+      const style = doc.createElement("style");
+      style.textContent = `
+        html,
+        body {
+          margin: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          min-height: 100vh !important;
+          background: #f7f9fc !important;
+        }
+        body > main,
+        body > div.flex-1,
+        body > div.flex-1.flex,
+        body > .flex-1 {
+          margin-left: 0 !important;
+          width: 100% !important;
+          max-width: none !important;
+        }
+        body > main {
+          min-height: 100vh !important;
+        }
+        ${currentModuleKey === "boundary" ? `
+        body {
+          overflow: hidden !important;
+        }
+        body > .flex.h-screen,
+        body > div.flex.h-screen {
+          width: 100% !important;
+          height: 100vh !important;
+        }
+        body > .flex.h-screen > .flex-1,
+        body > div.flex.h-screen > .flex-1 {
+          width: 100% !important;
+          height: 100% !important;
+          min-width: 0 !important;
+        }
+        body > .flex.h-screen main,
+        body > div.flex.h-screen main {
+          width: 100% !important;
+          height: 100% !important;
+        }
+        ` : ""}
+      `;
+      doc.head.appendChild(style);
+      installInteractionEnhancements(doc, currentModuleKey);
+
+      loadingMask.classList.add("hidden");
+      frameShell.classList.remove("frame-loading");
+      frame.contentWindow?.postMessage({
+        type: "module-activated",
+        moduleKey: currentModuleKey
+      }, "*");
+    }
+
+    tabContainer.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-key]");
+      if (!button) return;
+      switchModule(button.dataset.key);
+    });
+
+   window.addEventListener("message", (event) => {
+  const data = event.data || {};
+
+  if (data.type === "gwp-location") {
+    setCurrentSubtitle(data.pageName || "");
+    return;
+  }
+
+  if (data.type === "model-location") {
+    setCurrentSubtitle(data.pageName || "");
+  }
+});
+
+
+    frame.addEventListener("load", cleanupEmbeddedPage);
+
+    switchModule((location.hash || "#boundary").slice(1));
+    titleNode.addEventListener("click", () => {
+  if (currentModuleKey !== "model") return;
+  if (titleNode.dataset.breadcrumbAction !== "model-list") return;
+
+  frame.contentWindow?.postMessage({
+    type: "model-navigate",
+    view: "list"
+  }, "*");
+
+  setCurrentSubtitle("");
+});
+  </script>
+</body>
+</html>

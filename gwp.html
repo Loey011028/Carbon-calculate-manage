@@ -1,0 +1,531 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carbon Management - GWP管理</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="./shared-mock-data.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: {
+      'surface-bright':'#f7f9fc','surface-container':'#eceef1','surface-container-low':'#f2f4f7','inverse-primary':'#a5c8ff','on-primary':'#ffffff','surface-variant':'#e0e3e6','secondary-fixed':'#d1e4ff','surface-tint':'#1890ff','on-secondary-fixed-variant':'#35485e','surface-container-lowest':'#ffffff','on-tertiary':'#ffffff','on-secondary-container':'#51647c','primary-container':'#0075d5','on-error':'#ffffff','secondary-fixed-dim':'#b4c8e3','on-error-container':'#93000a','primary-fixed':'#d4e3ff','surface-container-high':'#e6e8eb','on-tertiary-fixed-variant':'#733600','on-secondary':'#ffffff','background':'#f8fafc','on-secondary-fixed':'#071d31','on-primary-fixed':'#001c3a','outline':'#707785','secondary':'#4d6077','primary-fixed-dim':'#a5c8ff','tertiary-container':'#b95a00','on-tertiary-fixed':'#311300','inverse-surface':'#2d3133','on-tertiary-container':'#fffbff','error':'#ba1a1a','inverse-on-surface':'#eff1f4','tertiary-fixed':'#ffdbc7','surface-dim':'#d8dadd','on-primary-container':'#fefcff','surface':'#f7f9fc','primary':'#1890ff','outline-variant':'#e2e8f0','on-surface':'#0f172a','surface-container-highest':'#e0e3e6','secondary-container':'#cde1fd','on-surface-variant':'#475569','on-background':'#191c1e','error-container':'#ffdad6','tertiary':'#934600','sidebar-bg':'#1e293b'
+    }, borderRadius:{DEFAULT:'0.375rem',lg:'0.5rem',xl:'0.75rem',full:'9999px'}, spacing:{xl:'32px',sm:'12px','container-margin':'24px',base:'8px',md:'16px',lg:'24px',xs:'4px','sidebar-width':'240px','grid-gutter':'20px'} } } };
+  </script>
+  <style>
+    body{font-family:'Inter',sans-serif;font-size:14px}.gwp-page .text-xs{font-size:.875rem!important;line-height:1.25rem!important}.gwp-page .text-\[10px\],.gwp-page .text-\[11px\]{font-size:.75rem!important;line-height:1rem!important}.gwp-page input,.gwp-page select,.gwp-page textarea,.gwp-page button,.gwp-page table{font-size:.875rem}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}.custom-scrollbar::-webkit-scrollbar{width:6px;height:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:#94a3b8}.tab-active{color:#1890ff!important;border-bottom:2px solid #1890ff!important;font-weight:700!important}.chart-bar-transition{transition:height .8s cubic-bezier(.4,0,.2,1)}.tech-panel{background:radial-gradient(circle at 20% 0%,rgba(24,144,255,.12),transparent 28%),linear-gradient(180deg,#fff 0%,#f8fbff 100%)}.tech-table thead{background:linear-gradient(90deg,#eaf4ff 0%,#f5f9ff 100%)}.tech-table tbody tr:hover{background:rgba(24,144,255,.06)}.modal-backdrop{background-color:rgba(15,23,42,.4);backdrop-filter:blur(4px)}.dropdown-menu{display:none;position:absolute;right:0;top:100%;z-index:50;min-width:152px;background:white;border:1px solid #e2e8f0;border-radius:.375rem;box-shadow:0 10px 15px -3px rgb(0 0 0 / .1)}.dropdown-menu.show{display:block}.toast{position:fixed;right:24px;bottom:24px;z-index:200;background:#0f172a;color:white;padding:10px 14px;border-radius:10px;box-shadow:0 12px 24px rgba(15,23,42,.2);font-size:13px}.hide-scrollbar::-webkit-scrollbar{display:none}.gwp-page select{padding-right:2.75rem!important;background-position:right .85rem center!important;background-size:1rem 1rem!important;white-space:nowrap}.gwp-page select option{font-size:.875rem}.filter-row-select{min-width:12rem}.compare-version-select{min-width:15rem;max-width:18rem}.compact-select{min-width:8rem}.pager-size-select{min-width:7rem}
+  </style>
+</head>
+<body class="gwp-page min-h-screen text-on-surface bg-background flex flex-col overflow-hidden select-none">
+<main class="flex-1 flex flex-col min-w-0 bg-background relative h-screen overflow-hidden">
+  <div class="px-container-margin pt-4 bg-white border-b border-outline-variant shadow-sm z-10" id="gwp-main-tabs">
+    <div class="flex items-center -mb-px" id="gwp-tab-nav">
+      <div class="px-6 py-3 text-sm font-medium cursor-pointer transition-all tab-active" id="tab-version-btn" onclick="switchTab('version')">GWP版本管理</div>
+      <div class="px-6 py-3 text-sm font-medium hover:text-primary cursor-pointer transition-all text-on-surface-variant" id="tab-param-btn" onclick="switchTab('param')">温室气体参数管理</div>
+    </div>
+    <div class="hidden items-center gap-2 py-3 text-xs text-on-surface-variant" id="gwp-sub-nav">
+      <button class="text-primary hover:underline" onclick="showGwpMainView()">GWP版本管理</button><span>/</span><span id="gwp-sub-title">版本对比</span>
+    </div>
+  </div>
+
+  <div class="p-container-margin pb-4 flex gap-grid-gutter flex-1 min-h-0 overflow-hidden">
+    <div class="flex-1 flex flex-col gap-lg overflow-y-auto custom-scrollbar pr-1" id="main-content-scroll">
+      <div class="flex flex-col gap-lg" id="view-version">
+        <div class="grid grid-cols-4 gap-md" id="version-stats"></div>
+
+        <div class="bg-white border border-outline-variant rounded-xl flex flex-col shadow-sm overflow-hidden">
+          <div class="flex items-center border-b border-outline-variant px-lg py-4 bg-slate-50/50">
+            <span class="text-sm font-bold text-slate-800">版本列表</span>
+            <div class="ml-auto flex gap-2 items-center">
+              <button class="px-4 py-1.5 bg-primary text-white rounded-lg text-sm flex items-center gap-1.5 hover:brightness-110 shadow-sm transition-all font-medium" onclick="openModal('version-add')"><span class="material-symbols-outlined text-[18px]">add</span>新建版本</button>
+            </div>
+          </div>
+          <div class="overflow-auto custom-scrollbar h-[240px]">
+            <table class="w-full text-sm text-left border-collapse">
+              <thead class="sticky top-0 z-10"><tr class="bg-slate-50 text-on-surface-variant border-b border-outline-variant"><th class="px-6 py-3 font-semibold">版本名称</th><th class="px-4 py-3 font-semibold">来源标准</th><th class="px-4 py-3 font-semibold text-center">状态</th><th class="px-4 py-3 font-semibold text-center">气体种类</th><th class="px-4 py-3 font-semibold text-center">因子数量</th><th class="px-6 py-3 font-semibold text-right">操作</th></tr></thead>
+              <tbody class="divide-y divide-outline-variant" id="version-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-lg items-stretch">
+          <div class="tech-panel border border-blue-100 rounded-xl px-lg pt-lg pb-10 shadow-sm flex flex-col gap-3 overflow-hidden relative h-full" id="chart-panel">
+            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-cyan-400 to-blue-500"></div>
+            <div class="flex flex-col gap-0.5"><div class="flex items-center gap-1.5"><span class="text-sm font-bold text-slate-800" id="chart-title">GWP 因子概览</span><span class="material-symbols-outlined text-slate-400 text-[16px] cursor-help">info</span></div><span class="text-xs text-on-surface-variant" id="chart-subtitle">当前启用版本的主要温室气体 GWP100 因子值</span></div>
+            <div class="relative h-52 border-l border-b border-blue-100 ml-20 mr-2 mt-auto flex items-end bg-[linear-gradient(to_top,rgba(24,144,255,0.08)_1px,transparent_1px)] bg-[length:100%_25%]" id="chart-area"><span class="absolute -left-24 top-1/2 -translate-y-1/2 -rotate-90 origin-center text-[11px] text-primary font-semibold whitespace-nowrap">GWP100 因子值</span><div class="absolute -left-10 inset-y-0 flex flex-col justify-between text-[10px] text-slate-400 pb-1" id="chart-axis"></div><div class="w-full flex items-end justify-around px-2 gap-2" id="chart-bars"></div></div>
+          </div>
+          <div class="tech-panel border border-blue-100 rounded-xl px-lg pt-lg pb-6 shadow-sm flex flex-col gap-3 overflow-hidden relative h-full">
+            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-cyan-400 to-blue-500"></div>
+            <span class="text-sm font-bold text-slate-800">因子明细预览</span>
+            <div class="overflow-y-auto max-h-60 custom-scrollbar border border-blue-100 rounded-lg shadow-sm bg-white/90"><table class="w-full text-xs border-collapse tech-table"><thead class="sticky top-0 border-b border-blue-100"><tr class="text-on-surface-variant"><th class="px-4 py-2.5 text-left font-semibold">温室气体</th><th class="px-4 py-2.5 text-left font-semibold">化学式</th><th class="px-4 py-2.5 text-right font-semibold">GWP100</th></tr></thead><tbody class="divide-y divide-outline-variant" id="preview-body"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-lg h-full min-h-0 hidden" id="view-param">
+        <div class="grid grid-cols-5 gap-md" id="param-stats"></div>
+        <div class="bg-white border border-outline-variant rounded-xl flex flex-col shadow-sm overflow-hidden h-[627px]">
+          <div class="p-lg flex items-center justify-between gap-6 bg-slate-50/50 border-b border-outline-variant">
+            <div class="flex items-center gap-6"><div class="flex items-center gap-2 shrink-0"><label class="text-xs font-bold text-slate-600 whitespace-nowrap">GWP版本</label><select id="param-version-filter" class="filter-row-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-1.5 bg-white shadow-sm focus:border-primary focus:ring-0"></select></div><div class="flex items-center gap-2 shrink-0"><label class="text-xs font-bold text-slate-600 whitespace-nowrap">时间尺度</label><select id="param-horizon-filter" class="compact-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-1.5 bg-white shadow-sm focus:border-primary focus:ring-0"></select></div></div>
+            <div class="flex items-center gap-3 flex-1 max-w-md"><div class="relative flex-1"><span class="absolute inset-y-0 left-3 flex items-center text-slate-400"><span class="material-symbols-outlined text-[18px]">search</span></span><input id="param-search-filter" class="w-full pl-9 pr-4 py-1.5 border border-outline-variant rounded-lg text-xs bg-white shadow-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none" placeholder="搜索温室气体名称/化学式" type="text"/></div><button class="px-4 py-1.5 bg-primary text-white rounded-lg text-xs flex items-center gap-1.5 font-medium shrink-0 shadow-sm hover:brightness-110" onclick="openModal('param-add')"><span class="material-symbols-outlined text-[16px]">add</span>新增参数</button></div>
+          </div>
+          <div class="overflow-auto custom-scrollbar flex-1 min-h-0"><table class="w-full text-sm text-left border-collapse"><thead class="sticky top-0 z-10"><tr class="bg-slate-50 text-on-surface-variant border-b border-outline-variant"><th class="px-6 py-3 font-semibold">温室气体名称</th><th class="px-4 py-3 font-semibold">化学式</th><th class="px-4 py-3 font-semibold">GWP100值</th><th class="px-4 py-3 font-semibold text-center">状态</th><th class="px-4 py-3 font-semibold text-center">引用数</th><th class="px-6 py-3 font-semibold text-right">操作</th></tr></thead><tbody class="divide-y divide-outline-variant" id="param-table-body"></tbody></table></div>
+        </div>
+      </div>
+
+      <div class="hidden flex flex-col gap-lg pb-6" id="view-compare">
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm p-lg">
+          <div class="flex items-start justify-between gap-4 mb-5 flex-wrap"><div class="shrink-0"><h2 class="text-base font-bold text-slate-800">版本对比</h2><button class="text-xs text-primary mt-1 hover:underline" onclick="showGwpMainView()">返回列表</button></div><div class="flex items-center justify-end gap-3 flex-wrap max-w-full"><select id="compare-source" class="compare-version-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-1.5 bg-white"></select><select id="compare-target" class="compare-version-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-1.5 bg-white"></select><select id="compare-horizon" class="compact-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-1.5 bg-white"></select><button class="px-5 py-1.5 bg-primary text-white rounded-lg text-xs font-bold shrink-0" onclick="applyCompare()">对比</button></div></div>
+          <div class="bg-white rounded-lg border border-outline-variant shadow-sm px-6 py-5 mb-4"><div class="text-sm font-bold text-slate-800 mb-6">基础信息</div><div id="compare-info" class="space-y-5 text-xs"></div></div>
+          <div class="grid grid-cols-5 gap-md mb-4" id="compare-stats"></div>
+          <div class="flex gap-5 h-[350px] items-stretch pb-0"><div class="flex-1 bg-white rounded-lg shadow-sm border border-outline-variant p-5 overflow-auto custom-scrollbar"><div class="flex items-center justify-between mb-4" id="compare-table-title"></div><table class="w-full text-xs text-left"><thead class="sticky top-0"><tr id="compare-head"></tr></thead><tbody id="compare-body" class="divide-y divide-slate-50"></tbody></table></div><div class="w-80 bg-white rounded-lg shadow-sm border border-outline-variant p-5 flex flex-col overflow-hidden" id="compare-distribution"></div></div>
+        </div>
+      </div>
+
+      <div class="hidden flex flex-col gap-lg h-full min-h-0" id="view-log">
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm p-lg flex flex-col min-h-[calc(100vh-128px)]">
+          <div class="flex items-center justify-between gap-4 mb-5"><div><h2 class="text-base font-bold text-slate-800">操作日志</h2><button class="text-xs text-primary mt-1 hover:underline" onclick="showGwpMainView()">返回列表</button></div></div>
+          <div class="bg-slate-50/60 border border-outline-variant rounded-lg p-4 mb-5 flex flex-wrap items-center gap-3"><input data-log-filter="keyword" class="text-xs border border-outline-variant rounded-lg px-3 py-2 bg-white min-w-[220px] h-10" placeholder="请输入关键字" type="text"><select data-log-filter="action" class="filter-row-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-2 bg-white h-10"></select><select data-log-filter="operator" class="filter-row-select text-xs border border-outline-variant rounded-lg pl-3 pr-11 py-2 bg-white h-10"></select><div class="flex items-center gap-2"><input data-log-filter="startDate" aria-label="开始日期" class="text-xs border border-outline-variant rounded-lg px-3 py-2 bg-white min-w-[160px] h-10" type="date"><span class="text-on-surface-variant">-</span><input data-log-filter="endDate" aria-label="结束日期" class="text-xs border border-outline-variant rounded-lg px-3 py-2 bg-white min-w-[160px] h-10" type="date"></div><div class="ml-auto flex gap-2"><button class="px-4 py-2 border border-outline-variant rounded-lg text-xs font-bold bg-white" onclick="resetLogFilters()">重置</button><button class="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold" onclick="applyLogFilters()">查询</button><button class="px-4 py-2 border border-outline-variant rounded-lg text-xs font-bold bg-white" onclick="showGwpHint('日志导出已触发')">导出日志</button></div></div>
+          <div class="border border-outline-variant rounded-lg overflow-auto custom-scrollbar h-[520px] min-h-[520px] max-h-[520px] shrink-0 mt-[15px]"><table class="w-full text-sm text-left"><thead class="sticky top-0 bg-slate-50 text-on-surface-variant border-b border-outline-variant"><tr><th class="px-4 py-3">序号</th><th class="px-4 py-3">操作时间</th><th class="px-4 py-3">操作类型</th><th class="px-4 py-3">操作内容</th><th class="px-4 py-3">因子名称</th><th class="px-4 py-3">版本</th><th class="px-4 py-3">操作人</th><th class="px-4 py-3">结果</th><th class="px-4 py-3">操作IP</th></tr></thead><tbody class="divide-y divide-outline-variant" id="log-body"></tbody></table></div>
+          <div class="px-1 py-4 flex items-center justify-between gap-4 text-xs text-on-surface-variant">
+            <div id="log-total" class="shrink-0 whitespace-nowrap">共 0 条</div>
+            <div class="flex items-center justify-end gap-2 flex-wrap min-w-0" id="log-pager"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="w-80 bg-white border border-outline-variant rounded-xl flex flex-col shadow-sm shrink-0 self-stretch overflow-hidden" id="gwp-aside">
+      <div class="p-lg border-b border-outline-variant flex items-center justify-between bg-slate-50/50"><span class="text-sm font-bold text-slate-800" id="aside-title">版本详情</span><span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-slate-600" onclick="closeAside()">close</span></div>
+      <div class="flex-1 overflow-y-auto custom-scrollbar" id="aside-content">
+        <div class="hidden h-full p-lg" id="aside-empty-view"><div class="h-full rounded-xl border border-dashed border-outline-variant bg-slate-50/60 flex flex-col items-center justify-center text-center px-6"><div class="w-12 h-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center mb-3 border border-blue-100"><span class="material-symbols-outlined text-[26px]">fact_check</span></div><div class="text-sm font-bold text-slate-800">请选择版本或参数</div><div class="text-xs text-on-surface-variant mt-2 leading-relaxed">点击列表中的查看或行数据后，在此查看详细信息。</div></div></div>
+        <div class="p-lg space-y-5 min-h-full" id="aside-version-view"><div class="space-y-3.5"><div class="flex justify-between items-start"><span class="text-xs text-on-surface-variant">版本名称</span><span class="text-xs font-semibold text-slate-800 text-right max-w-[160px]" id="dt-v-name">-</span></div><div class="flex justify-between items-start"><span class="text-xs text-on-surface-variant">来源标准</span><span class="text-xs font-medium text-slate-600 text-right max-w-[160px]" id="dt-v-std">-</span></div><div class="flex justify-between items-center"><span class="text-xs text-on-surface-variant">状态</span><span id="dt-v-status">-</span></div><div class="flex justify-between items-center"><span class="text-xs text-on-surface-variant">生效时间</span><span class="text-xs font-mono text-slate-700" id="dt-v-start">-</span></div><div class="flex justify-between items-center"><span class="text-xs text-on-surface-variant">失效时间</span><span class="text-xs font-medium text-slate-600" id="dt-v-end">-</span></div><div class="flex justify-between items-center"><span class="text-xs text-on-surface-variant">温室气体种类</span><span class="text-xs font-medium text-slate-700" id="dt-v-gastype">-</span></div><div class="flex justify-between items-center"><span class="text-xs text-on-surface-variant">因子数量</span><span class="text-xs font-medium text-slate-700" id="dt-v-factorcnt">-</span></div></div><div class="pt-4 border-t border-outline-variant"><span class="text-[11px] font-bold text-slate-400 uppercase block mb-1.5 tracking-wider">描述</span><p class="text-xs text-on-surface-variant leading-relaxed" id="dt-v-desc">-</p></div><div class="pt-4 border-t border-outline-variant flex flex-col gap-2 bg-slate-50/50 p-2.5 rounded-lg border border-slate-100"><div class="flex justify-between text-[11px] text-on-surface-variant"><span>创建人</span><span class="text-slate-700 font-medium">管理员</span></div><div class="flex justify-between text-[11px] text-on-surface-variant"><span>创建时间</span><span class="font-mono text-slate-600">2023-12-01 10:00</span></div><div class="flex justify-between text-[11px] text-on-surface-variant"><span>更新时间</span><span class="font-mono text-slate-600">2026-07-07 09:30</span></div></div></div>
+        <div class="p-lg space-y-6 min-h-full hidden" id="aside-param-view"><div><h4 class="text-[11px] font-bold text-slate-400 uppercase mb-3 tracking-wider">基础因子信息</h4><div class="space-y-3"><div class="flex justify-between text-xs"><span class="text-on-surface-variant">GWP版本</span><span class="font-medium text-slate-700" id="dt-p-version">-</span></div><div class="flex justify-between text-xs"><span class="text-on-surface-variant">温室气体名称</span><span class="font-semibold text-slate-800" id="dt-p-name">-</span></div><div class="flex justify-between text-xs"><span class="text-on-surface-variant">化学式</span><span class="font-mono text-slate-600" id="dt-p-formula">-</span></div><div class="flex justify-between text-xs items-center"><span class="text-on-surface-variant">GWP值</span><span class="text-primary font-bold text-base" id="dt-p-value">-</span></div><div class="flex justify-between text-xs"><span class="text-on-surface-variant">时间尺度</span><span class="font-medium text-slate-700" id="dt-p-horizon">-</span></div></div></div><div class="pt-4 border-t border-outline-variant"><h4 class="text-[11px] font-bold text-slate-400 uppercase mb-3 tracking-wider">生效及引用信息</h4><div class="space-y-3"><div class="flex justify-between text-xs"><span class="text-on-surface-variant">来源标准</span><span class="font-medium text-slate-700 text-right max-w-[160px]" id="dt-p-source">-</span></div><div class="flex justify-between text-xs"><span class="text-on-surface-variant">状态</span><span id="dt-p-status">-</span></div><div class="flex justify-between items-center pt-2"><span class="text-xs text-on-surface-variant">当前引用模型数</span><span class="text-sm font-bold text-primary" id="dt-p-ref">0 个</span></div></div></div><div class="pt-2"><button class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-primary text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-slate-200" onclick="openModal('ref-list')"><span class="material-symbols-outlined text-[16px]">visibility</span>查看所有引用模型</button></div></div>
+      </div>
+      <div class="p-lg border-t border-outline-variant grid grid-cols-2 gap-md bg-slate-50" id="aside-actions"><button class="col-span-2 py-2 border border-outline-variant rounded-lg bg-white text-xs font-bold hover:bg-slate-50 text-slate-700 transition-colors shadow-sm" id="aside-toggle-status" onclick="toggleSelectedStatus()">停用版本</button><button class="col-span-2 py-2 bg-primary text-white rounded-lg text-xs font-bold hover:brightness-110 shadow-sm transition-all" onclick="openCurrentEditModal()">编辑版本</button></div>
+    </aside>
+  </div>
+
+  <div class="fixed inset-0 z-[100] flex items-center justify-center modal-backdrop hidden" id="modal-container" onclick="closeModal()">
+    <div class="bg-white rounded-xl shadow-2xl w-[740px] max-h-[90vh] flex flex-col overflow-hidden hidden" id="modal-version-form" onclick="event.stopPropagation()">
+      <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-slate-50">
+        <h3 class="text-base font-bold text-slate-800" id="form-title">新增GWP标准</h3>
+        <span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-slate-600" onclick="closeModal()">close</span>
+      </div>
+      <div class="p-6 space-y-5 overflow-y-auto custom-scrollbar">
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700">版本名称 <span class="text-error">*</span></label>
+            <input id="modal-version-name" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="如：IPCC AR6" type="text" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700">来源标准 <span class="text-error">*</span></label>
+            <select id="modal-version-standard" class="w-full h-11 pl-4 pr-12 border border-outline-variant rounded-xl text-xs bg-white outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+              <option value="IPCC AR6 第六次报告">IPCC AR6 第六次报告</option>
+              <option value="IPCC AR5 第五次报告">IPCC AR5 第五次报告</option>
+              <option value="IPCC AR4 第四次报告">IPCC AR4 第四次报告</option>
+              <option value="GHG Protocol GWP Values">GHG Protocol GWP Values</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700">生效时间 <span class="text-error">*</span></label>
+            <input id="modal-version-start" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" type="date" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700">启用状态</label>
+            <div class="flex items-center gap-3 h-11">
+              <input id="modal-version-enabled" type="hidden" value="true" />
+              <button id="modal-version-switch" type="button" class="w-10 h-6 bg-primary rounded-full relative transition-colors" onclick="toggleModalVersionSwitch()">
+                <span id="modal-version-switch-dot" class="absolute right-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all"></span>
+              </button>
+              <span class="text-xs font-medium text-slate-600" id="modal-version-switch-label">默认启用</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-700">描述备注说明</label>
+          <textarea id="modal-version-desc" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-xs h-28 outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="请输入版本修订或数据来源细则说明..."></textarea>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3 bg-slate-50">
+        <button class="px-5 py-2.5 border border-outline-variant bg-white rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-sm" onclick="closeModal()">取消</button>
+        <button class="px-6 py-2.5 bg-primary text-white rounded-xl text-xs font-bold hover:brightness-110 shadow-sm" onclick="saveVersionModal()">确认保存</button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-2xl w-[1240px] max-h-[92vh] flex flex-col overflow-hidden hidden" id="modal-param-form" onclick="event.stopPropagation()">
+      <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-slate-50">
+        <h3 class="text-base font-bold text-slate-800" id="param-form-title">新增温室气体参数</h3>
+        <span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-slate-600" onclick="closeModal()">close</span>
+      </div>
+      <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar">
+        <section>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-1 h-5 bg-primary rounded-full"></div>
+            <h4 class="text-sm font-bold text-slate-800">基础信息</h4>
+          </div>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-5">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">GWP版本 <span class="text-error">*</span></label>
+              <select id="modal-param-version" class="w-full h-11 pl-4 pr-12 border border-outline-variant rounded-xl text-xs bg-white outline-none focus:ring-1 focus:ring-primary focus:border-primary"></select>
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">温室气体名称 <span class="text-error">*</span></label>
+              <input id="modal-param-name" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="请输入温室气体名称" type="text" />
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">化学式 <span class="text-error">*</span></label>
+              <input id="modal-param-formula" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs font-mono outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="请输入化学式" type="text" />
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">GWP值 <span class="text-error">*</span></label>
+              <input id="modal-param-value" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="请输入数值" type="number" step="0.01" />
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">时间尺度 <span class="text-error">*</span></label>
+              <select id="modal-param-horizon" class="w-full h-11 pl-4 pr-12 border border-outline-variant rounded-xl text-xs bg-white outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                <option>100年</option>
+                <option>20年</option>
+                <option>500年</option>
+              </select>
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">来源标准</label>
+              <input id="modal-param-standard" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="如：IPCC AR6" type="text" />
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-1 h-5 bg-primary rounded-full"></div>
+            <h4 class="text-sm font-bold text-slate-800">生效信息</h4>
+          </div>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-5">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">生效日期 <span class="text-error">*</span></label>
+              <input id="modal-param-start" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" type="date" />
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">失效日期</label>
+              <input id="modal-param-end" class="w-full h-11 px-4 border border-outline-variant rounded-xl text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary" type="date" />
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">状态</label>
+              <select id="modal-param-enabled" class="w-full h-11 pl-4 pr-12 border border-outline-variant rounded-xl text-xs bg-white outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="true">启用</option>
+                <option value="false">停用</option>
+              </select>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-1 h-5 bg-primary rounded-full"></div>
+            <h4 class="text-sm font-bold text-slate-800">备注</h4>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-600">备注说明</label>
+            <textarea id="modal-param-desc" class="w-full px-4 py-3 border border-outline-variant rounded-xl text-xs h-36 outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="请输入相关说明..."></textarea>
+          </div>
+        </section>
+      </div>
+      <div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3 bg-slate-50">
+        <button class="px-5 py-2.5 border border-outline-variant bg-white rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-sm" onclick="closeModal()">取消</button>
+        <button class="px-7 py-2.5 bg-primary text-white rounded-xl text-xs font-bold hover:brightness-110 shadow-sm" onclick="saveParamModal()">保存数据</button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-2xl w-[720px] max-h-[80vh] flex flex-col overflow-hidden hidden" id="modal-ref-list" onclick="event.stopPropagation()"><div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-slate-50"><h3 class="text-base font-bold text-slate-800">引用模型列表</h3><span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-slate-600" onclick="closeModal()">close</span></div><div class="p-6"><div class="border border-outline-variant rounded-lg overflow-hidden"><table class="w-full text-sm"><thead class="bg-slate-50 text-on-surface-variant"><tr><th class="px-4 py-3 text-left">模型名称</th><th class="px-4 py-3 text-left">排放类别</th><th class="px-4 py-3 text-left">状态</th></tr></thead><tbody><tr><td class="px-4 py-3">逸散排放核算模型</td><td class="px-4 py-3">制冷剂泄漏</td><td class="px-4 py-3 text-emerald-600">启用</td></tr><tr><td class="px-4 py-3">固定燃烧核算模型</td><td class="px-4 py-3">固定燃烧</td><td class="px-4 py-3 text-emerald-600">启用</td></tr></tbody></table></div></div></div>
+  </div>
+</main>
+<script>
+const Mock = window.CarbonMockData || window.MockCarbonData || window.Mock || window.CarbonAccountingMock || {};
+let currentTab = 'version';
+let selectedVersionId = '';
+let selectedParamId = '';
+let currentModalMode = '';
+let currentEditId = '';
+let gwpVersions = [];
+let gwpParameters = [];
+let gwpLogs = [];
+const paramFilters = { versionId:'', horizon:'100年', keyword:'' };
+const compareState = { sourceId:'', targetId:'', horizon:'100年', draftSourceId:'', draftTargetId:'', draftHorizon:'100年' };
+const logState = { keyword:'', action:'', operator:'', startDate:'', endDate:'', page:1, pageSize:10 };
+const fallbackVersions = [
+  {id:'gwp-ar6-100',code:'AR6',name:'IPCC AR6 (2021) - GWP100',sourceStandard:'IPCC AR6 第六次评估报告',horizon:'100年',effectiveDate:'2023-01-01',expireDate:'',enabled:true,status:'启用',description:'基于 IPCC AR6 的 GWP100 参数库。'},
+  {id:'gwp-ar5-100',code:'AR5',name:'IPCC AR5 (2014) - GWP100',sourceStandard:'IPCC AR5 第五次评估报告',horizon:'100年',effectiveDate:'2015-06-01',expireDate:'2022-12-31',enabled:false,status:'停用',description:'基于 IPCC AR5 的 GWP100 参数库。'},
+  {id:'gwp-ar4-100',code:'AR4',name:'IPCC AR4 (2007) - GWP100',sourceStandard:'IPCC AR4 第四次评估报告',horizon:'100年',effectiveDate:'2008-01-01',expireDate:'2015-05-31',enabled:false,status:'停用',description:'用于历史核算项目追溯的 AR4 GWP 参数版本。'}
+];
+const fallbackGas = [
+  ['CO₂','二氧化碳','CO₂',{AR6:1,AR5:1,AR4:1}],['CH₄','甲烷','CH₄',{AR6:27.2,AR5:28,AR4:25}],['N₂O','一氧化二氮','N₂O',{AR6:273,AR5:265,AR4:298}],['HFC-134a','HFC-134a','CH₂FCF₃',{AR6:1530,AR5:1300,AR4:1430}],['R410A','R410A 制冷剂','R410A',{AR6:2256,AR5:1924,AR4:2088}],['NF₃','三氟化氮','NF₃',{AR6:17400,AR5:16100,AR4:17200}],['SF₆','六氟化硫','SF₆',{AR6:25200,AR5:23500,AR4:22800}]
+];
+const fallbackParams = fallbackVersions.flatMap(v => fallbackGas.map(g => ({id:`${v.id}-${g[0]}`,versionId:v.id,versionCode:v.code,gas:g[0],gasName:g[1],formula:g[2],horizon:'100年',value:g[3][v.code],enabled:true,status:'启用',refs:Math.floor(Math.random()*20)+1,source:v.sourceStandard})));
+function html(v){return String(v ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function enabledOf(item){return item?.enabled === true || item?.status === '启用';}
+function isParamActuallyEnabled(p = {}) {return enabledOf(p) && enabledOf(getVersion(p.versionId));}
+function paramStatusBadge(p = {}) {
+  const version = getVersion(p.versionId);
+  const versionEnabled = enabledOf(version);
+  const paramEnabled = enabledOf(p);
+  if (!versionEnabled) {
+    return `<span class="inline-flex items-center gap-1 bg-slate-100 text-slate-500 border-slate-200 px-2.5 py-0.5 rounded-full text-xs font-medium border"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>随版本停用</span>`;
+  }
+  return statusBadge(paramEnabled);
+}
+function valueOf(p){const v = p?.displayValue ?? p?.value ?? '';return typeof v === 'number' ? v.toLocaleString('zh-CN',{maximumFractionDigits:2}) : String(v);}
+function numericValue(p){return Number(String(p?.value ?? p?.displayValue ?? '0').replace(/,/g,'')) || 0;}
+function statusBadge(enabled){return `<span class="inline-flex items-center gap-1 ${enabled ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'} px-2.5 py-0.5 rounded-full text-xs font-medium border"><span class="w-1.5 h-1.5 rounded-full ${enabled ? 'bg-emerald-500' : 'bg-slate-400'}"></span>${enabled ? '启用' : '停用'}</span>`;}
+function uniqueBy(arr, fn){const m=new Map();arr.forEach(x=>{const k=fn(x);if(!m.has(k))m.set(k,x)});return [...m.values()];}
+function uniqueParams(params){return uniqueBy(params, p => `${p.versionId}|${p.horizon||'100年'}|${String(p.gas||p.formula||p.gasName||'').toUpperCase()}`);}
+function uniqueValues(values){return [...new Set(values.filter(Boolean))];}
+function getVersion(id){return gwpVersions.find(v=>String(v.id)===String(id));}
+function versionParams(id, horizon=''){return uniqueParams(gwpParameters.filter(p=>String(p.versionId)===String(id)).filter(p=>!horizon || (p.horizon||'100年')===horizon));}
+function activeVersion(){return gwpVersions.find(enabledOf) || null;}
+function getShort(v){return v?.shortName || v?.code || String(v?.name||'').replace(/\s*-\s*GWP\d+/,'').replace(/ \(.+?\)/,'');}
+function getDisplayName(v){
+  if(!v) return '-';
+  const name = String(v.name || '');
+  const code = String(v.code || getShort(v) || '').toUpperCase();
+  const year = (name.match(/\((\d{4})\)/) || [])[1] || '';
+  const horizon = String(v.horizon || '').replace('年','');
+  if(code && year && horizon) return `IPCC ${code} (${year}) · GWP${horizon}`;
+  if(code && year) return `IPCC ${code} (${year})`;
+  if(code && horizon) return `IPCC ${code} · GWP${horizon}`;
+  return name.replace(/\s*-\s*GWP\d+/,'') || code || '-';
+}
+function getLogActionClass(action=''){
+  const text = String(action || '');
+  if(text.includes('启用')) return 'bg-emerald-50 text-emerald-700 border-emerald-100';
+  if(text.includes('停用') || text.includes('删除')) return 'bg-rose-50 text-rose-700 border-rose-100';
+  if(text.includes('编辑')) return 'bg-amber-50 text-amber-700 border-amber-100';
+  if(text.includes('新增') || text.includes('发布')) return 'bg-blue-50 text-primary border-blue-100';
+  if(text.includes('对比')) return 'bg-violet-50 text-violet-700 border-violet-100';
+  return 'bg-slate-100 text-slate-600 border-slate-200';
+}
+function shortLogVersion(value=''){
+  return String(value || '').replace(/IPCC\s*/g,'').replace(/\s*-\s*GWP100/g,'').replace(/\(2021\)/g,'').replace(/\(2014\)/g,'').replace(/\(2007\)/g,'').trim() || '-';
+}
+function normalize(){
+  const versionsRaw = (Mock.getGwpVersions?.() || Mock.GwpVersions || fallbackVersions);
+  const paramsRaw = (Mock.getGwpParameters?.() || Mock.GwpParameters || fallbackParams);
+  gwpVersions = versionsRaw.map(v=>({id:v.id, code:v.code || v.versionCode || '', name:v.name, shortName:v.shortName || v.code || v.name, standard:v.sourceStandard || v.standard || v.reportName || '', enabled:enabledOf(v), status:enabledOf(v)?'启用':'停用', start:v.effectiveDate || v.start || '', end:v.expireDate || v.end || '长期有效', desc:v.description || v.desc || ''}));
+  gwpParameters = uniqueParams(paramsRaw.map(p=>({id:p.id, versionId:p.versionId, versionCode:p.versionCode, gas:p.gas || p.formula, gasName:p.gasName || p.name || p.gas, name:p.gasName || p.name || p.gas, formula:p.formula || p.gas, horizon:p.horizon || '100年', value:numericValue(p), displayValue:valueOf(p), enabled:enabledOf(p), status:enabledOf(p)?'启用':'停用', refs:p.refs || 0, source:p.source || '', description:p.description || ''})));
+  gwpLogs = (Mock.getGwpOperationLogs?.() || Mock.GwpOperationLogs || [
+    {id:'gwp-log-1',time:'2026-07-07 09:30:00',action:'启用版本',content:'启用 IPCC AR6 GWP100，并自动停用其他版本',target:'IPCC AR6',version:'AR6',operator:'管理员',result:'成功',ip:'192.168.1.100'},
+    {id:'gwp-log-2',time:'2026-07-07 09:10:00',action:'版本对比',content:'对比 IPCC AR6 与 IPCC AR5',target:'GWP版本',version:'AR6/AR5',operator:'管理员',result:'成功',ip:'192.168.1.100'},
+    {id:'gwp-log-3',time:'2026-07-06 16:40:00',action:'编辑因子',content:'修改甲烷 GWP100 参数',target:'甲烷',version:'AR6',operator:'管理员',result:'成功',ip:'192.168.1.101'}
+  ]);
+  if(!selectedVersionId || !getVersion(selectedVersionId)) selectedVersionId = activeVersion()?.id || gwpVersions[0]?.id || '';
+  if(!paramFilters.versionId || !getVersion(paramFilters.versionId)) paramFilters.versionId = activeVersion()?.id || '';
+  const horizons = uniqueValues(gwpParameters.map(p=>p.horizon||'100年'));
+  if(!horizons.includes(paramFilters.horizon)) paramFilters.horizon = horizons[0] || '100年';
+  if(!compareState.sourceId) compareState.sourceId = activeVersion()?.id || gwpVersions[0]?.id || '';
+  if(!compareState.targetId) compareState.targetId = gwpVersions.find(v=>v.id!==compareState.sourceId)?.id || compareState.sourceId;
+  compareState.draftSourceId = compareState.draftSourceId || compareState.sourceId;
+  compareState.draftTargetId = compareState.draftTargetId || compareState.targetId;
+  compareState.draftHorizon = compareState.draftHorizon || paramFilters.horizon;
+}
+function addGwpLog(action, content, target = '', version = ''){const log={id:`gwp-log-${Date.now()}-${Math.random().toString(16).slice(2)}`,time:new Date().toLocaleString('zh-CN',{hour12:false}).replaceAll('/','-'),action,content,target,version,operator:'管理员',result:'成功',ip:'192.168.1.100'};if(Mock.addGwpOperationLog){Mock.addGwpOperationLog(log);}else{gwpLogs.unshift(log);}gwpLogs=(Mock.getGwpOperationLogs?.() || Mock.GwpOperationLogs || gwpLogs);return log;}
+function persistLog(log){if(log?.action){return addGwpLog(log.action,log.content||'',log.target||'',log.version||'');}}
+function showGwpHint(msg){document.querySelector('.toast')?.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}function notifyGwpLocation(pageName=''){try{window.parent?.postMessage({type:'gwp-location',pageName},'*');}catch(e){}}
+
+function renderStats(){
+  const enabledCount = gwpVersions.filter(enabledOf).length;
+  const allParams = uniqueParams(gwpParameters);
+  const gases = new Set(allParams.map(p=>p.gas||p.formula));
+  document.getElementById('version-stats').innerHTML = [
+    ['inventory_2','GWP版本总数',gwpVersions.length,'个','bg-blue-50 text-primary border-blue-100'],['heat_pump','温室气体种类',gases.size,'种','bg-slate-50 text-slate-600 border-slate-100'],['task_alt','启用版本',enabledCount,'个','bg-emerald-50 text-emerald-600 border-emerald-100'],['history_toggle_off','即将失效版本',gwpVersions.filter(v=>v.end&&v.end!=='长期有效').length,'个','bg-rose-50 text-error border-rose-100']
+  ].map(x=>`<div class="bg-white border border-outline-variant p-lg rounded-xl flex items-center gap-lg shadow-sm"><div class="w-12 h-12 ${x[4]} rounded-xl flex items-center justify-center border"><span class="material-symbols-outlined text-[26px]">${x[0]}</span></div><div><div class="text-on-surface-variant text-xs font-medium mb-0.5">${x[1]}</div><div class="flex items-baseline gap-0.5"><span class="text-2xl font-bold tracking-tight">${x[2]}</span><span class="text-xs text-on-surface-variant">${x[3]}</span></div></div></div>`).join('');
+}
+function renderVersionRows(){
+  document.getElementById('version-table-body').innerHTML = gwpVersions.map(v=>{const params=versionParams(v.id);const gasCount=new Set(params.map(p=>p.gas||p.formula)).size;return `<tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer ${v.id===selectedVersionId?'bg-blue-50/20':''}" onclick="selectVersion('${html(v.id)}')"><td class="px-6 py-4"><span class="${enabledOf(v)?'text-primary font-semibold':'text-slate-700 font-medium'}">${html(getDisplayName(v))}</span></td><td class="px-4 py-4 text-on-surface-variant" title="${html(v.name)}">${html(v.standard)}</td><td class="px-4 py-4 text-center">${statusBadge(enabledOf(v))}</td><td class="px-4 py-4 text-center font-medium">${gasCount}</td><td class="px-4 py-4 text-center font-medium">${params.length}</td><td class="px-6 py-4 text-right" onclick="event.stopPropagation()"><div class="flex justify-end items-center gap-3 relative"><button class="text-primary text-xs font-bold hover:underline" onclick="selectVersion('${html(v.id)}')">查看</button><button class="text-primary text-xs font-bold hover:underline" onclick="openModal('version-edit','${html(v.id)}')">编辑</button><button class="w-8 h-8 border border-outline-variant rounded-lg bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center" onclick="toggleDropdown('version-menu-${html(v.id)}')"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button><div class="dropdown-menu text-left" id="version-menu-${html(v.id)}"><button class="block w-full text-left px-4 py-2 text-xs hover:bg-slate-50" onclick="toggleVersionStatusById('${html(v.id)}')">${enabledOf(v)?'停用版本':'启用版本'}</button><button class="block w-full text-left px-4 py-2 text-xs hover:bg-slate-50" onclick="openGwpSubView('compare','${html(v.id)}')">版本对比</button><button class="block w-full text-left px-4 py-2 text-xs hover:bg-slate-50" onclick="openGwpSubView('log')">操作日志</button></div></div></td></tr>`}).join('');
+}
+function renderActiveVersionViews(){
+  const active = activeVersion(); const chartTitle=document.getElementById('chart-title'), bars=document.getElementById('chart-bars'), axis=document.getElementById('chart-axis'), preview=document.getElementById('preview-body');
+  if(!active){chartTitle.textContent='GWP 因子概览';axis.innerHTML='';bars.innerHTML=`<div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6"><div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center mb-3 border border-outline-variant"><span class="material-symbols-outlined text-[26px]">bar_chart_off</span></div><div class="text-sm font-bold text-slate-800">暂无启用的 GWP 版本</div><div class="text-xs text-on-surface-variant mt-1">请在版本列表中启用一个版本后查看图表。</div></div>`;preview.innerHTML=`<tr><td class="px-4 py-8 text-center text-on-surface-variant" colspan="3">暂无启用版本，因子明细暂不展示</td></tr>`;return;}
+  const params = versionParams(active.id,'100年').filter(isParamActuallyEnabled).slice(0,7); chartTitle.textContent=`GWP 因子概览 (${getDisplayName(active)})`; const max=Math.max(...params.map(numericValue),1); axis.innerHTML=`<span>${Math.ceil(max).toLocaleString('zh-CN')}</span><span>${Math.ceil(max*.66).toLocaleString('zh-CN')}</span><span>${Math.ceil(max*.33).toLocaleString('zh-CN')}</span><span>0</span>`; bars.innerHTML=params.map(p=>{const h=Math.max(2,Math.round(numericValue(p)/max*190));return `<div class="relative flex flex-col items-center justify-end flex-1 min-w-0 h-full"><span class="text-[10px] font-bold text-primary">${html(valueOf(p))}</span><div class="w-full max-w-[22px] bg-gradient-to-t from-blue-400 via-primary to-cyan-300 rounded-t shadow-[0_0_18px_rgba(24,144,255,0.28)] chart-bar-transition" style="height:${h}px"></div><span class="absolute -bottom-6 text-[11px] font-mono text-slate-600 truncate w-full text-center" title="${html(p.gasName)}">${html(p.gas)}</span></div>`}).join(''); preview.innerHTML=params.map(p=>`<tr><td class="px-4 py-2.5">${html(p.gasName)}</td><td class="px-4 py-2.5 font-mono text-slate-500">${html(p.formula)}</td><td class="px-4 py-2.5 text-right font-bold text-slate-700">${html(valueOf(p))}</td></tr>`).join('');
+}
+function renderParamFilters(){const vs=document.getElementById('param-version-filter'), hs=document.getElementById('param-horizon-filter');vs.innerHTML=gwpVersions.map(v=>`<option value="${html(v.id)}">${html(getDisplayName(v))}</option>`).join('');vs.value=paramFilters.versionId;const horizons=uniqueValues(gwpParameters.map(p=>p.horizon||'100年'));hs.innerHTML=horizons.map(h=>`<option>${html(h)}</option>`).join('');hs.value=paramFilters.horizon;document.getElementById('param-search-filter').value=paramFilters.keyword;}
+function renderParamRows(){const params=versionParams(paramFilters.versionId,paramFilters.horizon).filter(p=>`${p.gasName}${p.gas}${p.formula}`.toLowerCase().includes(paramFilters.keyword.toLowerCase()));document.getElementById('param-stats').innerHTML=[['涉及气体种类',new Set(params.map(p=>p.gas||p.formula)).size+' 种',''],['参数条目总数',params.length+' 条',''],['启用中参数',params.filter(isParamActuallyEnabled).length+' 条','text-emerald-600'],['停用参数',params.filter(p=>!isParamActuallyEnabled(p)).length+' 条','text-error'],['平均引用数',((params.reduce((s,p)=>s+(Number(String(p.refs).replace(/\D/g,''))||0),0)/(params.length||1)).toFixed(1))+' 次','']].map(x=>`<div class="bg-white border border-outline-variant p-lg rounded-xl flex flex-col gap-0.5 shadow-sm"><span class="text-on-surface-variant text-xs font-medium">${x[0]}</span><span class="text-2xl font-bold tracking-tight ${x[2]}">${x[1]}</span></div>`).join('');document.getElementById('param-table-body').innerHTML=params.length?params.map(p=>`<tr class="hover:bg-slate-50/80 transition-colors cursor-pointer ${p.id===selectedParamId?'bg-blue-50/20':''}" onclick="selectParam('${html(p.id)}')"><td class="px-6 py-4 font-medium text-slate-800">${html(p.gasName)}</td><td class="px-4 py-4 font-mono text-slate-500">${html(p.formula)}</td><td class="px-4 py-4 font-bold text-primary">${html(valueOf(p))}</td><td class="px-4 py-4 text-center">${paramStatusBadge(p)}</td><td class="px-4 py-4 text-center font-medium text-slate-600">${html(p.refs||0)}</td><td class="px-6 py-4 text-right" onclick="event.stopPropagation()"><div class="flex justify-end gap-4 items-center"><button class="text-primary text-xs font-bold hover:underline" onclick="selectParam('${html(p.id)}')">查看</button><button class="text-primary text-xs font-bold hover:underline" onclick="openModal('param-edit','${html(p.id)}')">编辑</button>${enabledOf(getVersion(p.versionId)) ? `<button class="text-primary text-xs font-bold hover:underline" onclick="toggleParamStatus('${html(p.id)}')">${enabledOf(p)?'停用':'启用'}</button>` : `<button class="text-slate-400 text-xs font-bold cursor-not-allowed" disabled>版本停用</button>`}</div></td></tr>`).join(''):`<tr><td class="px-6 py-10 text-center text-on-surface-variant" colspan="6">暂无参数数据</td></tr>`;}
+function selectVersion(id){selectedVersionId=id;selectedParamId='';const v=getVersion(id);if(!v)return;document.getElementById('aside-title').textContent='版本详情';document.getElementById('aside-empty-view').classList.add('hidden');document.getElementById('aside-version-view').classList.remove('hidden');document.getElementById('aside-param-view').classList.add('hidden');document.getElementById('dt-v-name').textContent=getDisplayName(v);document.getElementById('dt-v-name').title=v.name||'';document.getElementById('dt-v-std').textContent=v.standard;document.getElementById('dt-v-status').innerHTML=statusBadge(enabledOf(v));document.getElementById('dt-v-start').textContent=v.start||'-';document.getElementById('dt-v-end').textContent=v.end||'长期有效';const params=versionParams(v.id);document.getElementById('dt-v-gastype').textContent=new Set(params.map(p=>p.gas||p.formula)).size+' 种';document.getElementById('dt-v-factorcnt').textContent=params.length+' 条';document.getElementById('dt-v-desc').textContent=v.desc||'-';document.getElementById('aside-toggle-status').textContent=enabledOf(v)?'停用版本':'启用版本';
+const asideToggle=document.getElementById('aside-toggle-status');asideToggle.disabled=false;asideToggle.classList.remove('opacity-50','cursor-not-allowed');
+document.querySelector('#aside-actions button.bg-primary').textContent='编辑版本';renderVersionRows();}
+function selectParam(id){selectedParamId=id;selectedVersionId='';const p=gwpParameters.find(x=>String(x.id)===String(id));if(!p)return;const v=getVersion(p.versionId);document.getElementById('aside-title').textContent='参数详情';document.getElementById('aside-empty-view').classList.add('hidden');document.getElementById('aside-version-view').classList.add('hidden');document.getElementById('aside-param-view').classList.remove('hidden');document.getElementById('dt-p-version').textContent=v?getDisplayName(v):(p.versionCode||'-');document.getElementById('dt-p-name').textContent=p.gasName;document.getElementById('dt-p-formula').textContent=p.formula;document.getElementById('dt-p-value').textContent=valueOf(p);document.getElementById('dt-p-horizon').textContent=p.horizon;document.getElementById('dt-p-source').textContent=p.source||v?.standard||'-';document.getElementById('dt-p-status').innerHTML=paramStatusBadge(p);document.getElementById('dt-p-ref').textContent=(p.refs||0)+' 个';
+const versionEnabled=enabledOf(getVersion(p.versionId));const asideToggle=document.getElementById('aside-toggle-status');asideToggle.textContent=versionEnabled?(enabledOf(p)?'停用参数':'启用参数'):'版本已停用';asideToggle.disabled=!versionEnabled;asideToggle.classList.toggle('opacity-50',!versionEnabled);asideToggle.classList.toggle('cursor-not-allowed',!versionEnabled);
+document.querySelector('#aside-actions button.bg-primary').textContent='编辑参数';renderParamRows();}
+function closeAside(){document.getElementById('aside-empty-view').classList.remove('hidden');document.getElementById('aside-version-view').classList.add('hidden');document.getElementById('aside-param-view').classList.add('hidden');selectedVersionId='';selectedParamId='';}
+function switchTab(tab){currentTab=tab;notifyGwpLocation('');document.getElementById('gwp-tab-nav').classList.remove('hidden');document.getElementById('gwp-sub-nav').classList.add('hidden');document.getElementById('gwp-sub-nav').classList.remove('flex');document.getElementById('gwp-aside').classList.remove('hidden');document.getElementById('view-compare').classList.add('hidden');document.getElementById('view-log').classList.add('hidden');document.getElementById('view-version').classList.toggle('hidden',tab!=='version');document.getElementById('view-param').classList.toggle('hidden',tab!=='param');document.getElementById('tab-version-btn').classList.toggle('tab-active',tab==='version');document.getElementById('tab-param-btn').classList.toggle('tab-active',tab==='param');renderGwpData();}
+function renderGwpData(){normalize();renderStats();renderVersionRows();renderActiveVersionViews();renderParamFilters();renderParamRows();if(selectedVersionId)selectVersion(selectedVersionId);}
+function toggleVersionStatusById(id){const v=getVersion(id);if(!v)return;const next=!enabledOf(v);if(next){if(Mock.enableOnlyOneGwpVersion){Mock.enableOnlyOneGwpVersion(id);}else if(Mock.upsertGwpVersion){gwpVersions.forEach(item=>Mock.upsertGwpVersion?.({...item,enabled:item.id===id,status:item.id===id?'启用':'停用'}));}gwpVersions=gwpVersions.map(item=>({...item,enabled:item.id===id,status:item.id===id?'启用':'停用'}));addGwpLog('启用版本',`启用 ${v.name}，并自动停用其他版本`,v.name,getShort(v));showGwpHint('已启用该 GWP 版本，并自动停用其他版本');}else{if(Mock.upsertGwpVersion){Mock.upsertGwpVersion({...v,enabled:false,status:'停用'});}gwpVersions=gwpVersions.map(item=>item.id===id?{...item,enabled:false,status:'停用'}:item);addGwpLog('停用版本',`停用 ${v.name}`,v.name,getShort(v));showGwpHint('当前版本已停用；如没有启用版本，图表将显示占位');}selectedVersionId=id;document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'));renderStats();renderVersionRows();renderActiveVersionViews();renderParamFilters();renderParamRows();selectVersion(id);if(!document.getElementById('view-log')?.classList.contains('hidden'))renderLogView();}
+function toggleParamStatus(id){const p=gwpParameters.find(x=>String(x.id)===String(id));if(!p)return;const version=getVersion(p.versionId);if(!enabledOf(version)){showGwpHint('所属 GWP 版本已停用，不能单独切换参数状态');return;}const next=!enabledOf(p);if(Mock.upsertGwpParameter){Mock.upsertGwpParameter({...p,enabled:next,status:next?'启用':'停用'});}gwpParameters=gwpParameters.map(item=>String(item.id)===String(id)?{...item,enabled:next,status:next?'启用':'停用'}:item);addGwpLog(next?'启用参数':'停用参数',`${next?'启用':'停用'} ${p.gasName||p.gas} 参数`,p.gasName||p.gas,getShort(getVersion(p.versionId)));showGwpHint('参数状态已切换');renderStats();renderActiveVersionViews();renderParamRows();selectParam(id);}
+function toggleSelectedStatus(){if(selectedVersionId)toggleVersionStatusById(selectedVersionId);else if(selectedParamId)toggleParamStatus(selectedParamId);}
+function openCurrentEditModal(){if(selectedParamId)openModal('param-edit',selectedParamId);else openModal('version-edit',selectedVersionId);}
+function toggleDropdown(id){document.querySelectorAll('.dropdown-menu').forEach(d=>{if(d.id!==id)d.classList.remove('show')});document.getElementById(id)?.classList.toggle('show');}
+document.addEventListener('click',e=>{if(!e.target.closest('.dropdown-menu')&&!e.target.closest('[onclick^="toggleDropdown"]'))document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('show'))});
+function openGwpSubView(type, id=''){if(type==='compare'&&id){compareState.sourceId=id;compareState.targetId=gwpVersions.find(v=>v.id!==id)?.id||id;compareState.draftSourceId=compareState.sourceId;compareState.draftTargetId=compareState.targetId;}document.getElementById('gwp-tab-nav').classList.add('hidden');document.getElementById('gwp-sub-nav').classList.add('hidden');document.getElementById('gwp-sub-nav').classList.remove('flex');notifyGwpLocation(type==='compare'?'版本对比':'操作日志');document.getElementById('view-version').classList.add('hidden');document.getElementById('view-param').classList.add('hidden');document.getElementById('view-compare').classList.toggle('hidden',type!=='compare');document.getElementById('view-log').classList.toggle('hidden',type!=='log');document.getElementById('gwp-aside').classList.add('hidden');if(type==='compare')renderCompareView();if(type==='log')renderLogView();document.getElementById('main-content-scroll').scrollTop=0;}
+function showGwpMainView(){notifyGwpLocation('');document.getElementById('gwp-sub-nav').classList.add('hidden');document.getElementById('gwp-sub-nav').classList.remove('flex');document.getElementById('gwp-tab-nav').classList.remove('hidden');document.getElementById('view-compare').classList.add('hidden');document.getElementById('view-log').classList.add('hidden');document.getElementById('gwp-aside').classList.remove('hidden');switchTab('version');}
+function syncCompareSelections(){const ids=gwpVersions.map(v=>v.id);if(!ids.includes(compareState.sourceId))compareState.sourceId=ids[0]||'';if(!ids.includes(compareState.targetId)||compareState.targetId===compareState.sourceId)compareState.targetId=ids.find(id=>id!==compareState.sourceId)||compareState.sourceId;compareState.draftSourceId=compareState.draftSourceId||compareState.sourceId;compareState.draftTargetId=compareState.draftTargetId||compareState.targetId;}
+function applyCompare(){compareState.sourceId=document.getElementById('compare-source').value;compareState.targetId=document.getElementById('compare-target').value;compareState.horizon=document.getElementById('compare-horizon').value;addGwpLog('版本对比',`对比 ${getDisplayName(getVersion(compareState.sourceId))} 与 ${getDisplayName(getVersion(compareState.targetId))} 的 ${compareState.horizon}`, 'GWP版本',`${getShort(getVersion(compareState.sourceId))}/${getShort(getVersion(compareState.targetId))}`);renderCompareView();if(!document.getElementById('view-log')?.classList.contains('hidden'))renderLogView();}
+function renderCompareView(){syncCompareSelections();const horizons=uniqueValues(gwpParameters.map(p=>p.horizon||'100年'));document.getElementById('compare-source').innerHTML=gwpVersions.filter(v=>v.id!==compareState.targetId).map(v=>`<option value="${html(v.id)}">${html(getDisplayName(v))}</option>`).join('');document.getElementById('compare-target').innerHTML=gwpVersions.filter(v=>v.id!==compareState.sourceId).map(v=>`<option value="${html(v.id)}">${html(getDisplayName(v))}</option>`).join('');document.getElementById('compare-horizon').innerHTML=horizons.map(h=>`<option>${html(h)}</option>`).join('');document.getElementById('compare-source').value=compareState.sourceId;document.getElementById('compare-target').value=compareState.targetId;document.getElementById('compare-horizon').value=compareState.horizon;const s=getVersion(compareState.sourceId),t=getVersion(compareState.targetId),sp=versionParams(s?.id,compareState.horizon),tp=versionParams(t?.id,compareState.horizon);const sm=new Map(sp.map(p=>[`${p.gasName}|${p.formula}`,p])),tm=new Map(tp.map(p=>[`${p.gasName}|${p.formula}`,p]));const keys=uniqueValues([...sm.keys(),...tm.keys()]);const rows=keys.map(k=>{const l=sm.get(k),r=tm.get(k),b=l||r,delta=l&&r?numericValue(l)-numericValue(r):null,rate=l&&r&&numericValue(r)!==0?delta/numericValue(r)*100:null;return{base:b,left:l,right:r,delta,rate}});const added=rows.filter(r=>r.left&&!r.right).length,deleted=rows.filter(r=>!r.left&&r.right).length,changed=rows.filter(r=>r.left&&r.right&&r.delta!==0).length;const avg=rows.map(r=>Math.abs(r.rate)).filter(Number.isFinite);document.getElementById('compare-info').innerHTML=`<div class="grid grid-cols-3 gap-4 pb-4 border-b border-slate-100"><div><div class="text-slate-400 mb-1">因子库名称</div><div class="font-semibold text-slate-800">${html(getDisplayName(s))}</div></div><div><div class="text-slate-400 mb-1">当前版本</div><div class="font-semibold text-slate-800">${html(getShort(s)||'-')} <span class="ml-2 ${enabledOf(s)?'text-emerald-600 bg-emerald-50 border-emerald-100':'text-slate-500 bg-slate-100 border-slate-200'} border px-2 py-0.5 rounded">${enabledOf(s)?'当前生效':'停用'}</span></div></div><div><div class="text-slate-400 mb-1">发布时间</div><div class="font-semibold text-slate-800">${html(s?.start||'-')}</div></div></div><div class="grid grid-cols-3 gap-4 pt-1"><div><div class="text-slate-400 mb-1">对比版本名称</div><div class="font-semibold text-slate-800">${html(getDisplayName(t))}</div></div><div><div class="text-slate-400 mb-1">对比版本</div><div class="font-semibold text-slate-800">${html(getShort(t)||'-')} <span class="ml-2 ${enabledOf(t)?'text-emerald-600 bg-emerald-50 border-emerald-100':'text-slate-500 bg-slate-100 border-slate-200'} border px-2 py-0.5 rounded">${enabledOf(t)?'当前生效':'停用'}</span></div></div><div><div class="text-slate-400 mb-1">发布时间</div><div class="font-semibold text-slate-800">${html(t?.start||'-')}</div></div></div>`;document.getElementById('compare-stats').innerHTML=[['因子总数对比',`${sp.length} / ${tp.length}`],['新增因子',added],['删除因子',deleted],['数值变更因子',changed],['平均变更幅度',`${(avg.reduce((a,b)=>a+b,0)/(avg.length||1)).toFixed(2)}%`]].map((x,i)=>`<div class="bg-white rounded-lg p-4 shadow-sm border border-outline-variant ${i===0?'border-l-4 border-l-primary':''}"><div class="text-xs text-slate-400 mb-2">${x[0]}</div><div class="text-2xl font-bold text-slate-800">${x[1]}</div></div>`).join('');document.getElementById('compare-table-title').innerHTML=`<h3 class="text-sm font-bold text-slate-800">因子对比明细 <span class="text-xs font-normal text-slate-400">(共${rows.length}条)</span></h3>`;document.getElementById('compare-head').innerHTML=`<th class="py-2 px-3 font-medium">序号</th><th class="py-2 px-3 font-medium">气体名称</th><th class="py-2 px-3 font-medium">化学式</th><th class="py-2 px-3 font-medium">${html(compareState.horizon)}<br><span class="text-[10px] font-normal">(${html(getShort(s)||'基准')})</span></th><th class="py-2 px-3 font-medium">${html(compareState.horizon)}<br><span class="text-[10px] font-normal">(${html(getShort(t)||'对比')})</span></th><th class="py-2 px-3 font-medium">变化值</th><th class="py-2 px-3 font-medium">变化率</th><th class="py-2 px-3 font-medium">变化趋势</th>`;document.getElementById('compare-body').innerHTML=rows.map((r,i)=>{const deltaText=r.delta===null?(r.left?'新增':'删除'):`${r.delta>0?'+':''}${r.delta.toLocaleString('zh-CN',{maximumFractionDigits:2})}`;const rateText=Number.isFinite(r.rate)?`${r.rate>0?'+':''}${r.rate.toFixed(2)}%`:'-';const trend=r.delta===null?(r.left?'新增':'删除'):(r.delta>0?'上升':r.delta<0?'下降':'持平');const color=r.delta===null?'text-primary':r.delta>0?'text-error':r.delta<0?'text-emerald-600':'text-slate-500';return `<tr class="hover:bg-slate-50"><td class="py-3 px-3">${i+1}</td><td class="py-3 px-3">${html(r.base?.gasName)}</td><td class="py-3 px-3 font-mono">${html(r.base?.formula)}</td><td class="py-3 px-3">${r.left?html(valueOf(r.left)):'-'}</td><td class="py-3 px-3">${r.right?html(valueOf(r.right)):'-'}</td><td class="py-3 px-3 ${color}">${deltaText}</td><td class="py-3 px-3 ${color}">${rateText}</td><td class="py-3 px-3">${trend}</td></tr>`}).join('')||`<tr><td class="py-8 px-3 text-center text-on-surface-variant" colspan="8">当前筛选条件下暂无可对比因子</td></tr>`;const buckets=[['变化率 > 20%',rows.filter(r=>Number.isFinite(r.rate)&&r.rate>20).length],['-10% 至 10%',rows.filter(r=>!Number.isFinite(r.rate)||Math.abs(r.rate)<=10).length],['变化率 < -20%',rows.filter(r=>Number.isFinite(r.rate)&&r.rate<-20).length]];document.getElementById('compare-distribution').innerHTML=`<h3 class="text-sm font-bold text-slate-800 mb-5">变化率分布</h3><div class="w-36 h-36 mx-auto rounded-full border-[18px] border-primary border-t-error border-r-emerald-400 flex items-center justify-center"><div class="text-center"><div class="text-2xl font-bold">${rows.length}</div><div class="text-xs text-on-surface-variant">总因子数</div></div></div><div class="mt-6 space-y-2 text-xs text-on-surface-variant">${buckets.map(b=>`<div class="flex justify-between"><span>${b[0]}</span><span>${b[1]}</span></div>`).join('')}</div>`;}
+function renderLogPager(total, pages){
+  const pager=document.getElementById('log-pager'), totalNode=document.getElementById('log-total');
+  if(!pager)return;
+  const current=Math.min(Math.max(1,Number(logState.page)||1), Math.max(1,pages));
+  const pageSize=Number(logState.pageSize)||10;
+  const begin=total ? (current-1)*pageSize+1 : 0;
+  const finish=Math.min(total,current*pageSize);
+  if(totalNode) totalNode.textContent=`共 ${total} 条，当前 ${begin}-${finish} 条`;
+  const maxVisible=5;
+  let startPage=Math.max(1,current-Math.floor(maxVisible/2));
+  let endPage=Math.min(pages,startPage+maxVisible-1);
+  startPage=Math.max(1,endPage-maxVisible+1);
+  const nums=[]; for(let i=startPage;i<=endPage;i++) nums.push(i);
+  const btn=(label,page,active=false,disabled=false)=>`<button type="button" class="min-w-8 h-8 px-2 rounded border border-outline-variant ${active?'bg-primary text-white':'bg-white hover:bg-slate-50'} disabled:opacity-40 disabled:cursor-not-allowed" ${disabled?'disabled':''} onclick="changeLogPage(${page})">${label}</button>`;
+  pager.innerHTML=`
+    ${btn('‹',current-1,false,current<=1)}
+    ${startPage>1?`${btn('1',1)}${startPage>2?'<span class="px-1 text-slate-400 leading-8">...</span>':''}`:''}
+    ${nums.map(p=>btn(p,p,p===current)).join('')}
+    ${endPage<pages?`${endPage<pages-1?'<span class="px-1 text-slate-400 leading-8">...</span>':''}${btn(pages,pages)}`:''}
+    ${btn('›',current+1,false,current>=pages)}
+    <select class="pager-size-select ml-2 h-8 rounded border border-outline-variant bg-white pl-3 pr-10 text-xs" onchange="changeLogPageSize(this.value)">
+      <option value="5" ${pageSize===5?'selected':''}>5 条/页</option>
+      <option value="10" ${pageSize===10?'selected':''}>10 条/页</option>
+      <option value="20" ${pageSize===20?'selected':''}>20 条/页</option>
+      <option value="50" ${pageSize===50?'selected':''}>50 条/页</option>
+    </select>`;
+}
+function changeLogPage(page){
+  const total=getCurrentLogs().filter(l=>(!logState.keyword||`${l.action||''}${l.content||''}${l.target||''}${l.version||''}${l.operator||''}`.includes(logState.keyword))&&(!logState.action||logState.action==='全部操作'||l.action===logState.action)&&(!logState.operator||logState.operator==='全部操作人'||l.operator===logState.operator)&&(!logState.startDate||String(l.time||'').slice(0,10)>=logState.startDate)&&(!logState.endDate||String(l.time||'').slice(0,10)<=logState.endDate)).length;
+  const pages=Math.max(1,Math.ceil(total/(Number(logState.pageSize)||10)));
+  logState.page=Math.min(Math.max(1,Number(page)||1),pages);
+  renderLogView();
+}
+function changeLogPageSize(size){
+  logState.pageSize=Number(size)||10;
+  logState.page=1;
+  renderLogView();
+}
+function normalizeGwpLog(log = {}, index = 0) {
+  const target = log.target || log.factorName || log.versionName || log.objectName || log.object || log.name || '';
+  const version = log.version || log.versionCode || log.versionName || log.gwpVersion || log.gwpVersionCode || '';
+  return {
+    id: log.id || log.logId || `gwp-log-local-${index}`,
+    time: log.time || log.operationTime || log.createdAt || log.createTime || log.updatedAt || log.updateTime || '',
+    action: log.action || log.operationType || log.type || log.operation || '操作',
+    content: log.content || log.operationContent || log.detail || log.description || log.remark || '',
+    target,
+    version,
+    operator: log.operator || log.operatorName || log.userName || log.user || log.createdBy || log.createBy || '管理员',
+    result: log.result || log.status || '成功',
+    ip: log.ip || log.operationIp || log.ipAddress || log.clientIp || '-'
+  };
+}
+
+function readStoredGwpLogs() {
+  try {
+    const key = Mock.STORAGE_KEY || 'carbon-accounting-mock-state-v7-boundary-source-model-match';
+    const saved = JSON.parse(localStorage.getItem(key) || '{}');
+    return saved.GwpOperationLogs || saved.gwpOperationLogs || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getCurrentLogs() {
+  let rows = [];
+  try {
+    if (Mock.getGwpOperationLogs) rows = Mock.getGwpOperationLogs() || [];
+  } catch (error) {
+    rows = [];
+  }
+  if (!rows.length && Array.isArray(Mock.GwpOperationLogs)) rows = Mock.GwpOperationLogs;
+  if (!rows.length) rows = readStoredGwpLogs();
+  if (!rows.length) rows = gwpLogs || [];
+  return (rows || [])
+    .map(normalizeGwpLog)
+    .sort((a, b) => String(b.time || '').localeCompare(String(a.time || '')));
+}
+function getParamDisplayStatus(param = {}) {
+  const version = getVersion(param.versionId);
+  const versionEnabled = enabledOf(version);
+  const paramEnabled = enabledOf(param);
+
+  if (!versionEnabled) {
+    return {
+      label: "随版本停用",
+      enabled: false,
+      className: "bg-slate-100 text-slate-500 border-slate-200"
+    };
+  }
+
+  if (!paramEnabled) {
+    return {
+      label: "停用",
+      enabled: false,
+      className: "bg-slate-100 text-slate-500 border-slate-200"
+    };
+  }
+
+  return {
+    label: "启用",
+    enabled: true,
+    className: "bg-emerald-50 text-emerald-600 border-emerald-100"
+  };
+}
+function renderLogView(){
+  gwpLogs=getCurrentLogs();
+  const actions=['全部操作',...uniqueValues(gwpLogs.map(l=>l.action))];
+  const ops=['全部操作人',...uniqueValues(gwpLogs.map(l=>l.operator))];
+  const actionSelect=document.querySelector('[data-log-filter="action"]');
+  const operatorSelect=document.querySelector('[data-log-filter="operator"]');
+  actionSelect.innerHTML=actions.map(a=>`<option>${html(a)}</option>`).join('');
+  operatorSelect.innerHTML=ops.map(o=>`<option>${html(o)}</option>`).join('');
+  document.querySelector('[data-log-filter="keyword"]').value=logState.keyword;
+  actionSelect.value=logState.action||'全部操作';
+  operatorSelect.value=logState.operator||'全部操作人';
+  document.querySelector('[data-log-filter="startDate"]').value=logState.startDate;
+  document.querySelector('[data-log-filter="endDate"]').value=logState.endDate;
+
+  let rows=gwpLogs.filter(l=>
+    (!logState.keyword||`${l.action||''}${l.content||''}${l.target||''}${l.version||''}${l.operator||''}`.includes(logState.keyword)) &&
+    (!logState.action||logState.action==='全部操作'||l.action===logState.action) &&
+    (!logState.operator||logState.operator==='全部操作人'||l.operator===logState.operator) &&
+    (!logState.startDate||String(l.time||'').slice(0,10)>=logState.startDate) &&
+    (!logState.endDate||String(l.time||'').slice(0,10)<=logState.endDate)
+  );
+  const total=rows.length;
+  const pages=Math.max(1,Math.ceil(total/(Number(logState.pageSize)||10)));
+  logState.page=Math.min(Math.max(1,Number(logState.page)||1),pages);
+  const start=(logState.page-1)*(Number(logState.pageSize)||10);
+  rows=rows.slice(start,start+(Number(logState.pageSize)||10));
+  document.getElementById('log-body').innerHTML=rows.length?rows.map((l,i)=>{
+    const actionClass=getLogActionClass(l.action);
+    const versionText=shortLogVersion(l.version);
+    return `<tr class="hover:bg-slate-50/80 transition-colors">
+      <td class="px-4 py-3 text-slate-400">${start+i+1}</td>
+      <td class="px-4 py-3 whitespace-nowrap text-slate-600">${html(l.time||'-')}</td>
+      <td class="px-4 py-3 whitespace-nowrap"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full border text-xs font-semibold ${actionClass}">${html(l.action||'-')}</span></td>
+      <td class="px-4 py-3"><div class="max-w-[360px] truncate text-slate-700" title="${html(l.content||'-')}">${html(l.content||'-')}</div></td>
+      <td class="px-4 py-3 whitespace-nowrap text-slate-700">${html(l.target||'-')}</td>
+      <td class="px-4 py-3 whitespace-nowrap font-mono text-slate-600">${html(versionText)}</td>
+      <td class="px-4 py-3 whitespace-nowrap">${html(l.operator||'-')}</td>
+      <td class="px-4 py-3 whitespace-nowrap"><span class="text-emerald-600 font-medium">${html(l.result||'成功')}</span></td>
+      <td class="px-4 py-3 whitespace-nowrap text-slate-400">${html(l.ip||'-')}</td>
+    </tr>`;
+  }).join(''):`<tr><td class="px-4 py-10 text-center text-on-surface-variant" colspan="9">当前筛选条件下暂无操作日志</td></tr>`;
+  renderLogPager(total,pages);
+}
+function applyLogFilters(){logState.keyword=document.querySelector('[data-log-filter="keyword"]').value.trim();logState.action=document.querySelector('[data-log-filter="action"]').value;logState.operator=document.querySelector('[data-log-filter="operator"]').value;logState.startDate=document.querySelector('[data-log-filter="startDate"]').value;logState.endDate=document.querySelector('[data-log-filter="endDate"]').value;logState.page=1;renderLogView();}
+function resetLogFilters(){Object.assign(logState,{keyword:'',action:'',operator:'',startDate:'',endDate:'',page:1});renderLogView();}
+function openModal(type,id=''){currentModalMode=type;currentEditId=id;document.getElementById('modal-container').classList.remove('hidden');document.querySelectorAll('#modal-container > div').forEach(d=>d.classList.add('hidden'));if(type.startsWith('version')){document.getElementById('modal-version-form').classList.remove('hidden');document.getElementById('form-title').textContent=type==='version-edit'?'编辑GWP标准':'新增GWP标准';const v=getVersion(id)||{};document.getElementById('modal-version-name').value=v.name||'';document.getElementById('modal-version-standard').value=v.sourceStandard||v.standard||'IPCC AR6 第六次报告';document.getElementById('modal-version-start').value=v.effectiveDate||v.start||today();setModalVersionSwitch(type==='version-edit'?enabledOf(v):true);document.getElementById('modal-version-desc').value=v.description||v.desc||'';}else if(type.startsWith('param')){document.getElementById('modal-param-form').classList.remove('hidden');document.getElementById('param-form-title').textContent=type==='param-edit'?'编辑温室气体参数':'新增温室气体参数';document.getElementById('modal-param-version').innerHTML=gwpVersions.map(v=>`<option value="${html(v.id)}">${html(getDisplayName(v))}</option>`).join('');const p=gwpParameters.find(x=>String(x.id)===String(id))||{};const v=getVersion(p.versionId)||activeVersion()||gwpVersions[0]||{};document.getElementById('modal-param-version').value=p.versionId||paramFilters.versionId||v.id||'';document.getElementById('modal-param-name').value=p.gasName||'';document.getElementById('modal-param-formula').value=p.formula||'';document.getElementById('modal-param-value').value=p.value||'';document.getElementById('modal-param-horizon').value=p.horizon||'100年';document.getElementById('modal-param-standard').value=p.sourceStandard||v.sourceStandard||v.name||'';document.getElementById('modal-param-start').value=p.effectiveDate||v.effectiveDate||today();document.getElementById('modal-param-end').value=p.expireDate||v.expireDate||'';document.getElementById('modal-param-enabled').value=enabledOf(p)?'true':'false';document.getElementById('modal-param-desc').value=p.description||'';}else if(type==='ref-list'){document.getElementById('modal-ref-list').classList.remove('hidden');}}
+function closeModal(){document.getElementById('modal-container').classList.add('hidden');}
+function setModalVersionSwitch(enabled){const hidden=document.getElementById('modal-version-enabled'),sw=document.getElementById('modal-version-switch'),dot=document.getElementById('modal-version-switch-dot'),label=document.getElementById('modal-version-switch-label');if(hidden)hidden.value=enabled?'true':'false';if(sw){sw.classList.toggle('bg-primary',enabled);sw.classList.toggle('bg-slate-300',!enabled);}if(dot){dot.classList.toggle('right-0.5',enabled);dot.classList.toggle('left-0.5',!enabled);}if(label)label.textContent=enabled?'默认启用':'默认停用';}
+function toggleModalVersionSwitch(){const hidden=document.getElementById('modal-version-enabled');setModalVersionSwitch(!(hidden?.value==='true'));}
+function saveVersionModal(){const id=currentEditId||`gwp-${Date.now()}`;const enabled=document.getElementById('modal-version-enabled').value==='true';const name=document.getElementById('modal-version-name').value.trim()||'新建GWP版本';const item={id,name,code:name.match(/AR\d+/i)?.[0]?.toUpperCase()||name,shortName:name.match(/AR\d+/i)?.[0]?.toUpperCase()||name,sourceStandard:document.getElementById('modal-version-standard').value||'',effectiveDate:document.getElementById('modal-version-start').value||'',description:document.getElementById('modal-version-desc').value||'',horizon:'100年',enabled,status:enabled?'启用':'停用'};if(enabled&&Mock.enableOnlyOneGwpVersion){Mock.upsertGwpVersion?.({...item,enabled:false,status:'停用'});Mock.enableOnlyOneGwpVersion(id);}else{Mock.upsertGwpVersion?.(item);}persistLog({id:'gwp-log-'+Date.now(),time:new Date().toLocaleString('zh-CN',{hour12:false}).replaceAll('/','-'),action:currentModalMode==='version-edit'?'编辑版本':'发布新版本',content:`${currentModalMode==='version-edit'?'编辑':'发布'} ${item.name}`,target:item.name,version:getShort(item),operator:'管理员',result:'成功',ip:'192.168.1.100'});closeModal();renderGwpData();}
+function saveParamModal(){const id=currentEditId||`gwp-param-${Date.now()}`;const v=getVersion(document.getElementById('modal-param-version').value);const enabled=document.getElementById('modal-param-enabled').value==='true';const formula=document.getElementById('modal-param-formula').value.trim();const name=document.getElementById('modal-param-name').value.trim();const item={id,versionId:v?.id,versionCode:v?.code,versionName:v?.name,gas:formula||name,gasName:name,formula,horizon:document.getElementById('modal-param-horizon').value,value:Number(document.getElementById('modal-param-value').value),sourceStandard:document.getElementById('modal-param-standard').value||v?.sourceStandard||'',effectiveDate:document.getElementById('modal-param-start').value||v?.effectiveDate||'',expireDate:document.getElementById('modal-param-end').value||'',enabled,status:enabled?'启用':'停用',description:document.getElementById('modal-param-desc').value,refs:0,referenceCount:0};Mock.upsertGwpParameter?.(item);persistLog({id:'gwp-log-'+Date.now(),time:new Date().toLocaleString('zh-CN',{hour12:false}).replaceAll('/','-'),action:currentModalMode==='param-edit'?'编辑因子':'新增因子',content:`${currentModalMode==='param-edit'?'编辑':'新增'} ${item.gasName}`,target:item.gasName,version:getShort(v),operator:'管理员',result:'成功',ip:'192.168.1.100'});closeModal();renderGwpData();}
+document.addEventListener('DOMContentLoaded',()=>{notifyGwpLocation('');normalize();renderGwpData();selectVersion(selectedVersionId);document.getElementById('param-version-filter').addEventListener('change',e=>{paramFilters.versionId=e.target.value;renderParamRows();});document.getElementById('param-horizon-filter').addEventListener('change',e=>{paramFilters.horizon=e.target.value;renderParamRows();});document.getElementById('param-search-filter').addEventListener('input',e=>{paramFilters.keyword=e.target.value;renderParamRows();});});
+</script>
+</body>
+</html>

@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<base href="./">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>碳核算管理平台 - 因子库管理</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Chart.js for the trend chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "inverse-on-surface": "#eff1f4",
+            "tertiary-container": "#b95a00",
+            "secondary-fixed": "#d1e4ff",
+            "surface-tint": "#005fae",
+            "on-tertiary-fixed": "#311300",
+            "background": "#f7f9fc",
+            "surface-container-high": "#e6e8eb",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#001c3a",
+            "on-primary-container": "#fefcff",
+            "on-primary-fixed-variant": "#004785",
+            "on-secondary-container": "#51647c",
+            "surface-variant": "#e0e3e6",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#35485e",
+            "surface": "#f7f9fc",
+            "primary-container": "#0075d5",
+            "on-surface": "#191c1e",
+            "on-secondary-fixed": "#071d31",
+            "on-tertiary-container": "#fffbff",
+            "on-background": "#191c1e",
+            "error": "#ba1a1a",
+            "on-error-container": "#93000a",
+            "surface-dim": "#d8dadd",
+            "secondary": "#4d6077",
+            "surface-container-highest": "#e0e3e6",
+            "primary-fixed": "#d4e3ff",
+            "outline": "#707785",
+            "secondary-fixed-dim": "#b4c8e3",
+            "on-surface-variant": "#404753",
+            "inverse-primary": "#a5c8ff",
+            "tertiary": "#934600",
+            "on-error": "#ffffff",
+            "primary-fixed-dim": "#a5c8ff",
+            "outline-variant": "#c0c7d6",
+            "inverse-surface": "#2d3133",
+            "tertiary-fixed": "#ffdbc7",
+            "primary": "#005daa",
+            "tertiary-fixed-dim": "#ffb688",
+            "surface-bright": "#f7f9fc",
+            "surface-container-low": "#f2f4f7",
+            "on-tertiary-fixed-variant": "#733600",
+            "on-primary": "#ffffff",
+            "surface-container": "#eceef1",
+            "secondary-container": "#cde1fd"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "base": "8px",
+            "md": "16px",
+            "grid-gutter": "16px",
+            "sm": "12px",
+            "xl": "32px",
+            "container-margin": "24px",
+            "sidebar-width": "240px",
+            "lg": "24px",
+            "xs": "4px"
+          },
+          "fontFamily": {
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-md-mobile": ["Inter"],
+            "display-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "title-lg": ["Inter"],
+            "label-sm": ["Inter"]
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="layout">
+    body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #f7f9fc; }
+    
+    .tree-item-active { background-color: #e6f7ff; color: #005daa; border-right: 3px solid #005daa; }
+    .sidebar-item-active { color: #005daa; background-color: #e6f7ff; border-right: 3px solid #005daa; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+    .modal-backdrop { background-color: rgba(0, 0, 0, 0.45); }
+    .tab-btn { transition: all 0.2s; }
+    .table-fixed-header th {
+      position: sticky;
+      top: 0;
+      background: #fafafa;
+      z-index: 10;
+    }
+    .factor-data-table {
+      table-layout: auto;
+      min-width: 920px;
+    }
+    .factor-data-table th,
+    .factor-data-table td {
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    .factor-data-table th:first-child,
+    .factor-data-table td:first-child {
+      min-width: 190px;
+    }
+    .factor-data-table .action-cell {
+      min-width: 128px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .required-star {
+      color: #ef4444;
+      margin-left: 2px;
+      font-weight: 600;
+    }
+    .tree-toggle .tree-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tree-filter-active {
+      background-color: #e6f7ff;
+      color: #005daa;
+      border-right: 3px solid #005daa;
+    }
+    .factor-tree-button {
+      min-height: 34px;
+    }
+    .factor-tree-leaf {
+      min-height: 32px;
+    }
+    .factor-tree-empty {
+      padding: 8px 16px 8px 40px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+  </style>
+
+
+<style data-integrated-cleanup>
+  html,
+  body {
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    background: #f7f9fc !important;
+  }
+
+  body.module-body {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  body > aside:first-of-type,
+  body > header:first-of-type,
+  body > nav:first-of-type {
+    display: none !important;
+  }
+
+  body.module-body > .flex,
+  body.module-body > div[class*="flex"] {
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+  }
+
+  main {
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  main[class*="ml-"],
+  main[class*="pt-"] {
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  main > .flex-1,
+  main > section.flex-1,
+  main > div.flex-1,
+  main > div[class*="overflow-hidden"],
+  main > section[class*="overflow-hidden"],
+  main > div[class*="h-[calc"],
+  main > section[class*="h-[calc"] {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  main > div:last-child,
+  main > section:last-child {
+    min-height: 0 !important;
+  }
+
+  .integrated-module-shell {
+    min-height: 100vh;
+    background: #f7f9fc;
+  }
+</style>
+<script src="./shared-mock-data.js"></script>
+</head>
+<body class="h-screen bg-surface module-body">
+
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+
+
+<main class="flex-1 overflow-hidden flex flex-col p-4 gap-4">
+<!-- BEGIN: Dashboard Statistics -->
+<section class="grid grid-cols-6 gap-4">
+<div class="bg-white p-4 rounded shadow-sm flex items-center gap-4 bg-surface-container-lowest">
+<div class="w-10 h-10 bg-blue-50 text-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-xl">analytics</span>
+</div>
+<div>
+<div class="text-gray-500 text-xs">因子总数</div>
+<div class="text-lg font-semibold flex items-baseline gap-1">
+              0 <span class="text-gray-400 text-xs font-normal">条</span>
+</div>
+</div>
+</div>
+<div class="bg-white p-4 rounded shadow-sm flex items-center gap-4 bg-surface-container-lowest">
+<div class="w-10 h-10 bg-green-50 text-green-600 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</div>
+<div>
+<div class="text-gray-500 text-xs">启用因子</div>
+<div class="text-lg font-semibold flex items-baseline gap-1">
+              0 <span class="text-gray-400 text-xs font-normal">条</span>
+</div>
+</div>
+</div>
+<div class="bg-white p-4 rounded shadow-sm flex items-center gap-4 bg-surface-container-lowest">
+<div class="w-10 h-10 bg-orange-50 text-orange-600 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-xl">edit_square</span>
+</div>
+<div>
+<div class="text-gray-500 text-xs">自定义因子</div>
+<div class="text-lg font-semibold flex items-baseline gap-1">
+              0 <span class="text-gray-400 text-xs font-normal">条</span>
+</div>
+</div>
+</div>
+<div class="bg-white p-4 rounded shadow-sm flex items-center gap-4 bg-surface-container-lowest">
+<div class="w-10 h-10 bg-purple-50 text-purple-600 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-xl">public</span>
+</div>
+<div>
+<div class="text-gray-500 text-xs">覆盖范围</div>
+<div class="text-lg font-semibold">0 <span class="text-gray-400 text-xs font-normal">项</span></div>
+</div>
+</div>
+<div class="bg-white p-4 rounded shadow-sm flex items-center gap-4 bg-surface-container-lowest">
+<div class="w-10 h-10 bg-indigo-50 text-indigo-600 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-xl">event</span>
+</div>
+<div>
+<div class="text-gray-500 text-xs">最新年份</div>
+<div class="text-lg font-semibold">-</div>
+</div>
+</div>
+<div class="bg-white p-4 rounded shadow-sm flex items-center gap-4 bg-surface-container-lowest">
+<div class="w-10 h-10 bg-teal-50 text-teal-600 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-xl">database</span>
+</div>
+<div>
+<div class="text-gray-500 text-xs">数据来源</div>
+<div class="text-lg font-semibold">0 <span class="text-gray-400 text-xs font-normal">来源</span></div>
+</div>
+</div>
+</section>
+<!-- END: Dashboard Statistics -->
+<!-- BEGIN: Main Workspace -->
+<div class="flex-1 overflow-hidden flex gap-4">
+<!-- BEGIN: Global Classification Sidebar -->
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0" data-purpose="classification-sidebar">
+<div class="p-4 border-b border-gray-100">
+<h2 class="text-base font-semibold mb-3">因子分类</h2>
+<div class="flex items-center space-x-2">
+<div class="relative flex-1"><span class="material-symbols-outlined absolute left-2 top-1.5 text-gray-400 text-sm">search</span><input class="w-full text-xs border-gray-200 rounded pl-8 py-1.5 focus:ring-primary focus:border-primary" placeholder="搜索分类名称" type="text"/></div>
+<button class="p-1.5 border border-gray-200 rounded hover:bg-gray-50 text-gray-500" title="新增分类"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto custom-scrollbar py-2 space-y-0.5" id="global-sidebar-tree">
+<div class="px-4 py-3 text-xs text-gray-400">正在读取排放源因子目录...</div>
+</nav>
+</aside>
+<!-- END: Left Sub-Sidebar -->
+<div class="flex-1 bg-white rounded shadow-sm flex flex-col overflow-hidden" id="list-container">
+<div class="border-b border-gray-200 px-6 flex items-center space-x-8 shrink-0">
+<button class="tab-btn py-3 px-1 text-primary font-medium border-b-2 border-primary" data-tab="factor">因子列表</button>
+<button class="tab-btn py-3 px-1 text-gray-500 hover:text-primary border-b-2 border-transparent" data-tab="group">因子组列表</button>
+</div>
+<div class="flex-1 flex flex-col overflow-hidden" id="factor-list-view">
+<div class="p-6 bg-white shrink-0"><div class="flex items-center gap-4 overflow-x-auto whitespace-nowrap custom-scrollbar"><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">气体</label><select class="w-28 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="factor-search-gas"><option>全部</option><option>CO₂</option><option>CH₄</option><option>N₂O</option><option>R410A</option></select></div><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">标准</label><select class="w-40 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="factor-search-standard"></select></div><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">活动类型</label><select class="w-40 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="factor-search-activity-type"></select></div><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">状态</label><select class="w-28 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="factor-search-status"><option>全部</option><option>当前版本</option><option>历史版本</option><option>待生效</option><option>停用</option></select></div><div class="flex items-center space-x-2 ml-auto shrink-0"><button class="px-4 py-1.5 border border-gray-200 rounded text-gray-600 hover:bg-gray-50" id="factor-reset-btn" type="button">重置</button><button class="px-4 py-1.5 bg-primary text-white rounded hover:opacity-90" id="factor-search-btn" type="button">查询</button><button class="px-4 py-1.5 bg-primary text-white rounded hover:opacity-90 flex items-center" id="add-factor-btn"><span class="material-symbols-outlined text-sm mr-1">add</span>新增因子</button></div></div></div>
+<div class="flex-1 overflow-auto px-6 custom-scrollbar"><table class="factor-data-table w-full text-left border-collapse table-fixed-header"><thead class="text-gray-600 font-medium border-b border-gray-100"><tr><th class="py-3 px-4">因子名称</th><th class="py-3 px-4">编码</th><th class="py-3 px-4">排放类别</th><th class="py-3 px-4">活动数据类型</th><th class="py-3 px-4">气体</th><th class="py-3 px-4">因子值</th><th class="py-3 px-4">单位</th><th class="py-3 px-4">来源标准</th><th class="py-3 px-4">GWP版本</th><th class="py-3 px-4">版本状态</th><th class="py-3 px-4">操作</th></tr></thead><tbody class="text-sm divide-y divide-gray-100" id="factor-table-body"></tbody></table></div>
+<div class="px-6 py-3 flex items-center justify-between border-t border-gray-100 shrink-0"><span class="text-gray-500 text-xs" id="factor-count">共 0 条</span><div class="flex items-center space-x-1" id="factor-pagination"></div></div>
+</div>
+<div class="hidden flex-1 flex flex-col overflow-hidden" id="group-list-view">
+<div class="p-6 bg-white shrink-0"><div class="flex items-center gap-4 overflow-x-auto whitespace-nowrap custom-scrollbar"><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">标准</label><select class="w-40 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="group-search-standard"></select></div><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">活动类型</label><select class="w-40 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="group-search-activity-type"></select></div><div class="flex items-center space-x-2 shrink-0"><label class="whitespace-nowrap text-gray-600">状态</label><select class="w-28 text-sm border-gray-200 rounded focus:ring-primary focus:border-primary" id="group-search-status"><option>全部</option><option>当前版本</option><option>历史版本</option><option>待生效</option><option>停用</option></select></div><div class="flex items-center space-x-2 ml-auto shrink-0"><button class="px-4 py-1.5 border border-gray-200 rounded text-gray-600 hover:bg-gray-50" id="group-reset-btn" type="button">重置</button><button class="px-4 py-1.5 bg-primary text-white rounded hover:opacity-90" id="group-search-btn" type="button">查询</button><button class="px-4 py-1.5 bg-primary text-white rounded hover:opacity-90 flex items-center" id="add-group-btn"><span class="material-symbols-outlined text-sm mr-1">add</span>新增因子组</button></div></div></div>
+<div class="flex-1 overflow-auto px-6 custom-scrollbar"><table class="factor-data-table w-full text-left border-collapse table-fixed-header"><thead class="text-gray-600 font-medium border-b border-gray-100"><tr><th class="py-3 px-4">因子组名称</th><th class="py-3 px-4">编码</th><th class="py-3 px-4">排放类别</th><th class="py-3 px-4">活动数据类型</th><th class="py-3 px-4">匹配参数</th><th class="py-3 px-4">来源标准</th><th class="py-3 px-4">引用因子数</th><th class="py-3 px-4">GWP版本</th><th class="py-3 px-4">版本状态</th><th class="py-3 px-4">操作</th></tr></thead><tbody class="text-sm divide-y divide-gray-100" id="group-table-body"></tbody></table></div>
+<div class="px-6 py-3 flex items-center justify-between border-t border-gray-100 shrink-0"><span class="text-gray-500 text-xs" id="group-count">共 0 条</span><div class="flex items-center space-x-1" id="group-pagination"></div></div>
+</div>
+<div class="hidden flex-1 flex flex-col overflow-hidden" id="standard-list-view" style="display:none">
+<div class="p-6 bg-white space-y-4 shrink-0"><div class="flex items-center gap-4"><div class="text-sm text-gray-500">维护因子引用的标准/指南，不同标准可独立启停。</div><div class="ml-auto"><button class="px-4 py-1.5 bg-primary text-white rounded hover:opacity-90 flex items-center" id="add-standard-btn"><span class="material-symbols-outlined text-sm mr-1">add</span>新增标准</button></div></div></div>
+<div class="flex-1 overflow-auto px-6 custom-scrollbar"><table class="factor-data-table w-full text-left border-collapse table-fixed-header"><thead class="text-gray-600 font-medium border-b border-gray-100"><tr><th class="py-3 px-4">标准名称</th><th class="py-3 px-4">编码</th><th class="py-3 px-4">发布机构</th><th class="py-3 px-4">年份</th><th class="py-3 px-4">类型</th><th class="py-3 px-4">状态</th><th class="py-3 px-4">操作</th></tr></thead><tbody class="text-sm divide-y divide-gray-100" id="standard-table-body"></tbody></table></div>
+<div class="px-6 py-3 flex items-center justify-between border-t border-gray-100 shrink-0"><span class="text-gray-500 text-xs" id="standard-count">共 0 条</span></div>
+</div>
+</div>
+</div>
+<!-- END: Main Workspace -->
+</main>
+</div>
+<!-- BEGIN: Factor Form Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden" id="factor-form-modal">
+<div class="bg-white w-[920px] max-h-[94vh] rounded shadow-2xl flex flex-col overflow-hidden">
+<div class="px-6 py-5 border-b flex items-center justify-between"><h2 class="text-xl font-bold text-slate-800" id="factor-form-title">新增因子</h2><button class="text-gray-400 hover:text-gray-600" id="factor-form-close-x"><span class="material-symbols-outlined text-3xl">close</span></button></div>
+<div class="flex-1 overflow-y-auto p-6 space-y-7 custom-scrollbar">
+<input id="factor-form-kind" type="hidden" value="factor"/><input id="factor-form-mode" type="hidden" value="add"/><input id="factor-form-id" type="hidden"/>
+<section class="space-y-4"><div class="flex items-center gap-3 text-slate-900 text-base"><span class="w-1 h-6 bg-primary rounded-full"></span><span>基本信息</span></div><div class="grid grid-cols-2 gap-x-8 gap-y-4">
+<div class="space-y-1.5"><label class="text-sm text-slate-500" id="name-label">因子名称<span class="required-star">*</span></label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-name" placeholder="请输入因子名称" type="text"/></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500" id="code-label">因子编码</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm bg-gray-50" id="form-code" placeholder="自动生成" type="text"/></div>
+<div class="space-y-1.5 col-span-2">
+  <label class="text-sm text-slate-500">因子分类<span class="required-star">*</span></label>
+  <input id="form-category" type="hidden"/>
+  <div class="grid grid-cols-2 gap-3">
+    <select class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-category-group"></select>
+    <select class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-category-category"></select>
+  </div>
+</div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">默认GWP版本<span class="required-star">*</span></label><select class="w-full border border-gray-200 rounded px-4 py-3 text-sm bg-white focus:ring-primary focus:border-primary outline-none" id="factor-gwp-version-input"></select></div>
+<div class="space-y-1.5 col-span-2" id="match-param-field">
+  <label class="text-sm text-slate-500">核算参数<span class="required-star">*</span></label>
+  <div class="grid grid-cols-2 gap-3" id="factor-accounting-params"></div>
+  <p class="text-xs text-slate-400">
+    核算参数来自排放源活动数据配置，仅可选择，不在因子库中新增。
+  </p>
+</div>
+<div class="space-y-1.5 col-span-2"><label class="text-sm text-slate-500">因子标准<span class="required-star">*</span></label><select class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-standard"></select></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">活动数据类型<span class="required-star">*</span></label><input
+  class="w-full border border-gray-200 rounded px-4 py-3 text-sm bg-slate-50 text-slate-600"
+  id="form-activity-data-type"
+  readonly
+  type="text"
+/>
+<input id="form-activity-data-type-value" type="hidden" /></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">版本号</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-version" placeholder="V1.0" type="text"/></div>
+</div></section>
+<section class="space-y-4" id="factor-config-section"><div class="flex items-center justify-between"><div class="flex items-center gap-3 text-slate-900 text-base"><span class="w-1 h-6 bg-primary rounded-full"></span><span>排放因子配置</span></div><button class="hidden text-primary text-sm hover:underline" id="add-gas-row" type="button">+ 添加气体</button></div><div class="border border-gray-100 rounded overflow-hidden"><table class="w-full text-sm text-left"><thead class="bg-gray-50 text-slate-600"><tr><th class="py-3 px-5 font-medium">温室气体<span class="required-star">*</span></th><th class="py-3 px-5 font-medium">因子值<span class="required-star">*</span></th><th class="py-3 px-5 font-medium">因子单位<span class="required-star">*</span></th><th class="py-3 px-5 font-medium w-20 hidden" id="config-action-head">操作</th></tr></thead><tbody id="config-table-body"></tbody></table></div></section>
+<section class="space-y-4 hidden" id="group-factor-section"><div class="flex items-center gap-3 text-slate-900 text-base"><span class="w-1 h-6 bg-primary rounded-full"></span><span>引用因子</span></div><div class="space-y-2"><select class="w-full min-h-[168px] border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-factor-ids" multiple></select><p class="text-xs text-gray-400" id="factor-candidate-hint">候选因子会按分类、活动类型、标准和匹配参数自动过滤。</p></div></section>
+<section class="space-y-4"><div class="flex items-center gap-3 text-slate-900 text-base"><span class="w-1 h-6 bg-primary rounded-full"></span><span>来源与版本</span></div><div class="grid grid-cols-2 gap-x-8 gap-y-4"><div class="space-y-1.5 col-span-2"><label class="text-sm text-slate-500">来源标准/指南</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-source" placeholder="请输入来源名称" type="text"/></div><div class="space-y-1.5"><label class="text-sm text-slate-500">生效日期</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-start-date" type="date"/></div><div class="space-y-1.5" id="end-date-field"><label class="text-sm text-slate-500">失效日期</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="form-end-date" type="date"/></div></div></section>
+</div><div class="px-6 py-4 border-t bg-gray-50 flex justify-end gap-3"><button class="px-8 py-2.5 border border-gray-200 rounded text-sm text-gray-700 font-medium hover:bg-white" id="factor-form-cancel">取消</button><button class="px-8 py-2.5 border border-primary text-primary rounded text-sm font-medium hover:bg-blue-50 hidden" id="factor-form-save-new" type="button">另存为新版本</button><button class="px-8 py-2.5 bg-primary text-white rounded text-sm font-medium hover:opacity-90" id="factor-form-save" type="button">保存当前版本</button></div>
+</div>
+</div>
+<!-- END: Factor Form Modal -->
+<!-- BEGIN: Standard Form Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden" id="standard-form-modal">
+<div class="bg-white w-[720px] max-h-[90vh] rounded shadow-2xl flex flex-col overflow-hidden">
+<div class="px-6 py-5 border-b flex items-center justify-between"><h2 class="text-xl font-bold text-slate-800" id="standard-form-title">新增标准</h2><button class="text-gray-400 hover:text-gray-600" id="standard-form-close-x"><span class="material-symbols-outlined text-3xl">close</span></button></div>
+<div class="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
+<input id="standard-form-mode" type="hidden" value="add"/><input id="standard-form-id" type="hidden"/>
+<div class="grid grid-cols-2 gap-x-6 gap-y-4">
+<div class="space-y-1.5 col-span-2"><label class="text-sm text-slate-500">标准名称<span class="required-star">*</span></label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-name" type="text"/></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">标准编码</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-code" type="text"/></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">标准类型</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-type" type="text"/></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">发布机构</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-issuer" type="text"/></div>
+<div class="space-y-1.5"><label class="text-sm text-slate-500">发布年份</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-year" type="text"/></div>
+<div class="space-y-1.5 col-span-2"><label class="text-sm text-slate-500">引用链接</label><input class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-url" type="text"/></div>
+<div class="space-y-1.5 col-span-2"><label class="text-sm text-slate-500">说明</label><textarea class="w-full border border-gray-200 rounded px-4 py-3 text-sm focus:ring-primary focus:border-primary" id="standard-desc" rows="3"></textarea></div>
+</div>
+</div><div class="px-6 py-4 border-t bg-gray-50 flex justify-end gap-3"><button class="px-8 py-2.5 border border-gray-200 rounded text-sm text-gray-700 font-medium hover:bg-white" id="standard-form-cancel">取消</button><button class="px-8 py-2.5 bg-primary text-white rounded text-sm font-medium hover:opacity-90" id="standard-form-save">保存</button></div>
+</div>
+</div>
+<!-- END: Standard Form Modal -->
+<!-- BEGIN: Factor Detail Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden" id="factor-detail-modal">
+<div class="bg-white w-[760px] max-h-[90vh] rounded shadow-2xl flex flex-col overflow-hidden">
+<div class="px-6 py-4 border-b flex items-center justify-between">
+<div><h2 class="text-xl font-bold text-slate-800" id="detail-modal-title">因子详情</h2><p class="text-xs text-slate-500 mt-1" id="detail-modal-subtitle"></p></div>
+<button class="text-gray-400 hover:text-gray-600" id="detail-modal-close"><span class="material-symbols-outlined text-3xl">close</span></button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+<div class="grid grid-cols-3 gap-4" id="detail-summary-cards"></div>
+<section class="space-y-3"><div class="flex items-center gap-2 text-primary font-semibold"><span class="material-symbols-outlined text-lg">tune</span>排放因子配置</div><div class="border border-gray-100 rounded overflow-hidden"><table class="w-full text-sm text-left"><thead class="bg-gray-50 text-slate-600"><tr><th class="py-3 px-4 font-medium">温室气体</th><th class="py-3 px-4 font-medium">因子值</th><th class="py-3 px-4 font-medium">单位</th><th class="py-3 px-4 font-medium">GWP值（来自GWP模块）</th></tr></thead><tbody id="detail-gas-body"></tbody></table></div></section>
+<section class="space-y-3"><div class="flex items-center gap-2 text-primary font-semibold"><span class="material-symbols-outlined text-lg">info</span>基础信息</div><div class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm" id="detail-info-grid"></div></section>
+</div>
+<div class="px-6 py-4 border-t bg-gray-50 flex justify-end"><button class="px-8 py-2.5 bg-primary text-white rounded text-sm font-medium hover:opacity-90" id="detail-modal-ok">完成查看</button></div>
+</div>
+</div>
+<!-- END: Factor Detail Modal -->
+<!-- Factor Library Interaction Script -->
+<script data-purpose="factor-library-interactions">
+(function() {
+  const pageSize = 5;
+  const Mock = window.CarbonAccountingMock || window;
+  const defaultFactors = Mock.DefaultFactorLibraryFactors || Mock.FactorLibraryFactors || [];
+  const defaultGroups = Mock.DefaultFactorLibraryGroups || Mock.FactorLibraryGroups || [];
+  const defaultStandards = Mock.DefaultFactorStandards || Mock.FactorStandards || [];
+
+  Mock.FactorLibraryFactors = Array.isArray(Mock.FactorLibraryFactors) && Mock.FactorLibraryFactors.length ? Mock.FactorLibraryFactors : defaultFactors;
+  Mock.FactorLibraryGroups = Array.isArray(Mock.FactorLibraryGroups) && Mock.FactorLibraryGroups.length ? Mock.FactorLibraryGroups : defaultGroups;
+  Mock.FactorStandards = Array.isArray(Mock.FactorStandards) && Mock.FactorStandards.length ? Mock.FactorStandards : defaultStandards;
+
+  const factors = Mock.FactorLibraryFactors;
+  const groups = Mock.FactorLibraryGroups;
+  const standards = Mock.FactorStandards;
+  window.FactorLibraryFactors = factors;
+  window.FactorLibraryGroups = groups;
+  window.FactorStandards = standards;
+  if (window.CarbonAccountingMock) {
+    window.CarbonAccountingMock.FactorLibraryFactors = factors;
+    window.CarbonAccountingMock.FactorLibraryGroups = groups;
+    window.CarbonAccountingMock.FactorStandards = standards;
+  }
+
+  let activeTab = 'factor';
+  let factorPage = 1;
+  let groupPage = 1;
+  let currentCategoryKey = null;
+  const treeExpandedKeys = new Set(['all']);
+  let versionContext = {
+    kind: "",
+    id: "",
+    item: null
+  };
+
+  const modal = document.getElementById('factor-form-modal');
+  const detailModal = document.getElementById('factor-detail-modal');
+  const title = document.getElementById('factor-form-title');
+  const kindInput = document.getElementById('factor-form-kind');
+  const modeInput = document.getElementById('factor-form-mode');
+  const idInput = document.getElementById('factor-form-id');
+  const nameInput = document.getElementById('form-name');
+  const codeInput = document.getElementById('form-code');
+  const categoryInput = document.getElementById('form-category');
+const categoryGroupInput = document.getElementById('form-category-group');
+const categoryCategoryInput = document.getElementById('form-category-category');
+  const standardInput = document.getElementById('form-standard');
+  const activityInput = document.getElementById('form-activity-data-type');
+  const versionInput = document.getElementById('form-version');
+  const factorIdsInput = document.getElementById('form-factor-ids');
+  const factorConfigSection = document.getElementById('factor-config-section');
+  const groupFactorSection = document.getElementById('group-factor-section');
+  const gwpInput = document.getElementById('factor-gwp-version-input');
+  const regionInput = document.getElementById('form-region');
+  const scopeInput = document.getElementById('form-scope');
+  const sourceInput = document.getElementById('form-source');
+  const startDateInput = document.getElementById('form-start-date');
+  const endDateInput = document.getElementById('form-end-date');
+  const configBody = document.getElementById('config-table-body');
+  const addGasBtn = document.getElementById('add-gas-row');
+  const configActionHead = document.getElementById('config-action-head');
+  const nameLabel = document.getElementById('name-label');
+  const codeLabel = document.getElementById('code-label');
+  const endDateField = document.getElementById('end-date-field');
+  const standardModal = document.getElementById('standard-form-modal');
+  const standardModeInput = document.getElementById('standard-form-mode');
+  const standardIdInput = document.getElementById('standard-form-id');
+  const standardNameInput = document.getElementById('standard-name');
+  const standardCodeInput = document.getElementById('standard-code');
+  const standardTypeInput = document.getElementById('standard-type');
+  const standardIssuerInput = document.getElementById('standard-issuer');
+  const standardYearInput = document.getElementById('standard-year');
+  const standardUrlInput = document.getElementById('standard-url');
+  const standardDescInput = document.getElementById('standard-desc');
+  const factorFilters = {
+    gas: "全部",
+    standardId: "全部",
+    activityDataType: "全部",
+    versionStatus: "全部"
+  };
+  const groupFilters = {
+    standardId: "全部",
+    activityDataType: "全部",
+    versionStatus: "全部"
+  };
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  }
+
+  function keyFor(type, ...parts) { return [type, ...parts].join('|'); }
+  function parseTreeKey(key = 'all') {
+    const [type, ...parts] = String(key).split('|');
+    return { type, parts };
+  }
+
+  function normalizeScope(value) {
+    return Mock.toScopeLabel?.(value) || value || '';
+  }
+
+  function getStandard(id) {
+    return standards.find((standard) => standard.id === id) || null;
+  }
+
+  function standardLabel(id) {
+    const standard = getStandard(id);
+    return standard ? standard.name : '未设置标准';
+  }
+
+  function standardBadge(id) {
+    const standard = getStandard(id);
+    return `<span class="inline-flex max-w-[220px] truncate bg-slate-50 text-slate-700 px-2 py-1 rounded text-xs" title="${escapeHtml(standard?.name || '')}">${escapeHtml(standard?.name || '未设置标准')}</span>`;
+  }
+
+  function syncStandardOptions(value) {
+    standardInput.innerHTML = standards.map((standard) => `<option value="${escapeHtml(standard.id)}">${escapeHtml(standard.name)}</option>`).join('');
+    standardInput.value = value && standards.some((standard) => standard.id === value) ? value : (standards[0]?.id || '');
+  }
+function getActivityOptions() {
+  const known = new Map();
+
+  Object.values(Mock.ActivityParamSchemas || {}).forEach((schema) => {
+    if (!schema?.activityDataType) return;
+    known.set(
+      schema.activityDataType,
+      schema.activityDataTypeLabel || schema.activityDataType
+    );
+  });
+
+  [...factors, ...groups].forEach((item) => {
+    const value = item.activityDataType;
+    if (value && !known.has(value)) known.set(value, value);
+  });
+
+  return Array.from(known, ([value, label]) => ({ value, label }));
+}
+
+function activityLabel(value) {
+  if (!value) return '-';
+
+  const schemaMap = Mock.ActivityParamSchemas || {};
+  const schema = Object.values(schemaMap).find((item) => item.activityDataType === value);
+  if (schema?.activityDataTypeLabel) return schema.activityDataTypeLabel;
+
+  return getActivityOptions().find((item) => item.value === value)?.label || value;
+}
+
+function defaultActivityByCategory(categoryCode) {
+  return getActivitySchemaByCategory(categoryCode)?.activityDataType || "";
+}
+
+function syncActivityOptions(value = "") {
+  const schema = getActivitySchemaByCategory(categoryInput?.value || '');
+  const displayValue = schema?.activityDataTypeLabel || activityLabel(value || schema?.activityDataType) || value || '';
+  if (activityInput) activityInput.value = displayValue;
+  const hidden = document.getElementById('form-activity-data-type-value');
+  if (hidden) hidden.value = value || schema?.activityDataType || '';
+}
+
+  function populateFilterOptions() {
+    const standardOptions = `<option>全部</option>${standards.map((standard) => `<option value="${escapeHtml(standard.id)}">${escapeHtml(standard.name)}</option>`).join('')}`;
+    const activityOptions = `<option>全部</option>${getActivityOptions().map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join('')}`;
+    const factorStandard = document.getElementById('factor-search-standard');
+    const groupStandard = document.getElementById('group-search-standard');
+    const factorActivity = document.getElementById('factor-search-activity-type');
+    const groupActivity = document.getElementById('group-search-activity-type');
+    if (factorStandard) factorStandard.innerHTML = standardOptions;
+    if (groupStandard) groupStandard.innerHTML = standardOptions;
+    if (factorActivity) factorActivity.innerHTML = activityOptions;
+    if (groupActivity) groupActivity.innerHTML = activityOptions;
+    if (factorStandard) factorStandard.value = factorFilters.standardId;
+    if (groupStandard) groupStandard.value = groupFilters.standardId;
+    if (factorActivity) factorActivity.value = factorFilters.activityDataType;
+    if (groupActivity) groupActivity.value = groupFilters.activityDataType;
+  }
+
+  function versionStatus(item) {
+    return Mock.getFactorVersionStatus?.(item) || item.versionStatus || item.status || '-';
+  }
+function getActivitySchemaByCategory(categoryCode) {
+  return window.CarbonAccountingMock?.getActivityParamSchema?.(categoryCode)
+    || window.CarbonAccountingMock?.ActivityParamSchemas?.[categoryCode]
+    || null;
+}
+function getSchemaParams(categoryCode) {
+  const schema = getActivitySchemaByCategory(categoryCode);
+  return Array.isArray(schema?.params) ? schema.params : [];
+}
+
+function getCurrentActivityDataType() {
+  return document.getElementById('form-activity-data-type-value')?.value || '';
+}
+
+function getCurrentAccountingParams() {
+  const params = {};
+  document.querySelectorAll('.factor-accounting-param').forEach((select) => {
+    const key = select.dataset.paramKey;
+    if (key && select.value) {
+      params[key] = select.value;
+    }
+  });
+  return params;
+}
+function renderFactorAccountingParams(categoryCode, values = {}) {
+  const schema = getActivitySchemaByCategory(categoryCode);
+  const typeInput = document.getElementById("form-activity-data-type");
+  const typeValueInput = document.getElementById("form-activity-data-type-value");
+  const container = document.getElementById("factor-accounting-params");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (!schema) {
+    if (typeInput) typeInput.value = "";
+    if (typeValueInput) typeValueInput.value = "";
+    container.innerHTML = `
+      <div class="col-span-2 text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded px-3 py-2">
+        当前二级分类暂无活动数据配置，请先在排放源管理中维护该分类的活动数据配置。
+      </div>
+    `;
+    return;
+  }
+
+if (typeInput) {
+  typeInput.value = schema.activityDataTypeLabel || activityLabel(schema.activityDataType) || schema.activityDataType || "";
+}
+
+  if (typeValueInput) {
+    typeValueInput.value = schema.activityDataType || "";
+  }
+
+  const params = Array.isArray(schema.params) ? schema.params : [];
+
+  if (!params.length) {
+    container.innerHTML = `
+      <div class="col-span-2 text-xs text-slate-500 bg-slate-50 border border-slate-100 rounded px-3 py-2">
+        当前活动数据类型无需额外核算参数。
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = params.map((param) => {
+    const options = (param.options || [])
+      .filter((option) => option.value !== "__custom__")
+      .map((option) => `
+        <option value="${escapeHtml(option.value)}" data-unit="${escapeHtml(option.unit || schema.defaultUnit || "")}">
+          ${escapeHtml(option.label)}
+        </option>
+      `)
+      .join("");
+
+    const currentValue = values[param.key] || "";
+
+    return `
+      <div class="space-y-1.5">
+        <label class="text-xs text-gray-500">${escapeHtml(param.label || param.key)}</label>
+        <select
+          class="factor-accounting-param w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+          data-param-key="${escapeHtml(param.key)}"
+        >
+          <option value="">请选择</option>
+          ${options}
+        </select>
+      </div>
+    `;
+  }).join("");
+
+  container.querySelectorAll(".factor-accounting-param").forEach((select) => {
+    const key = select.dataset.paramKey;
+    if (values[key]) select.value = values[key];
+  });
+}
+  function isDisabledStatus(status) {
+    return status === '停用' || status === '鍋滅敤';
+  }
+
+  function statusBadge(status) {
+    const active = status === '启用' || status === '当前版本';
+    const pending = status === '待生效';
+    const color = active ? 'text-green-600 bg-green-50' : (pending ? 'text-orange-600 bg-orange-50' : 'text-gray-500 bg-gray-50');
+    return `<span class="status-badge ${color} px-2 py-1 rounded text-xs">${escapeHtml(status || '-')}</span>`;
+  }
+
+  function firstGas(item = {}) {
+    return item.gases?.[0] || { gas: item.gas || '-', value: item.value || '-', unit: item.unit || '-' };
+  }
+
+  function getGroupFactors(group = {}) {
+    return Mock.getFactorsByGroup?.(group) || factors.filter((factor) => group.factorIds?.includes(factor.id));
+  }
+
+  function formatNumber(value) {
+    return Number(value || 0).toLocaleString('zh-CN');
+  }
+
+  function updateDashboardStats() {
+    const dashboard = document.querySelector('main > section.grid.grid-cols-6');
+    if (!dashboard) return;
+
+    const allFactorItems = [...factors, ...groups];
+    const enabledItems = allFactorItems.filter((item) => !isDisabledStatus(item.status) && versionStatus(item) !== '历史版本');
+    const customItems = allFactorItems.filter((item) =>
+      String(item.id || '').startsWith('factor-') ||
+      String(item.id || '').startsWith('group-') ||
+      String(item.code || '').includes('CUSTOM')
+    );
+    const coverageCount = new Set(
+      allFactorItems
+        .map((item) => item.region || item.categoryCode || item.category)
+        .filter(Boolean)
+    ).size;
+    const latestYear = allFactorItems
+      .map((item) => item.effectiveDate || item.startDate || item.expireDate || item.endDate || '')
+      .map((date) => String(date).slice(0, 4))
+      .filter((year) => /^\d{4}$/.test(year))
+      .sort()
+      .pop() || '-';
+    const sourceCount = new Set(
+      [
+        ...standards.map((standard) => standard.id || standard.name),
+        ...allFactorItems.map((item) => item.source || item.standardId)
+      ].filter(Boolean)
+    ).size;
+
+    const cards = [...dashboard.children];
+    const values = [
+      `${formatNumber(allFactorItems.length)} <span class="text-gray-400 text-xs font-normal">条</span>`,
+      `${formatNumber(enabledItems.length)} <span class="text-gray-400 text-xs font-normal">条</span>`,
+      `${formatNumber(customItems.length)} <span class="text-gray-400 text-xs font-normal">条</span>`,
+      `${formatNumber(coverageCount)} <span class="text-gray-400 text-xs font-normal">项</span>`,
+      `${escapeHtml(latestYear)}`,
+      `${formatNumber(sourceCount)} <span class="text-gray-400 text-xs font-normal">来源</span>`
+    ];
+
+    cards.forEach((card, index) => {
+      const valueNode = card.querySelector('.text-lg.font-semibold');
+      if (valueNode && values[index] !== undefined) valueNode.innerHTML = values[index];
+    });
+  }
+
+function getMatchSummary(item = {}) {
+  const categoryCode = item.categoryCode || item.category || "";
+  const params = getSchemaParams(categoryCode);
+
+  if (!params.length) return "-";
+
+  return params.map((param) => {
+    const value = item[param.key] || item.matchParams?.[param.key] || "";
+    const label = (param.options || []).find((option) => option.value === value)?.label || value || "-";
+    return `${param.label || param.key}: ${label}`;
+  }).join("；");
+}
+
+  function itemSearchText(item = {}) {
+    return [item.name, item.code, item.categoryLabel, item.category, item.standardName, standardLabel(item.standardId), item.source].filter(Boolean).join(' ').toLowerCase();
+  }
+
+  function getGwpVersions() {
+    return Mock.getGwpVersions?.() || Mock.GwpVersions || [];
+  }
+
+  function renderGwpVersionOptions(selectedId = "") {
+    const input = document.getElementById('factor-gwp-version-input');
+    if (!input) return;
+
+    const versions = getGwpVersions();
+    const enabled = versions.find((version) => version.enabled !== false && version.status !== "停用");
+    const fallback = selectedId || enabled?.id || versions[0]?.id || "";
+
+    input.innerHTML = versions.map((version) => {
+      const label = `${version.name || version.code} / ${version.horizon || "100年"}`;
+      return `<option value="${escapeHtml(version.id)}" ${version.id === fallback ? "selected" : ""}>${escapeHtml(label)}</option>`;
+    }).join('');
+  }
+
+  
+
+  function renderMatchParamField(categoryCode, item = {}) {
+    const config = getMatchParamConfig(categoryCode);
+    const field = document.getElementById('match-param-field');
+    const label = document.getElementById('match-param-label');
+    const input = document.getElementById('match-param-input');
+    if (!field || !label || !input) return;
+
+    label.textContent = config.label;
+    input.dataset.matchKey = config.key;
+    input.innerHTML = config.options.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join('');
+
+    const value = item?.[config.key] || item?.matchParams?.[config.key] || config.options[0]?.value || "";
+    setSelectValue(input, value);
+  }
+function getSourceTree() {
+  const fullTree = Mock.EmissionCategoryTree || [];
+  const sourceRows = Mock.EmissionSources || [];
+
+  const usedCategoryCodes = new Set(
+    sourceRows
+      .map((source) => source.categoryCode || source.category)
+      .filter(Boolean)
+  );
+
+  return fullTree
+    .map((group) => {
+      const categories = (group.children || group.categories || [])
+        .filter((category) => usedCategoryCodes.has(category.category))
+        .map((category) => ({
+          category: category.category,
+          categoryLabel: category.categoryLabel
+        }));
+
+      return {
+        groupCode: group.groupCode,
+        groupLabel: group.groupLabel,
+        categories
+      };
+    })
+    .filter((group) => group.categories.length);
+}
+
+ function getFactorCategoryCatalogFromSourceTree() {
+  return getSourceTree().map((group) => ({
+    groupCode: group.groupCode,
+    groupLabel: group.groupLabel,
+    categories: (group.categories || []).map((category) => ({
+      categoryCode: category.category,
+      categoryLabel: category.categoryLabel
+    }))
+  }));
+}
+
+function factorCategoryCatalog() {
+  return getFactorCategoryCatalogFromSourceTree();
+}
+
+function findCategoryNodeByCode(categoryCode) {
+  for (const group of factorCategoryCatalog()) {
+    const category = (group.categories || []).find((item) => item.categoryCode === categoryCode);
+    if (category) {
+      return {
+        groupCode: group.groupCode,
+        groupLabel: group.groupLabel,
+        categoryCode: category.categoryCode,
+        categoryLabel: category.categoryLabel
+      };
+    }
+  }
+  return null;
+}
+
+function firstCategoryNode() {
+  const catalog = factorCategoryCatalog();
+const group = catalog[0];
+  const category = group?.categories?.[0];
+  if (!group || !category) return null;
+
+  return {
+    groupCode: group.groupCode,
+    groupLabel: group.groupLabel,
+    categoryCode: category.categoryCode,
+    categoryLabel: category.categoryLabel
+  };
+}
+
+function inferScopeLabelByCategory(categoryCode) {
+  const scopeCode = Mock.inferScopeByCategory?.(categoryCode) || '';
+  return Mock.toScopeLabel?.(scopeCode) || scopeCode || '';
+}
+
+function syncCategoryValue(values = {}) {
+  const categoryCode = categoryCategoryInput?.value || '';
+
+  if (categoryInput) {
+    categoryInput.value = categoryCode;
+  }
+
+  const scopeLabel = inferScopeLabelByCategory(categoryCode);
+  if (scopeInput) {
+    scopeInput.value = scopeLabel;
+  }
+
+  renderFactorAccountingParams(categoryCode, values);
+}
+
+function refreshCategoryGroupOptions(selectedGroupCode) {
+  const catalog = factorCategoryCatalog();
+  categoryGroupInput.innerHTML = catalog.map((group) =>
+    `<option value="${escapeHtml(group.groupCode)}">${escapeHtml(group.groupLabel)}</option>`
+  ).join('');
+
+  const fallbackGroupCode = catalog[0]?.groupCode || '';
+  categoryGroupInput.value = selectedGroupCode && catalog.some((group) => group.groupCode === selectedGroupCode)
+    ? selectedGroupCode
+    : fallbackGroupCode;
+}
+
+function refreshCategoryOptions(selectedCategoryCode) {
+  const catalog = factorCategoryCatalog();
+  const group = catalog.find((item) => item.groupCode === categoryGroupInput.value) || catalog[0];
+  const categories = group?.categories || [];
+
+  categoryCategoryInput.innerHTML = categories.map((category) =>
+    `<option value="${escapeHtml(category.categoryCode)}">${escapeHtml(category.categoryLabel)}</option>`
+  ).join('');
+
+  const fallbackCategoryCode = categories[0]?.categoryCode || '';
+  categoryCategoryInput.value = selectedCategoryCode && categories.some((category) => category.categoryCode === selectedCategoryCode)
+    ? selectedCategoryCode
+    : fallbackCategoryCode;
+
+  syncCategoryValue();
+}
+
+function syncCategorySelector(value) {
+  const categoryCode = Mock.toCategoryCode?.(value) || value || '';
+  const node = findCategoryNodeByCode(categoryCode) || firstCategoryNode();
+
+  refreshCategoryGroupOptions(node?.groupCode);
+  refreshCategoryOptions(node?.categoryCode);
+}
+
+function inferFactorCategoryCode(item = {}) {
+  if (item.categoryCode) return item.categoryCode;
+  const rawCategory = item.category || '';
+  const normalized = Mock.toCategoryCode?.(rawCategory) || rawCategory;
+  if (findCategoryNodeByCode(normalized)) return normalized;
+
+  for (const group of factorCategoryCatalog()) {
+    const category = (group.categories || []).find((entry) => rawCategory.includes(entry.categoryLabel));
+    if (category) return category.categoryCode;
+  }
+  return normalized;
+}
+
+function inferMatchValue(categoryCode, item = {}) {
+  if (categoryCode === 'stationary_combustion') {
+    if (item.fuelType || item.matchParams?.fuelType) return item.fuelType || item.matchParams.fuelType;
+    return String(item.category || item.name || '').includes('柴油') ? 'diesel' : 'natural_gas';
+  }
+  if (categoryCode === 'purchased_electricity') {
+    return item.electricityRegion || item.matchParams?.electricityRegion || 'east_china_grid';
+  }
+  if (categoryCode === 'fugitive_emission') {
+    return item.refrigerantType || item.matchParams?.refrigerantType || 'r410a';
+  }
+  return item.matchParam || item.matchParams?.matchParam || '';
+}
+
+function findGwpVersionForItem(item = {}) {
+  const versions = getGwpVersions();
+  const current = item.gwpVersionId || item.gwpVersionCode || item.gwp || '';
+  return versions.find((version) =>
+    version.id === item.gwpVersionId ||
+    version.code === item.gwpVersionCode ||
+    version.name === item.gwp ||
+    (current && ((version.code && String(current).includes(version.code)) || (version.name && String(current).includes(version.name))))
+  ) || versions.find((version) => version.enabled !== false && version.status !== "停用") || versions[0] || null;
+}
+
+function normalizeFactorRecord(item = {}) {
+  const categoryCode = inferFactorCategoryCode(item);
+  const categoryNode = findCategoryNodeByCode(categoryCode);
+  const schema = getActivitySchemaByCategory(categoryCode);
+  const matchParams = { ...(item.matchParams || {}) };
+  const matchParamLabels = { ...(item.matchParamLabels || {}) };
+  const gwpVersion = findGwpVersionForItem(item);
+
+  (schema?.params || []).forEach((param) => {
+    const existingValue =
+      item[param.key] ||
+      item.matchParams?.[param.key] ||
+      "";
+
+    if (!existingValue) return;
+
+    const option = (param.options || []).find((entry) => entry.value === existingValue);
+    matchParams[param.key] = existingValue;
+    matchParamLabels[param.key] = option?.label || item.matchParamLabels?.[param.key] || existingValue;
+  });
+
+  item.categoryCode = categoryCode;
+  item.categoryLabel = item.categoryLabel || categoryNode?.categoryLabel || Mock.toCategoryLabel?.(categoryCode) || categoryCode;
+  item.groupCode = item.groupCode || categoryNode?.groupCode || '';
+  item.groupLabel = item.groupLabel || categoryNode?.groupLabel || '';
+
+  item.activityDataType = item.activityDataType || schema?.activityDataType || '';
+  item.activityDataTypeLabel = item.activityDataTypeLabel || schema?.activityDataTypeLabel || activityLabel(item.activityDataType);
+
+  item.matchParams = matchParams;
+  item.matchParamLabels = matchParamLabels;
+  Object.assign(item, matchParams);
+
+  item.effectiveDate = item.effectiveDate || item.startDate || '';
+  item.expireDate = item.expireDate || item.endDate || '';
+  item.startDate = item.effectiveDate;
+  item.endDate = item.expireDate;
+  item.version = item.version || 'V1.0';
+
+  item.gwpVersionId = item.gwpVersionId || gwpVersion?.id || '';
+  item.gwpVersionCode = item.gwpVersionCode || gwpVersion?.code || '';
+  item.gwp = item.gwp || gwpVersion?.name || '';
+
+  if (Array.isArray(item.gases) && item.gases.length === 1) {
+    item.gas = item.gas || item.gases[0].gas;
+    item.value = item.value || item.gases[0].value;
+    item.unit = item.unit || item.gases[0].unit;
+  }
+
+  return item;
+}
+
+function hydrateGroupFactorIds() {
+  groups.forEach((group) => {
+    if (Array.isArray(group.factorIds) && group.factorIds.length) return;
+
+    const categoryCode = group.categoryCode || group.category;
+    const schema = getActivitySchemaByCategory(categoryCode);
+    const paramKeys = (schema?.params || []).map((param) => param.key);
+
+    group.factorIds = factors
+      .filter((factor) => {
+        const paramsMatched = paramKeys.every((key) => {
+          const expected = group[key] || group.matchParams?.[key] || "";
+          if (!expected) return true;
+          return (factor[key] || factor.matchParams?.[key] || "") === expected;
+        });
+
+        return factor.categoryCode === group.categoryCode &&
+          factor.activityDataType === group.activityDataType &&
+          factor.standardId === group.standardId &&
+          paramsMatched &&
+          !isDisabledStatus(factor.status);
+      })
+      .map((factor) => factor.id);
+  });
+}
+
+  function itemText(item) {
+    return [item.name, item.code, item.category, item.source, item.scope].filter(Boolean).join(' ');
+  }
+
+  function itemMatchesTokens(item, tokens = []) {
+    const haystack = itemText(item).toLowerCase();
+    return tokens.every((token) => haystack.includes(String(token).toLowerCase()));
+  }
+
+
+function sourceCategoryMatchesItem(item, categoryCode) {
+  const itemCategoryCode = item.categoryCode || item.category || '';
+  const normalizedItemCategory = Mock.toCategoryCode?.(itemCategoryCode) || itemCategoryCode;
+  const normalizedTargetCategory = Mock.toCategoryCode?.(categoryCode) || categoryCode;
+
+  if (normalizedItemCategory === normalizedTargetCategory) return true;
+
+  const categoryLabel = Mock.toCategoryLabel?.(normalizedTargetCategory) || normalizedTargetCategory;
+  return itemMatchesTokens(item, [categoryLabel]);
+}
+
+  function treeChildrenButton(node, level) {
+    const hasChildren = node.children?.length;
+    const expanded = treeExpandedKeys.has(node.key);
+    const paddingLeft = 16 + level * 14;
+    const arrow = hasChildren ? (expanded ? 'expand_more' : 'chevron_right') : 'chevron_right';
+    const extraClass = hasChildren ? 'tree-toggle factor-tree-button flex' : 'factor-tree-leaf flex';
+    const prefix = hasChildren
+      ? `<span class="material-symbols-outlined tree-arrow text-sm text-gray-400 shrink-0">${arrow}</span>`
+      : '<span class="w-[18px] shrink-0"></span>';
+    return `<button class="tree-filter ${extraClass} w-full items-center gap-1 py-1.5 pr-3 hover:bg-gray-50 cursor-pointer text-gray-600 text-sm" style="padding-left:${paddingLeft}px" data-count-key="${escapeHtml(node.key)}" data-tree-key="${escapeHtml(node.key)}" type="button" title="${escapeHtml(node.title || node.label)}">${prefix}<span class="tree-label truncate text-left flex-1">${escapeHtml(node.label)}</span><span class="tree-count ml-1 text-xs shrink-0">(0)</span></button>`;
+  }
+
+  function renderTreeNode(node, level = 0) {
+    const expanded = treeExpandedKeys.has(node.key);
+    const childrenHtml = node.children?.length
+      ? `<div class="tree-children ${expanded ? '' : 'hidden'}">${node.children.map((child) => renderTreeNode(child, level + 1)).join('')}</div>`
+      : '';
+    return `<div class="tree-node" data-expanded="${expanded ? 'true' : 'false'}" data-tree-key="${escapeHtml(node.key)}">${treeChildrenButton(node, level)}${childrenHtml}</div>`;
+  }
+
+  function buildSidebarTree() {
+    const sourceTree = getSourceTree();
+    return {
+      key: 'all',
+      label: '全部因子',
+      children: sourceTree.map((group) => ({
+        key: keyFor('sourceGroup', group.groupCode),
+        label: group.groupLabel,
+        title: group.groupLabel,
+        children: (group.categories || []).map((category) => ({
+          key: keyFor('sourceCategory', group.groupCode, category.category),
+          label: category.categoryLabel,
+          title: `${group.groupLabel} / ${category.categoryLabel}`
+        }))
+      }))
+    };
+  }
+
+  function renderSidebarTree() {
+    const tree = document.getElementById('global-sidebar-tree');
+    if (!tree) return;
+    if (treeExpandedKeys.size === 1) {
+      getSourceTree().forEach((group) => treeExpandedKeys.add(keyFor('sourceGroup', group.groupCode)));
+    }
+    tree.innerHTML = renderTreeNode(buildSidebarTree());
+  }
+
+  function allItems() { return [...factors, ...groups]; }
+  function activeTreeItems() { return activeTab === 'group' ? groups : factors; }
+  function matchesCategory(item, key = currentCategoryKey) {
+    if (!key || key === 'all') return true;
+    const { type, parts } = parseTreeKey(key);
+    if (type === 'sourceGroup') {
+      const group = getSourceTree().find((item) => item.groupCode === parts[0]);
+      return (group?.categories || []).some((category) => sourceCategoryMatchesItem(item, category.category));
+    }
+    if (type === 'sourceCategory') return sourceCategoryMatchesItem(item, parts[1]);
+    if (type === 'scope') return item.scope === parts[0];
+    if (type === 'category') return item.scope === parts[0] && itemMatchesTokens(item, [parts[1]]);
+    if (type === 'factorClass') return item.scope === parts[0] && itemMatchesTokens(item, parts.slice(1));
+    return item.category === key || item.category.startsWith(key + ' /');
+  }
+  function matchesFactorFilters(item) {
+    const gas = firstGas(item).gas;
+    const status = versionStatus(item);
+    return matchesCategory(item) &&
+      (factorFilters.gas === '全部' || gas === factorFilters.gas) &&
+      (factorFilters.standardId === '全部' || item.standardId === factorFilters.standardId) &&
+      (factorFilters.activityDataType === '全部' || item.activityDataType === factorFilters.activityDataType) &&
+      (factorFilters.versionStatus === '全部' || status === factorFilters.versionStatus || item.status === factorFilters.versionStatus);
+  }
+
+  function matchesGroupFilters(item) {
+    const status = versionStatus(item);
+    return matchesCategory(item) &&
+      (groupFilters.standardId === '全部' || item.standardId === groupFilters.standardId) &&
+      (groupFilters.activityDataType === '全部' || item.activityDataType === groupFilters.activityDataType) &&
+      (groupFilters.versionStatus === '全部' || status === groupFilters.versionStatus || item.status === groupFilters.versionStatus);
+  }
+
+  function filteredFactors() { return factors.filter((item) => matchesFactorFilters(item)); }
+  function filteredGroups() { return groups.filter((item) => matchesGroupFilters(item)); }
+  function pageItems(list, page) { return list.slice((page - 1) * pageSize, page * pageSize); }
+  function totalPages(list) { return Math.max(1, Math.ceil(list.length / pageSize)); }
+  function categoryCount(key) { return key === 'all' ? activeTreeItems().length : activeTreeItems().filter((item) => matchesCategory(item, key)).length; }
+  function updateTreeCounts() { document.querySelectorAll('[data-count-key]').forEach((node) => { const countEl = node.querySelector('.tree-count'); if (countEl) countEl.textContent = `(${categoryCount(node.dataset.countKey)})`; }); }
+  function updateTreeActive() { document.querySelectorAll('.tree-filter').forEach((node) => { const active = node.dataset.countKey === currentCategoryKey; node.classList.toggle('tree-filter-active', active); node.classList.toggle('text-primary', active); node.classList.toggle('bg-blue-50', active); node.classList.toggle('font-medium', active); }); }
+  function updateTabCounts(factorCount = filteredFactors().length, groupCount = filteredGroups().length) {
+    const factorTab = document.querySelector('[data-tab="factor"]');
+    const groupTab = document.querySelector('[data-tab="group"]');
+    if (factorTab) factorTab.textContent = `因子列表 (${factorCount})`;
+    if (groupTab) groupTab.textContent = `因子组列表 (${groupCount})`;
+  }
+  function syncFactorLibraryState() {
+    Mock.FactorLibraryFactors = factors;
+    Mock.FactorLibraryGroups = groups;
+    Mock.FactorStandards = standards;
+    if (typeof Mock.saveState === 'function') Mock.saveState();
+  }
+
+  function readPersistedFactorState() {
+    try {
+      const key = Mock.STORAGE_KEY || 'carbon-accounting-mock-state-v7-boundary-source-model-match';
+      return JSON.parse(window.localStorage?.getItem(key) || '{}');
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function syncFromSharedFactorState() {
+    const persisted = readPersistedFactorState();
+    const latestFactors = persisted.FactorLibraryFactors || Mock.FactorLibraryFactors || factors;
+    const latestGroups = persisted.FactorLibraryGroups || Mock.FactorLibraryGroups || groups;
+    const latestStandards = persisted.FactorStandards || Mock.FactorStandards || standards;
+
+    factors.splice(0, factors.length, ...latestFactors.map((item) => normalizeFactorRecord({ ...item })));
+    groups.splice(0, groups.length, ...latestGroups.map((item) => normalizeFactorRecord({ ...item })));
+    standards.splice(0, standards.length, ...latestStandards.map((item) => ({ ...item })));
+    hydrateGroupFactorIds();
+
+    Mock.FactorLibraryFactors = factors;
+    Mock.FactorLibraryGroups = groups;
+    Mock.FactorStandards = standards;
+    window.FactorLibraryFactors = factors;
+    window.FactorLibraryGroups = groups;
+    window.FactorStandards = standards;
+  }
+  function moreMenu() {
+    return `<div class="relative inline-block group/more"><button class="more-btn inline-flex items-center text-primary hover:underline focus:outline-none" type="button">更多<span class="material-symbols-outlined text-sm">arrow_drop_down</span></button><div class="more-dropdown hidden absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded shadow-lg z-20 py-1"><button class="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-surface-container-low transition-colors" data-action="toggle-status" type="button">启用/停用</button><button class="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-surface-container-low transition-colors" data-action="version-management" type="button">版本管理</button><button class="block w-full text-left px-4 py-2 text-xs text-error hover:bg-error-container/20 transition-colors" data-action="delete-row" type="button">删除</button></div></div>`;
+  }
+
+  function renderPagination(kind, list, page) {
+    const pageCount = totalPages(list);
+    const target = document.getElementById(`${kind}-pagination`);
+    target.innerHTML = `<button class="page-btn p-1 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-40" data-kind="${kind}" data-page="${Math.max(1, page - 1)}" ${page === 1 ? 'disabled' : ''}><span class="material-symbols-outlined text-xs">chevron_left</span></button>${Array.from({ length: pageCount }, (_, index) => `<button class="page-btn px-2 py-0.5 border border-gray-200 text-xs rounded hover:bg-gray-50 ${index + 1 === page ? 'bg-primary text-white border-primary' : 'text-gray-600'}" data-kind="${kind}" data-page="${index + 1}">${index + 1}</button>`).join('')}<button class="page-btn p-1 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-40" data-kind="${kind}" data-page="${Math.min(pageCount, page + 1)}" ${page === pageCount ? 'disabled' : ''}><span class="material-symbols-outlined text-xs">chevron_right</span></button>`;
+  }
+
+  function render() {
+    updateDashboardStats();
+    renderSidebarTree();
+    populateFilterOptions();
+    const factorList = filteredFactors();
+    const groupList = filteredGroups();
+    factorPage = Math.min(factorPage, totalPages(factorList));
+    groupPage = Math.min(groupPage, totalPages(groupList));
+    const factorBody = document.getElementById('factor-table-body');
+    const groupBody = document.getElementById('group-table-body');
+    factorBody.innerHTML = pageItems(factorList, factorPage).map((item) => {
+      const gas = firstGas(item);
+      return `<tr class="hover:bg-blue-50/50 cursor-pointer" data-kind="factor" data-id="${escapeHtml(item.id)}"><td class="py-4 px-4 font-medium">${escapeHtml(item.name)}</td><td class="py-4 px-4 text-gray-500">${escapeHtml(item.code)}</td><td class="py-4 px-4">${escapeHtml(item.categoryLabel || item.categoryCode || item.category || '-')}</td><td class="py-4 px-4">${escapeHtml(activityLabel(item.activityDataType))}</td><td class="py-4 px-4"><span class="bg-blue-50 text-primary px-2 py-0.5 rounded text-xs">${escapeHtml(gas.gas)}</span></td><td class="py-4 px-4 font-medium">${escapeHtml(gas.value)}</td><td class="py-4 px-4 text-gray-500">${escapeHtml(gas.unit)}</td><td class="py-4 px-4">${standardBadge(item.standardId)}</td><td class="py-4 px-4 text-gray-500">${escapeHtml(item.gwp || item.gwpVersionCode || '-')}</td><td class="py-4 px-4">${statusBadge(versionStatus(item))}</td><td class="py-4 px-4 text-primary action-cell"><div class="flex items-center gap-3"><button class="hover:underline view-row" type="button">查看</button><button class="hover:underline edit-row" type="button">编辑</button>${moreMenu()}</div></td></tr>`;
+    }).join('') || `<tr><td class="py-10 px-4 text-center text-gray-400" colspan="11">暂无匹配的因子数据</td></tr>`;
+    groupBody.innerHTML = pageItems(groupList, groupPage).map((item) => {
+      const groupFactors = getGroupFactors(item);
+      return `<tr class="hover:bg-blue-50/50 cursor-pointer" data-kind="group" data-id="${escapeHtml(item.id)}"><td class="py-4 px-4 font-medium">${escapeHtml(item.name)}</td><td class="py-4 px-4 text-gray-500">${escapeHtml(item.code)}</td><td class="py-4 px-4">${escapeHtml(item.categoryLabel || item.categoryCode || item.category || '-')}</td><td class="py-4 px-4">${escapeHtml(activityLabel(item.activityDataType))}</td><td class="py-4 px-4">${escapeHtml(getMatchSummary(item))}</td><td class="py-4 px-4">${standardBadge(item.standardId)}</td><td class="py-4 px-4">${groupFactors.length}</td><td class="py-4 px-4 text-gray-500">${escapeHtml(item.gwp || item.gwpVersionCode || '-')}</td><td class="py-4 px-4">${statusBadge(versionStatus(item))}</td><td class="py-4 px-4 text-primary action-cell"><div class="flex items-center gap-3"><button class="hover:underline view-row" type="button">查看</button><button class="hover:underline edit-row" type="button">编辑</button>${moreMenu()}</div></td></tr>`;
+    }).join('') || `<tr><td class="py-10 px-4 text-center text-gray-400" colspan="10">暂无匹配的因子组数据</td></tr>`;
+    document.getElementById('factor-count').textContent = `共 ${factorList.length} 条，当前第 ${factorPage}/${totalPages(factorList)} 页`;
+    document.getElementById('group-count').textContent = `共 ${groupList.length} 条，当前第 ${groupPage}/${totalPages(groupList)} 页`;
+    renderPagination('factor', factorList, factorPage);
+    renderPagination('group', groupList, groupPage);
+    updateTabCounts(factorList.length, groupList.length);
+    updateTreeCounts();
+    updateTreeActive();
+  }
+
+  function renderFactorTable() { render(); }
+  function renderGroupTable() { render(); }
+
+  function setSelectValue(select, value) {
+    if (!select) return;
+    if (![...select.options].some((option) => option.value === value || option.textContent === value)) select.insertAdjacentHTML('beforeend', `<option>${escapeHtml(value)}</option>`);
+    select.value = value;
+  }
+  function addConfigRow(row = { gas: 'CO₂', value: '', unit: 'kgCO₂/Nm³' }) { const isGroup = kindInput.value === 'group'; const tr = document.createElement('tr'); tr.className = 'border-t border-gray-50 first:border-t-0'; tr.innerHTML = `<td class="py-4 px-5"><select class="gas-select w-full border border-gray-200 rounded px-4 py-2.5 text-sm focus:ring-primary focus:border-primary"><option>CO₂</option><option>CH₄</option><option>N₂O</option><option>R410A</option></select></td><td class="py-4 px-5"><input class="value-input w-full border border-gray-200 rounded px-4 py-2.5 text-sm focus:ring-primary focus:border-primary" placeholder="0.00" type="number" step="0.00001"/></td><td class="py-4 px-5"><select class="unit-select w-full border border-gray-200 rounded px-4 py-2.5 text-sm focus:ring-primary focus:border-primary"><option>kgCO₂/Nm³</option><option>kgCH₄/Nm³</option><option>kgN₂O/Nm³</option><option>kgCO₂/L</option><option>kgCH₄/L</option><option>kgN₂O/L</option><option>kgCO₂/kWh</option><option>kgR410A/kg</option></select></td><td class="config-action-cell py-4 px-5 text-center ${isGroup ? '' : 'hidden'}"><button class="delete-gas-row text-gray-400 hover:text-red-500" type="button"><span class="material-symbols-outlined text-lg">delete</span></button></td>`; configBody.appendChild(tr); setSelectValue(tr.querySelector('.gas-select'), row.gas || 'CO₂'); tr.querySelector('.value-input').value = row.value || ''; setSelectValue(tr.querySelector('.unit-select'), row.unit || 'kgCO₂/Nm³'); }
+  function selectedFactorIds() {
+    return [...(factorIdsInput?.selectedOptions || [])].map((option) => option.value);
+  }
+function getCurrentActivityDataType() {
+  return document.getElementById('form-activity-data-type-value')?.value || '';
+}
+
+function getCurrentAccountingParams() {
+  const params = {};
+  document.querySelectorAll('.factor-accounting-param').forEach((select) => {
+    const key = select.dataset.paramKey;
+    if (key && select.value) params[key] = select.value;
+  });
+  return params;
+}
+  function factorMatchesGroupCandidate(factor, group = {}) {
+    const categoryCode = group.categoryCode || categoryInput.value;
+    const standardId = group.standardId || standardInput.value;
+    const activityDataType = group.activityDataType || getCurrentActivityDataType();
+const currentParams = group.matchParams || getCurrentAccountingParams();
+
+const schema = getActivitySchemaByCategory(categoryCode);
+const paramKeys = Array.isArray(schema?.params)
+  ? schema.params.map((param) => param.key)
+  : [];
+
+const paramsMatched = paramKeys.every((key) => {
+  const expected = currentParams[key] || group[key] || '';
+  if (!expected) return true;
+  return (factor[key] || factor.matchParams?.[key] || '') === expected;
+});
+
+return factor.id !== group.id &&
+  factor.categoryCode === categoryCode &&
+  factor.activityDataType === activityDataType &&
+  factor.standardId === standardId &&
+  paramsMatched &&
+  !isDisabledStatus(factor.status) &&
+  versionStatus(factor) !== '历史版本';
+    return factor.id !== group.id &&
+      factor.categoryCode === categoryCode &&
+      factor.activityDataType === activityDataType &&
+      factor.standardId === standardId &&
+      (factor[config.key] || factor.matchParams?.[config.key] || '') === matchValue &&
+      !isDisabledStatus(factor.status) &&
+      versionStatus(factor) !== '历史版本';
+  }
+
+  function renderFactorCandidates(selectedIds = []) {
+    if (!factorIdsInput) return;
+  const currentParams = getCurrentAccountingParams();
+
+const groupShape = {
+  categoryCode: categoryInput.value,
+  activityDataType: getCurrentActivityDataType(),
+  standardId: standardInput.value,
+  matchParams: currentParams,
+  ...currentParams
+};
+    const candidates = factors.filter((factor) => factorMatchesGroupCandidate(factor, groupShape));
+    factorIdsInput.innerHTML = candidates.map((factor) => {
+      const gas = firstGas(factor);
+      return `<option value="${escapeHtml(factor.id)}" ${selectedIds.includes(factor.id) ? 'selected' : ''}>${escapeHtml(factor.name)} / ${escapeHtml(gas.gas)} / ${escapeHtml(gas.value)} ${escapeHtml(gas.unit)}</option>`;
+    }).join('');
+    const hint = document.getElementById('factor-candidate-hint');
+    if (hint) hint.textContent = `已筛选出 ${candidates.length} 个可引用因子。`;
+  }
+
+function buildFactorKey(item = {}) {
+  const categoryCode = item.categoryCode || item.category || "";
+  const activityDataType = item.activityDataType || "";
+  const standardId = item.standardId || "";
+  const region = item.region || "";
+  const unit = item.unit || firstGas(item).unit || "";
+
+  const schema = getActivitySchemaByCategory(categoryCode);
+  const paramPart = (schema?.params || [])
+    .map((param) => {
+      const value = item[param.key] || item.matchParams?.[param.key] || "";
+      return `${param.key}:${value}`;
+    })
+    .join(";");
+
+  return [categoryCode, activityDataType, standardId, paramPart, region, unit].join("|");
+}
+
+  function getLocalFactorVersions(kind, item) {
+    const list = kind === "group" ? groups : factors;
+    const key = Mock.buildFactorVersionKey?.(item) || buildFactorKey(item);
+    return list
+      .filter((row) => {
+        const rowKey = Mock.buildFactorVersionKey?.(row) || buildFactorKey(row);
+        return rowKey === key;
+      })
+      .sort((a, b) => String(b.effectiveDate || b.startDate || "").localeCompare(String(a.effectiveDate || a.startDate || "")));
+  }
+
+  function nextVersionText(version = "V1.0") {
+    const match = String(version).match(/V?(\d+)\.(\d+)/i);
+    if (!match) return "V1.1";
+    return `V${match[1]}.${Number(match[2]) + 1}`;
+  }
+
+  function renderVersionCard(kind, version) {
+    const status = Mock.getFactorVersionStatus?.(version) || versionStatus(version);
+    const statusClass = status === "当前版本"
+      ? "bg-primary-container text-on-primary-container"
+      : status === "待生效"
+        ? "bg-orange-50 text-orange-600"
+        : "bg-surface-variant text-on-surface-variant";
+
+    return `
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+      <div class="flex items-center justify-between mb-md">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="font-title-lg text-title-lg text-on-surface">${escapeHtml(version.version || "-")}</span>
+            <span class="text-body-sm text-on-surface-variant">生效日期：${escapeHtml(version.effectiveDate || version.startDate || "-")}</span>
+          </div>
+          <div class="text-xs text-on-surface-variant mt-1">
+            失效日期：${escapeHtml(version.expireDate || version.endDate || "长期有效")}
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded ${statusClass} text-[11px] font-bold">${escapeHtml(status)}</span>
+      </div>
+
+      <div class="text-xs text-on-surface-variant mb-md">
+        ${escapeHtml(version.name || "")}
+      </div>
+
+      <div class="flex gap-2 border-t border-outline-variant pt-md">
+        <button class="flex-1 py-1.5 border border-outline text-on-surface-variant rounded-lg hover:bg-surface-container-high" data-version-action="view" data-kind="${kind}" data-id="${escapeHtml(version.id)}">查看</button>
+        <button class="flex-1 py-1.5 border border-outline text-on-surface-variant rounded-lg hover:bg-surface-container-high" data-version-action="edit" data-kind="${kind}" data-id="${escapeHtml(version.id)}">编辑</button>
+        <button class="flex-1 py-1.5 bg-secondary-container text-on-secondary-container rounded-lg hover:opacity-90" data-version-action="new-version" data-kind="${kind}" data-id="${escapeHtml(version.id)}">另存新版</button>
+      </div>
+    </div>
+  `;
+  }
+
+  function renderVersionDrawer(kind, item) {
+    const versions = Mock.getFactorVersions?.(kind, item) || getLocalFactorVersions(kind, item);
+    const content = document.getElementById("version-drawer-content");
+    if (!content) return;
+
+    const title = item.name || (kind === "group" ? "因子组版本管理" : "因子版本管理");
+
+    content.innerHTML = `
+    <div class="h-full bg-white shadow-2xl flex flex-col">
+      <div class="px-lg py-md border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
+        <div>
+          <div class="text-base font-bold text-on-surface">${escapeHtml(title)}</div>
+          <div class="text-xs text-on-surface-variant mt-1">${kind === "group" ? "因子组" : "因子"}版本管理</div>
+        </div>
+        <button id="version-drawer-close" class="text-gray-400 hover:text-gray-600">
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+
+      <div class="p-lg border-b border-outline-variant bg-surface-container-lowest">
+        <button id="version-create-new-btn" class="w-full py-2 bg-primary text-white rounded text-sm font-medium">
+          另存为新版本
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-lg space-y-md">
+        ${versions.length ? versions.map((version) => renderVersionCard(kind, version)).join("") : `
+          <div class="text-center text-gray-400 py-12">暂无版本记录</div>
+        `}
+      </div>
+
+      <div class="px-lg py-md border-t border-outline-variant bg-surface-container-low">
+        <button class="w-full py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:shadow-md transition-all" id="finish-viewing-btn">
+          完成查看
+        </button>
+      </div>
+    </div>
+  `;
+
+    document.getElementById("version-drawer-close")?.addEventListener("click", closeVersionDrawer);
+    document.getElementById("finish-viewing-btn")?.addEventListener("click", closeVersionDrawer);
+    document.getElementById("version-create-new-btn")?.addEventListener("click", () => {
+      closeVersionDrawer();
+      openForm(kind, "new-version", item);
+    });
+  }
+
+  function openVersionDrawer(kind, item) {
+    if (!item) return;
+
+    versionContext = { kind, id: item.id, item };
+
+    renderVersionDrawer(kind, item);
+
+    const overlay = document.getElementById("version-drawer-overlay");
+    const content = document.getElementById("version-drawer-content");
+    const container = document.getElementById("version-management-container");
+
+    container?.classList.remove("pointer-events-none");
+    overlay?.classList.remove("pointer-events-none", "opacity-0");
+    overlay?.classList.add("opacity-100");
+    content?.classList.remove("translate-x-full");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeVersionDrawer() {
+    const overlay = document.getElementById("version-drawer-overlay");
+    const content = document.getElementById("version-drawer-content");
+    const container = document.getElementById("version-management-container");
+
+    overlay?.classList.add("opacity-0");
+    overlay?.classList.remove("opacity-100");
+    content?.classList.add("translate-x-full");
+
+    setTimeout(() => {
+      container?.classList.add("pointer-events-none");
+      overlay?.classList.add("pointer-events-none");
+      document.body.style.overflow = "";
+    }, 300);
+  }
+
+  window.closeVersionDrawer = closeVersionDrawer;
+  window.openVersionDrawer = openVersionDrawer;
+  function fillForm(kind, mode, item) {
+    kindInput.value = kind;
+    modeInput.value = mode;
+    idInput.value = item?.id || '';
+    const isGroup = kind === 'group';
+    const isNewVersion = mode === "new-version";
+    const isEdit = mode === "edit";
+    title.textContent = isNewVersion
+      ? `另存为新版本 - ${isGroup ? "因子组" : "因子"}`
+      : `${isEdit ? "编辑" : "新增"}${isGroup ? "因子组" : "因子"}`;
+    nameLabel.innerHTML = `${isGroup ? '因子组名称' : '因子名称'}<span class="required-star">*</span>`;
+    codeLabel.textContent = isGroup ? '因子组编码' : '因子编码';
+    nameInput.placeholder = isGroup ? '请输入因子组名称' : '请输入因子名称';
+    codeInput.placeholder = '自动生成';
+   addGasBtn.classList.toggle('hidden', !isGroup);
+configActionHead.classList.toggle('hidden', !isGroup);
+
+// 因子和因子组都展示“排放因子配置”
+factorConfigSection.classList.remove('hidden');
+
+// 不再使用“引用因子”多选
+groupFactorSection.classList.add('hidden');
+    endDateField.classList.remove('hidden');
+    document.getElementById("factor-form-save")?.classList.toggle("hidden", isNewVersion);
+    document.getElementById("factor-form-save-new")?.classList.toggle("hidden", !isNewVersion && !isEdit);
+    nameInput.value = item?.name || '';
+    codeInput.value = item?.code || '';
+  syncCategorySelector(item?.categoryCode || item?.category || 'stationary_combustion');
+renderFactorAccountingParams(categoryInput.value, item?.matchParams || item || {});
+syncStandardOptions(item?.standardId);
+    renderGwpVersionOptions(item?.gwpVersionId || '');
+    setSelectValue(regionInput, item?.region || '全国');
+    setSelectValue(scopeInput, item?.scope || inferScopeLabelByCategory(categoryInput.value) || '范围一');
+    sourceInput.value = item?.source || standardLabel(standardInput.value);
+    if (isNewVersion) {
+      versionInput.value = nextVersionText(item?.version || "V1.0");
+      startDateInput.value = "";
+      endDateInput.value = "";
+    } else {
+      versionInput.value = item?.version || 'V1.0';
+      startDateInput.value = item?.effectiveDate || item?.startDate || '';
+      endDateInput.value = item?.expireDate || item?.endDate || '';
+    }
+    configBody.innerHTML = '';
+    [firstGas(item || {})].forEach(addConfigRow);
+    renderFactorCandidates(item?.factorIds || []);
+  }
+  function openForm(kind, mode = 'add', item = null) { fillForm(kind, mode, item); modal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
+  function closeForm() { modal.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+  function collectForm() {
+  const kind = kindInput.value;
+  const prefix = kind === 'group' ? 'FG' : 'EF';
+  const list = kind === 'group' ? groups : factors;
+  const serial = String(list.length + 1).padStart(3, '0');
+  const gasRow = configBody.querySelector('tr');
+  const gasFactor = {
+    gas: gasRow?.querySelector('.gas-select')?.value || 'CO₂',
+    value: gasRow?.querySelector('.value-input')?.value || '0.00',
+    unit: gasRow?.querySelector('.unit-select')?.value || 'kgCO₂/Nm³'
+  };
+
+  const standard = getStandard(standardInput.value);
+  const categoryCode = categoryInput.value;
+  const categoryNode = findCategoryNodeByCode(categoryCode);
+  const scopeLabel = inferScopeLabelByCategory(categoryCode);
+  const gwpVersionId = gwpInput?.value || "";
+  const gwpVersion = getGwpVersions().find((version) => version.id === gwpVersionId);
+  const activityDataTypeValue = document.getElementById('form-activity-data-type-value')?.value || '';
+
+const paramSelects = Array.from(document.querySelectorAll('.factor-accounting-param'));
+const matchParams = {};
+const matchParamLabels = {};
+
+paramSelects.forEach((select) => {
+  const key = select.dataset.paramKey;
+  const value = select.value;
+  const label = select.options[select.selectedIndex]?.textContent?.trim() || value;
+
+  if (!key || !value) return;
+
+  matchParams[key] = value;
+  matchParamLabels[key] = label;
+});
+  const factorIds = kind === 'group' ? selectedFactorIds() : [];
+
+  return {
+    id: idInput.value || `${kind}-${Date.now()}`,
+    name: nameInput.value.trim() || (kind === 'group' ? '未命名因子组' : '未命名因子'),
+    code: codeInput.value.trim() || `${prefix}_CUSTOM_${serial}`,
+
+    // 和 model 联动的核心字段
+    category: categoryCode,
+    categoryCode,
+    categoryLabel: categoryNode?.categoryLabel || Mock.toCategoryLabel?.(categoryCode) || categoryCode,
+    groupCode: categoryNode?.groupCode || '',
+    groupLabel: categoryNode?.groupLabel || '',
+    activityDataType: activityDataTypeValue,
+activityDataTypeLabel: activityLabel(activityDataTypeValue),
+    standardId: standard?.id || '',
+    standardName: standard?.name || '',
+matchParamLabels,
+    matchParams,
+    ...matchParams,
+    gwpVersionId,
+    gwpVersionCode: gwpVersion?.code || "",
+    gwp: gwpVersion?.name || "",
+    gas: kind === 'factor' ? gasFactor.gas : undefined,
+    value: kind === 'factor' ? gasFactor.value : undefined,
+    unit: kind === 'factor' ? gasFactor.unit : undefined,
+    gases: kind === 'factor' ? [gasFactor] : getGroupFactors({ factorIds }).map(firstGas),
+    factorIds,
+    region: regionInput.value,
+    scope: scopeLabel || scopeInput.value,
+    source: sourceInput.value.trim() || standard?.name || '',
+    effectiveDate: startDateInput.value,
+    expireDate: endDateInput.value,
+    startDate: startDateInput.value,
+    endDate: endDateInput.value,
+    version: versionInput.value.trim() || 'V1.0',
+    status: idInput.value ? (findItem(kind, idInput.value)?.status || '启用') : '启用'
+  };
+}
+  function previousDay(dateValue) {
+    if (!dateValue) return '';
+    const date = new Date(`${dateValue}T00:00:00`);
+    date.setDate(date.getDate() - 1);
+    return date.toISOString().slice(0, 10);
+  }
+
+  function todayString() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function saveForm(asNewVersion = false) {
+    const data = collectForm();
+    const kind = kindInput.value;
+    const list = kind === 'group' ? groups : factors;
+    const index = list.findIndex((item) => item.id === idInput.value);
+
+    if (asNewVersion && index >= 0) {
+      if (!startDateInput.value) {
+        alert("另存为新版本时必须填写生效日期");
+        return;
+      }
+
+      const newRecord = Mock.createFactorNewVersion?.(kind, idInput.value, data);
+
+      if (!newRecord) {
+        const oldItem = list[index];
+        const fallbackRecord = normalizeFactorRecord({
+          ...oldItem,
+          ...data,
+          id: `${kind}-${Date.now()}`,
+          code: oldItem.code || data.code,
+          version: data.version || nextVersionText(oldItem.version || "V1.0"),
+          status: "启用"
+        });
+        list.unshift(fallbackRecord);
+
+        if (data.effectiveDate && data.effectiveDate <= todayString() && versionStatus(oldItem) === "当前版本") {
+          oldItem.expireDate = previousDay(data.effectiveDate);
+          oldItem.endDate = oldItem.expireDate;
+        }
+      }
+
+      syncFromSharedFactorState?.();
+    } else if (index >= 0) {
+      list[index] = normalizeFactorRecord({ ...list[index], ...data });
+    } else {
+      list.unshift(normalizeFactorRecord(data));
+      if (kind === 'group') groupPage = 1; else factorPage = 1;
+    }
+
+    syncFactorLibraryState();
+    closeForm();
+    render();
+
+    if (versionContext.item) {
+      const latest = findItem(versionContext.kind, versionContext.id) || versionContext.item;
+      versionContext.item = latest;
+      renderVersionDrawer(versionContext.kind, latest);
+    }
+  }
+  function activateTab(tabName) {
+    if (!['factor', 'group'].includes(tabName)) tabName = 'factor';
+    activeTab = tabName;
+    syncFromSharedFactorState();
+
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      const active = btn.dataset.tab === tabName;
+      btn.classList.toggle("text-primary", active);
+      btn.classList.toggle("border-primary", active);
+      btn.classList.toggle("font-medium", active);
+      btn.classList.toggle("text-gray-500", !active);
+      btn.classList.toggle("border-transparent", !active);
+    });
+
+    const factorView = document.getElementById("factor-list-view");
+    const groupView = document.getElementById("group-list-view");
+    if (factorView) {
+      factorView.classList.toggle("hidden", tabName !== "factor");
+      factorView.style.display = tabName === "factor" ? "flex" : "none";
+    }
+    if (groupView) {
+      groupView.classList.toggle("hidden", tabName !== "group");
+      groupView.style.display = tabName === "group" ? "flex" : "none";
+    }
+
+    render();
+  }
+  function findItem(kind, id) { return (kind === 'group' ? groups : factors).find((item) => item.id === id); }
+  function openDetail(kind, item) {
+    if (!item) return;
+    const gwpVersion = getGwpVersions().find((version) => version.id === item.gwpVersionId);
+    const gwpName = item.gwp || gwpVersion?.name || '-';
+    const matchConfig = getMatchParamConfig(item.categoryCode || item.category);
+    const matchValue = item?.[matchConfig.key] || item?.matchParams?.[matchConfig.key] || '';
+    const matchOption = matchConfig.options.find((option) => option.value === matchValue);
+    const matchLabel = matchOption?.label || matchValue || '-';
+
+    const status = versionStatus(item);
+    const detailFactors = kind === 'group' ? getGroupFactors(item) : [item];
+
+    document.getElementById('detail-modal-title').textContent = kind === 'group' ? '因子组详情' : '因子详情';
+    document.getElementById('detail-modal-subtitle').textContent = `${item.name} / ${item.code}`;
+    document.getElementById('detail-summary-cards').innerHTML = `<div class="bg-gray-50 p-3 rounded"><div class="text-xs text-gray-500">版本状态</div><div class="mt-1">${statusBadge(status)}</div></div><div class="bg-gray-50 p-3 rounded"><div class="text-xs text-gray-500">GWP版本</div><div class="mt-1 font-semibold text-slate-800">${escapeHtml(gwpName)}</div></div><div class="bg-gray-50 p-3 rounded"><div class="text-xs text-gray-500">${kind === 'group' ? '引用因子数' : '版本号'}</div><div class="mt-1 font-semibold text-primary">${kind === 'group' ? detailFactors.length : escapeHtml(item.version || '-')}</div></div>`;
+    document.getElementById('detail-gas-body').innerHTML = detailFactors.map((factor) => {
+      const gas = firstGas(factor);
+      const gwpValue = Mock.getGasGwp?.(gas.gas, item) || "-";
+      return `<tr class="border-t border-gray-50 first:border-t-0"><td class="py-3 px-4"><span class="bg-blue-50 text-primary px-2 py-0.5 rounded text-xs">${escapeHtml(gas.gas)}</span></td><td class="py-3 px-4 font-semibold">${escapeHtml(gas.value)}</td><td class="py-3 px-4 text-gray-500">${escapeHtml(gas.unit)}</td><td class="py-3 px-4 text-gray-500">${escapeHtml(gwpValue)} <span class="text-xs text-gray-400">来自GWP模块</span></td></tr>`;
+    }).join('');
+    document.getElementById('detail-info-grid').innerHTML = `<div class="flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">排放类别</span><span class="font-medium text-slate-800">${escapeHtml(item.categoryLabel || item.categoryCode || item.category)}</span></div><div class="flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">活动数据类型</span><span class="font-medium text-slate-800">${escapeHtml(activityLabel(item.activityDataType))}</span></div><div class="flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">生效日期</span><span class="font-medium text-slate-800">${escapeHtml(item.effectiveDate || item.startDate || '-')}</span></div><div class="flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">失效日期</span><span class="font-medium text-slate-800">${escapeHtml(item.expireDate || item.endDate || '-')}</span></div><div class="col-span-2 flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">GWP版本ID</span><span class="font-medium text-slate-800">${escapeHtml(item.gwpVersionId || '-')}</span></div><div class="col-span-2 flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">${escapeHtml(matchConfig.label)}</span><span class="font-medium text-slate-800">${escapeHtml(matchLabel)}</span></div><div class="col-span-2 flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">来源标准</span><span class="font-medium text-slate-800">${escapeHtml(standardLabel(item.standardId))}</span></div><div class="col-span-2 flex justify-between border-b border-dashed pb-2"><span class="text-gray-500">来源标准/指南</span><span class="font-medium text-slate-800">${escapeHtml(item.source || '-')}</span></div>`;
+    detailModal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  }
+  function closeDetail() { detailModal.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+  function setCategoryFilter(key) { currentCategoryKey = key || 'all'; factorPage = 1; groupPage = 1; render(); }
+  function findStandard(id) { return standards.find((item) => item.id === id); }
+  function openStandardForm(mode = 'add', item = null) {
+    standardModeInput.value = mode;
+    standardIdInput.value = item?.id || '';
+    document.getElementById('standard-form-title').textContent = mode === 'edit' ? '编辑标准' : '新增标准';
+    standardNameInput.value = item?.name || '';
+    standardCodeInput.value = item?.code || '';
+    standardTypeInput.value = item?.type || '';
+    standardIssuerInput.value = item?.issuer || '';
+    standardYearInput.value = item?.year || '';
+    standardUrlInput.value = item?.referenceUrl || '';
+    standardDescInput.value = item?.description || '';
+    standardModal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  }
+  function closeStandardForm() { standardModal.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+  function saveStandardForm() {
+    const id = standardIdInput.value || `std-${Date.now()}`;
+    const standard = {
+      id,
+      name: standardNameInput.value.trim() || '未命名标准',
+      code: standardCodeInput.value.trim() || `STD_CUSTOM_${String(standards.length + 1).padStart(3, '0')}`,
+      type: standardTypeInput.value.trim() || '自定义标准',
+      issuer: standardIssuerInput.value.trim(),
+      year: standardYearInput.value.trim(),
+      referenceUrl: standardUrlInput.value.trim(),
+      description: standardDescInput.value.trim(),
+      status: findStandard(id)?.status || '启用'
+    };
+    const index = standards.findIndex((item) => item.id === id);
+    if (index >= 0) standards[index] = { ...standards[index], ...standard };
+    else standards.unshift(standard);
+    syncStandardOptions(standard.id);
+    syncFactorLibraryState();
+    render();
+    closeStandardForm();
+  }
+
+  document.getElementById('add-factor-btn').addEventListener('click', () => openForm('factor'));
+  document.getElementById('add-group-btn').addEventListener('click', () => openForm('group'));
+  document.getElementById('factor-form-save').addEventListener('click', () => saveForm(false));
+  document.getElementById('factor-form-save-new').addEventListener('click', () => saveForm(true));
+  document.getElementById('factor-form-cancel').addEventListener('click', closeForm);
+  document.getElementById('factor-form-close-x').addEventListener('click', closeForm);
+  categoryGroupInput?.addEventListener('change', () => {
+  refreshCategoryOptions('');
+  const categoryCode = categoryCategoryInput?.value || '';
+  renderFactorAccountingParams(categoryCode);
+});
+
+categoryCategoryInput?.addEventListener('change', () => {
+  const categoryCode = categoryCategoryInput.value;
+  if (categoryInput) categoryInput.value = categoryCode;
+  syncCategoryValue();
+  renderFactorAccountingParams(categoryCode);
+});
+  document.getElementById('detail-modal-close').addEventListener('click', closeDetail);
+  document.getElementById('detail-modal-ok').addEventListener('click', closeDetail);
+  document.addEventListener("click", (event) => {
+    const tab = event.target.closest(".tab-btn[data-tab]");
+    if (!tab) return;
+    event.preventDefault();
+    event.stopPropagation();
+    activateTab(tab.dataset.tab);
+  }, true);
+  document.getElementById('factor-search-btn').addEventListener('click', () => {
+    factorFilters.gas = document.getElementById('factor-search-gas').value;
+    factorFilters.standardId = document.getElementById('factor-search-standard').value;
+    factorFilters.activityDataType = document.getElementById('factor-search-activity-type').value;
+    factorFilters.versionStatus = document.getElementById('factor-search-status').value;
+    factorPage = 1;
+    renderFactorTable();
+  });
+  document.getElementById('factor-reset-btn').addEventListener('click', () => {
+    Object.assign(factorFilters, { gas: "全部", standardId: "全部", activityDataType: "全部", versionStatus: "全部" });
+    document.getElementById('factor-search-gas').value = "全部";
+    document.getElementById('factor-search-status').value = "全部";
+    factorPage = 1;
+    renderFactorTable();
+  });
+  document.getElementById('group-search-btn').addEventListener('click', () => {
+    groupFilters.standardId = document.getElementById('group-search-standard').value;
+    groupFilters.activityDataType = document.getElementById('group-search-activity-type').value;
+    groupFilters.versionStatus = document.getElementById('group-search-status').value;
+    groupPage = 1;
+    renderGroupTable();
+  });
+  document.getElementById('group-reset-btn').addEventListener('click', () => {
+    Object.assign(groupFilters, { standardId: "全部", activityDataType: "全部", versionStatus: "全部" });
+    document.getElementById('group-search-status').value = "全部";
+    groupPage = 1;
+    renderGroupTable();
+  });
+
+standardInput?.addEventListener('change', () => {
+  sourceInput.value = standardLabel(standardInput.value);
+  renderFactorCandidates(selectedFactorIds());
+});
+
+document.getElementById('factor-accounting-params')?.addEventListener('change', () => {
+  renderFactorCandidates(selectedFactorIds());
+});
+  addGasBtn.addEventListener('click', () => addConfigRow({ gas: 'CH₄', value: '', unit: 'kgCH₄/Nm³' }));
+  configBody.addEventListener('click', (event) => { const deleteBtn = event.target.closest('.delete-gas-row'); if (deleteBtn && configBody.querySelectorAll('tr').length > 1) deleteBtn.closest('tr').remove(); });
+  modal.addEventListener('click', (event) => { if (event.target === modal) closeForm(); });
+  standardModal.addEventListener('click', (event) => { if (event.target === standardModal) closeStandardForm(); });
+  detailModal.addEventListener('click', (event) => { if (event.target === detailModal) closeDetail(); });
+
+  document.addEventListener('click', (event) => {
+    const versionActionBtn = event.target.closest("[data-version-action]");
+    if (versionActionBtn) {
+      const action = versionActionBtn.dataset.versionAction;
+      const kind = versionActionBtn.dataset.kind;
+      const id = versionActionBtn.dataset.id;
+      const item = findItem(kind, id);
+
+      if (!item) return;
+
+      if (action === "view") {
+        closeVersionDrawer();
+        openDetail(kind, item);
+        return;
+      }
+
+      if (action === "edit") {
+        closeVersionDrawer();
+        openForm(kind, "edit", item);
+        return;
+      }
+
+      if (action === "new-version") {
+        closeVersionDrawer();
+        openForm(kind, "new-version", item);
+        return;
+      }
+    }
+
+    if (event.target.closest("#version-drawer-overlay")) {
+      closeVersionDrawer();
+      return;
+    }
+
+    const pageBtn = event.target.closest('.page-btn');
+    if (pageBtn && !pageBtn.disabled) { if (pageBtn.dataset.kind === 'factor') factorPage = Number(pageBtn.dataset.page); else groupPage = Number(pageBtn.dataset.page); render(); return; }
+    const actionRow = event.target.closest('tr[data-kind]');
+    const rowAction = event.target.closest('[data-action]');
+    if (rowAction && actionRow) {
+      const rowKind = actionRow.dataset.kind;
+      const list = rowKind === 'standard' ? standards : (rowKind === 'group' ? groups : factors);
+      const index = list.findIndex((item) => item.id === actionRow.dataset.id);
+      const item = list[index];
+      if (!item) return;
+      if (rowAction.dataset.action === 'version-management') {
+        const row = event.target.closest("tr");
+        const kind = row?.dataset.kind || activeTab;
+        const id = row?.dataset.id;
+        const targetItem = findItem(kind, id);
+        openVersionDrawer(kind, targetItem);
+        event.stopPropagation();
+        return;
+      }
+      if (rowAction.dataset.action === 'toggle-status') {
+        item.status = item.status === '启用' ? '停用' : '启用';
+        syncFactorLibraryState();
+        render();
+        event.stopPropagation();
+        return;
+      }
+      if (rowAction.dataset.action === 'delete-row') {
+        if (window.confirm(`确认删除“${item.name}”？`)) {
+          list.splice(index, 1);
+          syncFactorLibraryState();
+          render();
+        }
+        event.stopPropagation();
+        return;
+      }
+    }
+    const viewBtn = event.target.closest('.view-row');
+    if (viewBtn && actionRow) { openDetail(actionRow.dataset.kind, findItem(actionRow.dataset.kind, actionRow.dataset.id)); event.stopPropagation(); return; }
+    const editBtn = event.target.closest('.edit-row');
+    if (editBtn && actionRow) { openForm(actionRow.dataset.kind, 'edit', findItem(actionRow.dataset.kind, actionRow.dataset.id)); event.stopPropagation(); return; }
+    const editStandardBtn = event.target.closest('.edit-standard');
+    if (editStandardBtn && actionRow) { openStandardForm('edit', findStandard(actionRow.dataset.id)); event.stopPropagation(); return; }
+    const row = event.target.closest('#factor-table-body tr, #group-table-body tr');
+    if (row && !event.target.closest('button')) { row.closest('tbody').querySelectorAll('tr').forEach((item) => item.classList.remove('bg-blue-50/30')); row.classList.add('bg-blue-50/30'); }
+    const treeButton = event.target.closest('.tree-filter');
+    if (treeButton) {
+      const key = treeButton.dataset.countKey;
+      const node = treeButton.closest('.tree-node');
+      const hasChildren = Boolean(node?.querySelector(':scope > .tree-children'));
+      if (hasChildren) {
+        if (treeExpandedKeys.has(key)) treeExpandedKeys.delete(key);
+        else treeExpandedKeys.add(key);
+      }
+      setCategoryFilter(key);
+    }
+  });
+
+  window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { if (!modal.classList.contains('hidden')) closeForm(); if (!standardModal.classList.contains('hidden')) closeStandardForm(); if (!detailModal.classList.contains('hidden')) closeDetail(); } });
+  function refreshFromUpperTabState() {
+    syncFromSharedFactorState();
+    activateTab(activeTab);
+  }
+
+  window.addEventListener('carbon-mock-updated', refreshFromUpperTabState);
+  window.addEventListener('message', (event) => {
+    const data = event.data || {};
+    const shouldSync = data.type === 'factor-sync' ||
+      data.type === 'module-sync' ||
+      (data.type === 'module-activated' && data.moduleKey === 'factor');
+    if (shouldSync) refreshFromUpperTabState();
+  });
+  window.addEventListener('storage', (event) => {
+    if (!event.key || event.key === (Mock.STORAGE_KEY || 'carbon-accounting-mock-state-v7-boundary-source-model-match')) {
+      refreshFromUpperTabState();
+    }
+  });
+  window.addEventListener('focus', refreshFromUpperTabState);
+  window.addEventListener('pageshow', refreshFromUpperTabState);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refreshFromUpperTabState();
+  });
+  factors.forEach(normalizeFactorRecord);
+  groups.forEach(normalizeFactorRecord);
+  hydrateGroupFactorIds();
+  syncFactorLibraryState();
+  render();
+  activateTab(activeTab);
+})();
+</script><!-- Chart Init Script -->
+<script data-purpose="chart-init">
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('detailTrendChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['2020', '2021', '2022', '2023', '2024'],
+            datasets: [{
+              label: '因子值',
+              data: [0.612, 0.605, 0.598, 0.589, 0.570],
+              borderColor: '#005daa',
+              backgroundColor: 'rgba(0, 93, 170, 0.05)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointRadius: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { display: false }, ticks: { font: { size: 10 } } },
+              y: { display: true, grid: { borderDash: [2, 2] }, ticks: { font: { size: 10 } } }
+            }
+          }
+        });
+      }
+    });
+  </script>
+<!-- Dropdown Logic Script -->
+<script>
+(function() {
+  document.addEventListener('click', function(e) {
+    const allMenus = document.querySelectorAll('.more-dropdown');
+    const targetBtn = e.target.closest('.more-btn');
+
+    if (targetBtn) {
+      const menu = targetBtn.nextElementSibling;
+      const isHidden = menu.classList.contains('hidden');
+      
+      // Close all others
+      allMenus.forEach(m => m.classList.add('hidden'));
+      
+      if (isHidden) {
+        menu.classList.remove('hidden');
+      }
+      e.stopPropagation();
+    } else {
+      // Close if clicked outside
+      allMenus.forEach(m => m.classList.add('hidden'));
+    }
+  });
+})();
+</script>
+<!-- Version Management Drawer Container -->
+<div class="fixed inset-0 z-[60] pointer-events-none" id="version-management-container">
+<!-- Overlay -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 opacity-0 pointer-events-none" id="version-drawer-overlay"></div>
+<!-- Drawer Content -->
+<div class="absolute right-0 top-0 h-full w-[480px] bg-surface-container-lowest border-l border-outline-variant shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col pointer-events-auto translate-x-full" id="version-drawer-content"></div><script>
+  // Version drawer behavior is implemented in the main factor-library-interactions script.
+</script>
+</body></html>

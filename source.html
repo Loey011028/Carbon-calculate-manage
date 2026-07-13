@@ -1,0 +1,2525 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<base href="./">
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>碳排放管理平台 - 排放源管理</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Custom Tailwind Config -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'carbon-dark': '#001529',
+            'carbon-blue': '#1890ff',
+            'carbon-bg': '#f0f2f5',
+            'status-success': '#52c41a',
+            'status-warning': '#faad14',
+            'status-error': '#ff4d4f',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbar">
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style data-integrated-cleanup>
+  html,
+  body {
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    background: #f7f9fc !important;
+  }
+
+  body.module-body {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  body > aside:first-of-type,
+  body > header:first-of-type,
+  body > nav:first-of-type {
+    display: none !important;
+  }
+
+  body.module-body > .flex,
+  body.module-body > div[class*="flex"] {
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+  }
+
+  main {
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  main[class*="ml-"],
+  main[class*="pt-"] {
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  main > .flex-1,
+  main > section.flex-1,
+  main > div.flex-1,
+  main > div[class*="overflow-hidden"],
+  main > section[class*="overflow-hidden"],
+  main > div[class*="h-[calc"],
+  main > section[class*="h-[calc"] {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  main > div:last-child,
+  main > section:last-child {
+    min-height: 0 !important;
+  }
+
+  .integrated-module-shell {
+    min-height: 100vh;
+    background: #f7f9fc;
+  }
+</style>
+<script src="./shared-mock-data.js"></script>
+</head>
+<body class="bg-carbon-bg font-sans text-slate-700 module-body">
+<div class="flex h-screen overflow-hidden">
+
+<!-- Main Section Wrapper -->
+<div class="flex-1 flex flex-col min-w-0">
+
+<!-- Main Content Area -->
+<main class="flex-1 overflow-hidden flex flex-col p-6 gap-6">
+<!-- BEGIN: Stats Cards -->
+<section class="grid grid-cols-4 gap-6" data-purpose="header-stats">
+<!-- Total Emission Sources -->
+<div class="bg-white p-5 rounded-lg border shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-blue-50 text-carbon-blue rounded-lg flex items-center justify-center">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<p class="text-sm text-slate-500 mb-1">排放源总数</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">128</span>
+<span class="text-xs text-slate-400">个</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400">较上月</p>
+<div class="text-xs text-status-success flex items-center justify-end">
+<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" fill-rule="evenodd"></path></svg>
+                6.7%
+              </div>
+</div>
+</div>
+<!-- In Use -->
+<div class="bg-white p-5 rounded-lg border shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-green-50 text-status-success rounded-lg flex items-center justify-center">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<p class="text-sm text-slate-500 mb-1">启用中</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">96</span>
+<span class="text-xs text-slate-400">个</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400">较上月</p>
+<div class="text-xs text-status-success flex items-center justify-end">
+<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" fill-rule="evenodd"></path></svg>
+                5.5%
+              </div>
+</div>
+</div>
+<!-- Disabled -->
+<div class="bg-white p-5 rounded-lg border shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-orange-50 text-status-warning rounded-lg flex items-center justify-center">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<p class="text-sm text-slate-500 mb-1">停用</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">12</span>
+<span class="text-xs text-slate-400">个</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400">较上月</p>
+<div class="text-xs text-status-success flex items-center justify-end">
+<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 112 0v7.586l2.293-2.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg>
+                2.1%
+              </div>
+</div>
+</div>
+<!-- Pending Improvement -->
+<div class="bg-white p-5 rounded-lg border shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-red-50 text-status-error rounded-lg flex items-center justify-center">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<p class="text-sm text-slate-500 mb-1">待完善</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">20</span>
+<span class="text-xs text-slate-400">个</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-slate-400">较上月</p>
+<div class="text-xs text-status-success flex items-center justify-end">
+<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path clip-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" fill-rule="evenodd"></path></svg>
+                11.1%
+              </div>
+</div>
+</div>
+</section>
+<!-- END: Stats Cards -->
+<!-- BEGIN: Filter Bar -->
+<section class="bg-white p-4 rounded-lg border shadow-sm flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-4">
+<input class="px-4 py-2 border rounded text-sm w-48 focus:ring-1 focus:ring-carbon-blue" placeholder="请输入排放源名称" type="text">
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500 whitespace-nowrap">范围：</span>
+<select class="border rounded px-3 py-2 text-sm w-32 focus:ring-1 focus:ring-carbon-blue">
+<option>全部</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500 whitespace-nowrap">状态：</span>
+<select class="border rounded px-3 py-2 text-sm w-32 focus:ring-1 focus:ring-carbon-blue">
+<option>全部</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500 whitespace-nowrap">排放类别：</span>
+<select class="border rounded px-3 py-2 text-sm w-32 focus:ring-1 focus:ring-carbon-blue">
+<option>全部</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500 whitespace-nowrap">所属组织：</span>
+<select class="border rounded px-3 py-2 text-sm w-32 focus:ring-1 focus:ring-carbon-blue">
+<option>全部</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-2 border rounded text-sm hover:bg-slate-50">重置</button>
+<button class="px-6 py-2 bg-carbon-blue text-white rounded text-sm flex items-center gap-2" id="source-add-button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              新增排放源
+            </button>
+</div>
+</section>
+<!-- END: Filter Bar -->
+<!-- BEGIN: Main Dashboard Content -->
+<div class="flex-1 flex gap-6 overflow-hidden">
+<!-- Left Panel: Classification -->
+<aside class="w-64 bg-white border rounded-lg flex flex-col overflow-hidden shrink-0">
+<div class="p-4 border-b font-medium bg-slate-50">排放源分类</div>
+<div class="flex-1 overflow-y-auto p-2" id="source-boundary-tree"></div>
+<div class="p-4 border-t">
+<button class="w-full flex items-center justify-between p-2 rounded bg-slate-50 text-sm" data-tree-filter data-tree-status="停用">
+<span class="">已停用排放源</span>
+<span class="text-slate-400">(32)</span>
+</button>
+</div>
+</aside>
+<!-- Middle Panel: Data Table -->
+<section class="flex-1 bg-white border rounded-lg flex flex-col overflow-hidden">
+<div class="p-4 border-b font-medium bg-slate-50 flex justify-between items-center">
+<span class="">排放源列表</span>
+<button class="text-slate-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left text-sm">
+<thead class="bg-slate-50 text-slate-500 border-b sticky top-0">
+<tr>
+<th class="px-4 py-3 font-medium">排放源名称</th>
+<th class="px-4 py-3 font-medium">所属范围</th>
+<th class="px-4 py-3 font-medium">所属组织</th>
+<th class="px-4 py-3 font-medium">活动数据配置</th>
+<th class="px-4 py-3 font-medium">排放类别</th>
+<th class="px-4 py-3 font-medium">状态</th>
+<th class="px-4 py-3 font-medium">数据源数量</th>
+<th class="px-4 py-3 font-medium">关联设备</th>
+<th class="px-3 py-3 font-medium text-left w-36">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">天然气锅炉</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">固定燃烧</td>
+<td class="px-4 py-3"><span class="bg-green-100 text-status-success px-2 py-0.5 rounded text-xs">启用</span></td>
+<td class="px-4 py-3">2</td>
+<td class="px-4 py-3 text-carbon-blue">8台</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">停用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">柴油发电机</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">固定燃烧</td>
+<td class="px-4 py-3"><span class="bg-green-100 text-status-success px-2 py-0.5 rounded text-xs">启用</span></td>
+<td class="px-4 py-3">1</td>
+<td class="px-4 py-3 text-carbon-blue">4台</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">停用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">食堂燃气灶</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">固定燃烧</td>
+<td class="px-4 py-3"><span class="bg-green-100 text-status-success px-2 py-0.5 rounded text-xs">启用</span></td>
+<td class="px-4 py-3">1</td>
+<td class="px-4 py-3 text-carbon-blue">2台</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">停用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">工业窑炉</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">工艺排放</td>
+<td class="px-4 py-3"><span class="bg-green-100 text-status-success px-2 py-0.5 rounded text-xs">启用</span></td>
+<td class="px-4 py-3">2</td>
+<td class="px-4 py-3 text-carbon-blue">3台</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">停用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">公用车辆（汽油）</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">移动燃烧</td>
+<td class="px-4 py-3"><span class="bg-green-100 text-status-success px-2 py-0.5 rounded text-xs">启用</span></td>
+<td class="px-4 py-3">3</td>
+<td class="px-4 py-3 text-carbon-blue">15辆</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">停用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">公用车辆（柴油）</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">移动燃烧</td>
+<td class="px-4 py-3"><span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-xs">停用</span></td>
+<td class="px-4 py-3">0</td>
+<td class="px-4 py-3 text-carbon-blue">0辆</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">启用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">冷媒R410a泄漏</td>
+<td class="px-4 py-3">范围一</td>
+<td class="px-4 py-3">制冷剂泄漏</td>
+<td class="px-4 py-3"><span class="bg-orange-100 text-status-warning px-2 py-0.5 rounded text-xs" title="该排放源已创建，但关键配置信息（如数据源、核算模型或排放因子）尚不完善，暂无法用于碳核算。">待完善</span></td>
+<td class="px-4 py-3">0</td>
+<td class="px-4 py-3 text-carbon-blue">12台</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">完善</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-4 py-3 text-carbon-blue">外购电力-办公楼</td>
+<td class="px-4 py-3">范围二</td>
+<td class="px-4 py-3">外购电力</td>
+<td class="px-4 py-3"><span class="bg-green-100 text-status-success px-2 py-0.5 rounded text-xs">启用</span></td>
+<td class="px-4 py-3">1</td>
+<td class="px-4 py-3 text-slate-400">—</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue">编辑</button>
+<button class="text-carbon-blue">停用</button>
+<button class="text-status-error">删除</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t flex items-center justify-between gap-4 text-sm text-slate-500 bg-white" data-purpose="source-pagination">
+<div class="text-slate-600" id="source-pagination-summary">共 0 条，显示 0-0 条</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-2" id="source-pager"></div>
+<select class="w-[104px] border border-slate-300 rounded px-2 py-1 pr-7 text-xs text-slate-600 focus:ring-1 focus:ring-carbon-blue" id="source-page-size-select">
+<option value="10">10 条/页</option>
+<option value="20">20 条/页</option>
+</select>
+<div class="flex items-center gap-1 text-slate-600">
+<span>前往</span>
+<input class="h-8 w-12 border border-slate-300 rounded p-0 text-center text-xs focus:ring-1 focus:ring-carbon-blue" id="source-page-jump" min="1" type="number" value="1">
+<span>页</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Details Drawer -->
+<aside class="hidden fixed right-0 top-0 z-[90] w-[420px] max-w-[calc(100vw-24px)] translate-x-full bg-white border rounded-lg flex-col overflow-hidden shadow-2xl transition-transform duration-300 ease-out" data-purpose="detail-drawer">
+<div class="p-4 border-b flex justify-between items-center bg-slate-50">
+<h2 class="font-bold text-slate-800" id="detail-drawer-title">排放源详情</h2>
+<button class="text-slate-400 hover:text-slate-600" id="detail-close-button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-5 no-scrollbar" id="detail-drawer-content"></div>
+</aside>
+</div>
+<!-- END: Main Dashboard Content -->
+</main>
+</div>
+</div>
+<!-- Edit Modal Overlay -->
+<div class="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center hidden" id="edit-modal">
+<div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
+<h2 class="text-lg font-bold text-slate-800" id="source-modal-title">编辑排放源</h2>
+<button class="text-slate-400 hover:text-slate-600" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+<!-- Section 1: Basic Info -->
+<div class="mb-8">
+<h3 class="text-base font-bold border-l-4 border-carbon-blue pl-3 mb-6">基础信息配置</h3>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm text-slate-600">排放源名称</label>
+<input class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-name-input" type="text" value="天然气锅炉">
+</div>
+<div class="space-y-2">
+  <label class="text-sm text-slate-600">排放源大类</label>
+  <select class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-group-select"></select>
+</div>
+
+<div class="space-y-2 hidden" id="source-custom-group-wrap">
+  <label class="text-sm text-slate-600">自定义大类名称</label>
+  <input class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-custom-group-input" placeholder="请输入大类名称" type="text">
+</div>
+<div class="space-y-2">
+<label class="text-sm text-slate-600">排放类别</label>
+<select class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-category-select">
+<option selected="">固定燃烧</option>
+<option>移动燃烧</option>
+<option>工艺排放</option>
+<option>制冷剂泄漏</option>
+<option>外购电力</option>
+<option>外购热力</option>
+<option>员工通勤</option>
+<option>运输配送</option>
+<option>废弃物处理</option>
+</select>
+</div>
+<!-- <div class="space-y-2">
+<label class="text-sm text-slate-600">单位</label>
+<input class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-unit-input" placeholder="如 kWh、Nm³、kg" type="text">
+</div> -->
+<div class="space-y-2">
+<label class="text-sm text-slate-600">所属范围</label>
+<input class="w-full border rounded px-3 py-2 text-sm bg-slate-50 text-slate-600" id="source-scope-select" readonly type="text">
+</div>
+<div class="space-y-2">
+<label class="text-sm text-slate-600">所属组织</label>
+<select class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-org-input"></select>
+</div>
+</div>
+</div>
+<div class="mb-8" id="source-accounting-params-section">
+  <h3 class="text-base font-bold border-l-4 border-carbon-blue pl-3 mb-6">活动数据配置</h3>
+
+  <div class="grid grid-cols-2 gap-6 mb-6">
+    <div class="space-y-2">
+      <label class="text-sm text-slate-600">活动数据类型</label>
+      <input
+        class="w-full border rounded px-3 py-2 text-sm bg-slate-50 text-slate-600"
+        id="source-activity-data-type-label"
+        readonly
+        type="text"
+      >
+    </div>
+
+    <div class="space-y-2">
+      <label class="text-sm text-slate-600">默认活动单位</label>
+      <input
+        class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue"
+        id="source-unit-input"
+        placeholder="如 kWh、Nm³、kg"
+        type="text"
+      >
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-6" id="source-accounting-params"></div>
+</div>
+<!-- Section 2: Data Source Config -->
+<div>
+<h3 class="text-base font-bold border-l-4 border-carbon-blue pl-3 mb-6">数据来源配置</h3>
+<div class="grid grid-cols-5 gap-4 mb-6" id="source-datasource-type-cards"></div>
+<div class="grid grid-cols-[240px_1fr] gap-6">
+<div class="space-y-3">
+<label class="text-sm text-slate-600 font-medium">数据源类别</label>
+<select class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue" id="source-datasource-category"></select>
+<div class="p-3 rounded bg-blue-50 border border-blue-100 text-xs text-slate-600 leading-relaxed">
+一个排放源可按实际业务关联多个数据源，例如主表计、手工补录台账和接口校验数据。
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<label class="text-sm text-slate-600 font-medium">选择数据源（支持多选）</label>
+<span class="text-xs text-slate-400" id="source-datasource-count">已选择 0 个</span>
+</div>
+<div class="border rounded-lg overflow-hidden">
+<div class="grid grid-cols-[40px_1.3fr_1fr_0.8fr_0.8fr] gap-0 px-4 py-2 bg-slate-50 text-xs text-slate-500 border-b">
+<span></span><span>数据源名称</span><span>所属组织</span><span>状态</span><span>频率</span>
+</div>
+<div class="max-h-48 overflow-y-auto divide-y" id="source-datasource-options"></div>
+</div>
+<div class="min-h-[44px] p-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/70 flex flex-wrap gap-2" id="source-datasource-selected"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-4 border-t flex items-center justify-between gap-3 bg-slate-50">
+<div class="flex items-center gap-3">
+<span class="text-sm text-slate-600">启用状态</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="source-status-checkbox" type="checkbox">
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-carbon-blue"></div>
+</label>
+</div>
+<div class="flex justify-end gap-3">
+<button class="px-6 py-2 border rounded text-sm hover:bg-slate-50" onclick="closeModal()">取消</button>
+<button class="px-6 py-2 bg-carbon-blue text-white rounded text-sm" id="source-save-button">保存</button>
+</div>
+</div>
+</div>
+</div><script>
+  const Mock = window.CarbonAccountingMock || {};
+  const emissionCategoryTree = Mock.EmissionCategoryTree || [];
+
+  function getGroupNode(groupCode) {
+    return emissionCategoryTree.find(group => group.groupCode === groupCode) || null;
+  }
+
+  function getCategoryNode(categoryCode) {
+    for (const group of emissionCategoryTree) {
+      const category = (group.children || []).find(item => item.category === categoryCode);
+      if (category) return { group, category };
+    }
+    return { group: null, category: null };
+  }
+
+  function getDatasourceNames(datasourceIds = []) {
+    return datasourceIds
+      .map(id => (Mock.DataSources || []).find(ds => ds.id === id))
+      .filter(Boolean)
+      .map(item => item.name)
+      .join('、') || '待绑定';
+  }
+
+  function sharedSourceToRow(source) {
+    const datasources = Mock.getDatasourceByIds?.(source.datasourceIds || []) || [];
+    const firstDatasource = datasources[0];
+    const categoryNode = Mock.getEmissionCategoryNode?.(source.category);
+    const groupInfo = Mock.getEmissionGroupByCategory?.(source.category) || {};
+    const inferredScope = source.scope || Mock.inferScopeByCategory?.(source.category) || '';
+    const categoryLabel = source.categoryLabel || categoryNode?.categoryLabel || Mock.toCategoryLabel?.(source.category) || source.category || '';
+    return {
+      ...source,
+      groupCode: source.groupCode || categoryNode?.groupCode || groupInfo.groupCode || '',
+      groupLabel: source.groupLabel || categoryNode?.groupLabel || groupInfo.groupLabel || '',
+      scopeCode: inferredScope,
+      categoryCode: source.category,
+      scope: Mock.toScopeLabel?.(inferredScope) || inferredScope || '待推导',
+      boundaryCategory: categoryLabel,
+      category: categoryLabel,
+      dataSources: String(datasources.length),
+      datasourceIds: datasources.map(item => item.id),
+      datasourceNames: getDatasourceNames(source.datasourceIds || []),
+      org: source.org || firstDatasource?.org || '',
+    unit: source.unit || firstDatasource?.unit || '',
+activityDataType: source.activityDataType || firstDatasource?.activityDataType || '',
+activityDataTypeLabel: source.activityDataTypeLabel || source.activityDataLabel || Mock.getActivityDataLabel?.(source.activityDataType) || '',
+activityDataLabel: source.activityDataLabel || source.activityDataTypeLabel || Mock.getActivityDataLabel?.(source.activityDataType) || '',
+accountingParams: source.accountingParams || {},
+accountingParamLabels: source.accountingParamLabels || {}
+    };
+  }
+
+  const fallbackEmissionSourceData = [
+    { name: '天然气锅炉', scope: '范围一', category: '固定燃烧', status: '启用', dataSources: '1', datasourceIds: ['ds-6'], equipment: '8台' },
+    { name: '柴油发电机', scope: '范围一', category: '固定燃烧', status: '启用', dataSources: '1', datasourceIds: ['ds-10'], equipment: '4台' },
+    { name: '食堂燃气灶', scope: '范围一', category: '固定燃烧', status: '待完善', dataSources: '0', datasourceIds: [], equipment: '2台' },
+    { name: '工业窑炉', scope: '范围一', category: '工艺过程排放', status: '启用', dataSources: '1', datasourceIds: ['ds-11'], equipment: '3台' },
+    { name: '公用车辆（汽油）', scope: '范围一', category: '移动燃烧', status: '待完善', dataSources: '0', datasourceIds: [], equipment: '15辆' },
+    { name: '公用车辆（柴油）', scope: '范围一', category: '移动燃烧', status: '停用', dataSources: '0', equipment: '0辆' },
+    { name: '冷媒R410a泄漏', scope: '范围一', category: '逸散排放', status: '待完善', dataSources: '0', equipment: '12台' },
+    { name: '外购电力-办公楼', scope: '范围二', category: '外购电力', status: '启用', dataSources: '1', datasourceIds: ['ds-1'], equipment: '—' },
+    { name: '外购电力-生产线', scope: '范围二', category: '外购电力', status: '启用', dataSources: '1', datasourceIds: ['ds-2'], equipment: '—' },
+    { name: '外购蒸汽-供热站', scope: '范围二', category: '外购热力/蒸汽', status: '待完善', dataSources: '1', datasourceIds: ['ds-7'], equipment: '—' },
+    { name: '员工通勤', scope: '范围三', category: '类别7：员工通勤', status: '启用', dataSources: '1', datasourceIds: ['ds-9'], equipment: '—' },
+    { name: '上游运输', scope: '范围三', category: '类别4：上游运输和配送', status: '启用', dataSources: '1', datasourceIds: ['ds-4'], equipment: '6辆' },
+    { name: '办公废弃物处置', scope: '范围三', category: '类别5：运营产生的废弃物', status: '停用', dataSources: '0', equipment: '—' },
+    { name: '供应商原材料运输', scope: '范围三', category: '类别4：上游运输和配送', status: '待完善', dataSources: '0', equipment: '12辆' }
+  ];
+
+ let emissionSourceData = (Mock.EmissionSources || []).map(sharedSourceToRow);
+
+  const tableBody = document.querySelector('tbody.divide-y');
+  const headerStatCards = Array.from(document.querySelectorAll('[data-purpose="header-stats"] > div'));
+  let sourceDatasourceGroups = [
+    { key: 'smart-meter', label: '智能表计', icon: 'domain', categories: [
+      { key: 'electric', label: '电表', sources: [
+        { id: 'ds-1', name: '办公楼总电表', org: '华东园区', status: '在线', frequency: '15分钟' },
+        { id: 'ds-2', name: '生产车间A电表', org: '华东园区', status: '在线', frequency: '15分钟' }
+      ] },
+      { key: 'water', label: '水表', sources: [
+        { id: 'ds-5', name: '综合楼冷水表', org: '华南分公司', status: '在线', frequency: '1小时' }
+      ] },
+      { key: 'gas', label: '燃气表', sources: [
+        { id: 'ds-6', name: '锅炉房天然气表', org: '华东园区', status: '在线', frequency: '15分钟' }
+      ] },
+      { key: 'heat', label: '热表', sources: [
+        { id: 'ds-7', name: '园区蒸汽热量表', org: '西北生产基地', status: '离线', frequency: '1小时' }
+      ] }
+    ] },
+    { key: 'manual', label: '手工填报', icon: 'description', categories: [
+      { key: 'refrigerant', label: '制冷剂台账', sources: [
+        { id: 'ds-3', name: 'R410a充注记录', org: '华东园区', status: '离线', frequency: '每月' }
+      ] },
+      { key: 'fuel-ledger', label: '燃料台账', sources: [
+        { id: 'ds-10', name: '柴油加注手工台账', org: '西北生产基地', status: '在线', frequency: '每周' }
+      ] },
+      { key: 'commute-ledger', label: '通勤台账', sources: [
+        { id: 'ds-9', name: '员工通勤Excel台账', org: '华东园区', status: '离线', frequency: '每月' }
+      ] }
+    ] },
+    { key: 'api', label: 'API接口', icon: 'cloud', categories: [
+      { key: 'purchase-api', label: '采购系统', sources: [
+        { id: 'ds-4', name: '采购系统数据', org: '华东园区', status: '同步中', frequency: '日' }
+      ] },
+      { key: 'erp-api', label: 'ERP系统', sources: [] },
+      { key: 'energy-api', label: '能源平台', sources: [
+        
+      ] }
+    ] },
+    { key: 'iot', label: 'IoT设备', icon: 'memory', categories: [
+      { key: 'flow-meter', label: '流量计', sources: [
+        { id: 'ds-8', name: '污水站IoT流量计', org: '华南分公司', status: '在线', frequency: '5分钟' }
+      ] },
+      { key: 'temperature-sensor', label: '温度传感器', sources: [] },
+      { key: 'level-sensor', label: '液位计', sources: [] }
+    ] },
+    { key: 'excel', label: 'Excel导入', icon: 'file_download', categories: [
+      { key: 'excel-ledger', label: 'Excel台账', sources: [
+        { id: 'ds-11', name: '生产数据Excel导入台账', org: '华东园区', status: '离线', frequency: '按次导入' }
+      ] },
+      { key: 'production-excel', label: '生产数据台账', sources: [] }
+    ] }
+  ];
+  const datasourceGroupMeta = {
+    'smart-meter': { label: '智能表计', icon: 'domain' },
+    manual: { label: '手工填报', icon: 'description' },
+    api: { label: 'API接口', icon: 'cloud' },
+    iot: { label: 'IoT设备', icon: 'memory' },
+    excel: { label: 'Excel导入', icon: 'file_download' }
+  };
+  const datasourceCategoryMeta = {
+    electric: { label: '电表' },
+    water: { label: '水表' },
+    gas: { label: '燃气表' },
+    heat: { label: '热表' },
+    refrigerant: { label: '制冷剂台账' },
+    'fuel-ledger': { label: '燃料台账' },
+    'commute-ledger': { label: '通勤台账' },
+    'purchase-api': { label: '采购系统' },
+    'erp-api': { label: 'ERP系统' },
+    'energy-api': { label: '能源平台' },
+    'flow-meter': { label: '流量计' },
+    'temperature-sensor': { label: '温度传感器' },
+    'level-sensor': { label: '液位计' },
+    'excel-ledger': { label: 'Excel台账' },
+    'production-excel': { label: '生产数据台账' }
+  };
+  function buildDatasourceMap(groups) {
+    return new Map(groups.flatMap(group => group.categories.flatMap(category => category.sources.map(source => [source.id, { ...source, groupKey: group.key, groupLabel: group.label, categoryKey: category.key, categoryLabel: category.label }]))));
+  }
+
+  function buildLiveDatasourceGroups() {
+    const rows = Mock.DataSources || [];
+    const groupMap = new Map(sourceDatasourceGroups.map(group => [
+      group.key,
+      {
+        ...group,
+        categories: group.categories.map(category => ({ ...category, sources: [] }))
+      }
+    ]));
+    rows.forEach(source => {
+      const groupKey = source.groupKey || source.type || 'manual';
+      const categoryKey = source.meterType || source.activityDataType || 'default';
+      const groupMeta = datasourceGroupMeta[groupKey] || { label: groupKey, icon: 'dataset' };
+      const categoryMeta = datasourceCategoryMeta[categoryKey] || { label: categoryKey };
+      if (!groupMap.has(groupKey)) {
+        groupMap.set(groupKey, { key: groupKey, label: groupMeta.label, icon: groupMeta.icon, categories: [] });
+      }
+      const group = groupMap.get(groupKey);
+      let category = group.categories.find(item => item.key === categoryKey);
+      if (!category) {
+        category = { key: categoryKey, label: categoryMeta.label, sources: [] };
+        group.categories.push(category);
+      }
+      category.sources.push({
+        id: source.id,
+        name: source.name,
+        org: source.org || '',
+        status: source.status || '',
+        frequency: source.frequency || '',
+        activityDataType: source.activityDataType || '',
+        unit: source.unit || ''
+      });
+    });
+    return Array.from(groupMap.values());
+  }
+
+  let datasourceMap = buildDatasourceMap(sourceDatasourceGroups);
+
+  function refreshDatasourceCatalog() {
+    sourceDatasourceGroups = buildLiveDatasourceGroups();
+    datasourceMap = buildDatasourceMap(sourceDatasourceGroups);
+  }
+
+  refreshDatasourceCatalog();
+
+  function getBoundDatasourceIds(item) {
+    return Array.from(new Set(item?.datasourceIds || []));
+  }
+
+  function getBoundDatasources(item) {
+    return getBoundDatasourceIds(item).map(id => datasourceMap.get(id)).filter(Boolean);
+  }
+
+  function syncEmissionDatasourceBindings() {
+    emissionSourceData.forEach(item => {
+      const validIds = getBoundDatasourceIds(item);
+      item.datasourceIds = validIds;
+      item.dataSources = String(validIds.length);
+    });
+  }
+
+  syncEmissionDatasourceBindings();
+  const sourceFormState = { mode: 'add', editingIndex: null, groupKey: 'smart-meter', selectedIds: [] };
+  const fallbackBoundaryScopeMeta = {
+    scope1: { scope: '范围一', label: '范围一（直接排放）', shortLabel: '范围一', categoryStatus: '启用' },
+    scope2: { scope: '范围二', label: '范围二（能源间接排放）', shortLabel: '范围二', categoryStatus: '启用' },
+    scope3: { scope: '范围三', label: '范围三（其他间接排放）', shortLabel: '范围三', categoryStatus: '部分启用' }
+  };
+  const fallbackBoundaryCategoryTree = {
+    scope1: [
+      { category: '固定燃烧', status: '启用' },
+      { category: '移动燃烧', status: '启用' },
+      { category: '工艺过程排放', status: '启用' },
+      { category: '逸散排放', status: '启用' }
+    ],
+    scope2: [
+      { category: '外购电力', status: '启用' },
+      { category: '外购热力/蒸汽', status: '启用' },
+      { category: '外购制冷', status: '待启用' }
+    ],
+    scope3: [
+      { category: '类别4：上游运输和配送', status: '启用' },
+      { category: '类别5：运营产生的废弃物', status: '待完善' },
+      { category: '类别7：员工通勤', status: '启用' }
+    ]
+  };
+  const boundaryScopeMeta = window.CarbonAccountingMock?.BoundaryScopeMeta || fallbackBoundaryScopeMeta;
+  const boundaryCategoryTree = window.CarbonAccountingMock?.BoundaryCategoryTree || fallbackBoundaryCategoryTree;
+  const expandedBoundaryScopes = { all: true, energy: true, combustion: true, process: true, transport: true, other_direct: true };
+  const expandedBoundaryCategories = {};
+
+  const filterSection = document.querySelector('section.bg-white.p-4.rounded-lg.border.shadow-sm');
+  const keywordInput = filterSection.querySelector('input[type="text"]');
+  const filterSelects = filterSection.querySelectorAll('select');
+  const resetButton = Array.from(filterSection.querySelectorAll('button')).find(btn => btn.innerText.trim() === '重置');
+  const treePanel = document.querySelector('aside.w-64');
+  const treeContainer = document.getElementById('source-boundary-tree');
+  const detailDrawer = document.querySelector('[data-purpose="detail-drawer"]');
+  const detailDrawerFrame = detailDrawer.parentElement;
+  const detailDrawerTitle = document.getElementById('detail-drawer-title');
+  const detailDrawerContent = document.getElementById('detail-drawer-content');
+  const detailCloseButton = document.getElementById('detail-close-button');
+  const pagination = document.querySelector('[data-purpose="source-pagination"]');
+  const totalText = document.getElementById('source-pagination-summary');
+  const pagerBox = document.getElementById('source-pager');
+  const pageSizeSelect = document.getElementById('source-page-size-select');
+  const pageJumpInput = document.getElementById('source-page-jump');
+  let selectedDetailIndex = null;
+  let selectedDetailSourceId = null;
+  let detailDrawerCloseTimer = null;
+  const state = {
+    keyword: '',
+    scope: '全部',
+    status: '全部',
+    category: '全部',
+    org: '全部',
+    groupCode: '',
+    treeScope: '',
+    treeCategory: '',
+    treeSourceType: '',
+    treeSourceId: '',
+    treeStatus: '',
+    page: 1,
+    pageSize: 10
+  };
+
+  function fillSelect(select, options) {
+    select.innerHTML = options.map(option => `<option>${option}</option>`).join('');
+  }
+
+  function getActualBoundaryTree() {
+    const tree = Mock.getSourceCategoryTree?.() || [];
+    return tree.map(group => ({
+      groupCode: group.groupCode,
+      groupLabel: group.groupLabel,
+      children: (group.categories || []).map(category => ({
+        ...category,
+        children: category.sources || []
+      }))
+    }));
+  }
+
+  function getActualBoundaryKeys() {
+    const keys = new Set();
+    getActualBoundaryTree().forEach(group => {
+      (group.children || []).forEach(category => {
+        keys.add(`${group.groupCode}|${category.category}`);
+      });
+    });
+    return keys;
+  }
+
+  function isWithinActualBoundary(item) {
+    const keys = getActualBoundaryKeys();
+    if (!keys.size) return true;
+    const categoryCode = item.categoryCode || Mock.toCategoryCode?.(item.boundaryCategory || item.category) || item.category;
+    const groupCode = item.groupCode || Mock.getEmissionGroupByCategory?.(categoryCode)?.groupCode || '';
+    return keys.has(`${groupCode}|${categoryCode}`);
+  }
+
+  function getActualScopeEntries() {
+    const scopes = Array.from(new Set(emissionSourceData.map(item => item.scope).filter(Boolean)));
+    return scopes.map(scope => [Mock.toScopeCode?.(scope) || scope, { scope }]);
+  }
+
+  function getBoundaryCategories() {
+    return getActualBoundaryTree().flatMap(group =>
+      (group.children || []).map(category => category.categoryLabel)
+    );
+  }
+
+  function getBoundaryCategoriesForScope(scope) {
+    return emissionSourceData
+      .filter(item => item.scope === scope)
+      .map(item => item.category);
+  }
+
+  function getFilterCategories() {
+    return state.scope === '全部' ? getBoundaryCategories() : getBoundaryCategoriesForScope(state.scope);
+  }
+
+  function sourceOrg(item) {
+    if (item.org === '华东园区 / 工厂 B') return '华东园区';
+    if (item.org) return item.org;
+    if (item.name.includes('供应商') || item.name.includes('上游')) return '供应链';
+    if (item.scope === '范围三') return '总部园区';
+    return '华东园区';
+  }
+
+  function getOrgOptions() {
+    return Array.from(new Set(emissionSourceData.filter(isWithinActualBoundary).map(sourceOrg)));
+  }
+
+  function getFormOrgOptions(selectedOrg = '') {
+    const datasourceOrgs = (Mock.DataSources || []).map(item => item.org).filter(Boolean);
+    return Array.from(new Set([selectedOrg, ...datasourceOrgs, ...emissionSourceData.map(sourceOrg)].filter(Boolean)));
+  }
+
+  function setupFilters() {
+    fillSelect(filterSelects[0], ['全部', ...getActualScopeEntries().map(([, meta]) => meta.scope)]);
+    fillSelect(filterSelects[1], ['全部', '启用', '停用', '待完善']);
+    fillSelect(filterSelects[2], ['全部', ...getFilterCategories()]);
+    fillSelect(filterSelects[3], ['全部', ...getOrgOptions()]);
+  }
+
+  function syncFilterControls() {
+    const values = [state.scope, state.status, state.category, state.org];
+    const keys = ['scope', 'status', 'category', 'org'];
+    filterSelects.forEach((select, index) => {
+      if (Array.from(select.options).some(option => option.value === values[index])) {
+        select.value = values[index];
+      } else {
+        state[keys[index]] = '全部';
+        select.value = '全部';
+      }
+    });
+  }
+
+  function getGroupOptions() {
+    return [
+      ...emissionCategoryTree.map(group => ({ value: group.groupCode, label: group.groupLabel })),
+      { value: '__custom__', label: '自定义大类' }
+    ];
+  }
+
+  function getCategoryOptionsForGroup(groupCode) {
+    const boundaryGroups = getActualBoundaryTree();
+    const categories = boundaryGroups.flatMap(group => group.children || []);
+
+    return categories.map(category => ({
+      value: category.category,
+      label: category.categoryLabel,
+      alreadyInBoundary: true
+    }));
+  }
+
+  function getExistingGroupLabels(excludeIndex = null) {
+    const labels = new Set(emissionCategoryTree.map(group => group.groupLabel));
+    emissionSourceData.forEach((item, index) => {
+      if (index === excludeIndex) return;
+      if (item.groupLabel) labels.add(item.groupLabel);
+    });
+    return labels;
+  }
+
+  function fillValueSelect(select, options) {
+    select.innerHTML = options.map(option => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join('');
+  }
+
+  function isBuiltInGroupCode(groupCode) {
+    return emissionCategoryTree.some(group => group.groupCode === groupCode);
+  }
+
+  function makeCustomGroupCode(label) {
+    const base = String(label || '')
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^\w\u4e00-\u9fa5-]/g, '')
+      .slice(0, 24);
+    return `custom_${base || Date.now()}`;
+  }
+
+  function refreshScopePreview() {
+    const sourceCategorySelect = document.getElementById('source-category-select');
+    const sourceScopeInput = document.getElementById('source-scope-select');
+    const inferredScope = Mock.inferScopeByCategory?.(sourceCategorySelect.value) || '';
+    sourceScopeInput.value = Mock.toScopeLabel?.(inferredScope) || '待推导';
+    sourceScopeInput.dataset.scopeCode = inferredScope;
+  }
+
+  function setupFormOptions(selectedCategory = '', selectedGroupCode = '') {
+    const sourceGroupSelect = document.getElementById('source-group-select');
+    const sourceCategorySelect = document.getElementById('source-category-select');
+    const customGroupWrap = document.getElementById('source-custom-group-wrap');
+    const customGroupInput = document.getElementById('source-custom-group-input');
+    const groupOptions = getGroupOptions();
+    const groupFromCategory = selectedCategory ? Mock.getEmissionGroupByCategory?.(selectedCategory)?.groupCode : '';
+    const groupCode = selectedGroupCode || groupFromCategory || state.groupCode || groupOptions[0]?.value || '';
+    fillValueSelect(sourceGroupSelect, groupOptions);
+    const isCustomGroup = groupCode && !isBuiltInGroupCode(groupCode) && groupCode !== '__custom__';
+    sourceGroupSelect.value = isCustomGroup ? '__custom__' : (groupOptions.some(option => option.value === groupCode) ? groupCode : (groupOptions[0]?.value || ''));
+    customGroupWrap.classList.toggle('hidden', sourceGroupSelect.value !== '__custom__');
+    if (sourceGroupSelect.value === '__custom__') {
+      customGroupInput.value = isCustomGroup
+        ? (emissionSourceData[sourceFormState.editingIndex]?.groupLabel || '')
+        : customGroupInput.value;
+      customGroupInput.dataset.groupCode = isCustomGroup ? groupCode : '';
+    } else {
+      customGroupInput.value = '';
+      customGroupInput.dataset.groupCode = '';
+    }
+
+    const categories = getCategoryOptionsForGroup(sourceGroupSelect.value);
+    fillValueSelect(sourceCategorySelect, categories.length ? categories : [{ value: '', label: '暂无已添加分类' }]);
+    sourceCategorySelect.disabled = !categories.length;
+    sourceCategorySelect.value = categories.some(option => option.value === selectedCategory) ? selectedCategory : (categories[0]?.value || '');
+    const selectedOptionMeta = categories.find(option => option.value === sourceCategorySelect.value);
+    sourceCategorySelect.title = selectedOptionMeta?.alreadyInBoundary
+      ? '该边界类别已存在，新增排放源将归入现有类别。'
+      : '保存后将自动同步到核算边界。';
+    refreshScopePreview();
+  }
+
+  function setupFormOrgOptions(selectedOrg = '') {
+    const sourceOrgSelect = document.getElementById('source-org-input');
+    const options = getFormOrgOptions(selectedOrg);
+    fillSelect(sourceOrgSelect, options);
+    sourceOrgSelect.value = options.includes(selectedOrg) ? selectedOrg : (options[0] || '');
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+  }
+
+  function scopeLabel(scope) {
+    const labels = {
+      '范围一': '范围一（直接排放）',
+      '范围二': '范围二（能源间接排放）',
+      '范围三': '范围三（其他间接排放）'
+    };
+    return labels[scope] || scope || '—';
+  }
+
+  function statusTextClass(status) {
+    if (status === '启用') return 'text-status-success';
+    if (status === '待完善') return 'text-status-warning';
+    return 'text-slate-500';
+  }
+
+  function treeStatusClass(status) {
+    if (status === '启用') return 'bg-green-100 text-status-success';
+    if (status === '部分启用') return 'bg-orange-100 text-status-warning border border-orange-200';
+    if (status === '待完善') return 'bg-orange-100 text-status-warning';
+    return 'bg-slate-100 text-slate-500';
+  }
+
+  function boundaryCategoryExpandKey(groupCode, category) {
+    return `${groupCode}|${category}`;
+  }
+
+  function isBoundaryCategoryExpanded(groupCode, category) {
+    const key = boundaryCategoryExpandKey(groupCode, category);
+    return expandedBoundaryCategories[key] !== false;
+  }
+
+  function countSources(groupCode = '', category = '') {
+    return emissionSourceData.filter(item => {
+      if (!isWithinActualBoundary(item)) return false;
+      const itemGroupCode = item.groupCode || Mock.getEmissionGroupByCategory?.(item.categoryCode)?.groupCode || '';
+      const matchesGroup = !groupCode || itemGroupCode === groupCode;
+      const matchesCategory = !category || item.categoryCode === category;
+      return matchesGroup && matchesCategory;
+    }).length;
+  }
+
+  function renderBoundaryTree() {
+    const allActive = !state.groupCode && !state.treeCategory && !state.treeStatus;
+    treeContainer.innerHTML = `
+      <button class="w-full flex items-center justify-between p-2 rounded text-sm font-medium ${allActive ? 'bg-blue-50 text-carbon-blue' : 'hover:bg-slate-50'}" data-tree-all type="button">
+        <span class="truncate">全部排放源</span>
+        <span class="text-xs text-slate-400">(${countSources()})</span>
+      </button>
+      ${getActualBoundaryTree().map((group, index) => {
+        const categories = group.children || [];
+        const groupCount = countSources(group.groupCode);
+        const expanded = expandedBoundaryScopes[group.groupCode] !== false;
+        const groupActive = state.groupCode === group.groupCode && !state.treeCategory && !state.treeStatus;
+        return `
+        <div class="${index ? 'mt-2' : 'mt-3'}">
+          <button class="w-full flex items-center justify-between p-2 rounded text-sm font-medium ${groupActive ? 'bg-blue-50 text-carbon-blue' : 'hover:bg-slate-50'}" data-tree-group="${group.groupCode}" data-scope-key="${group.groupCode}" type="button">
+            <div class="flex items-center min-w-0">
+              <svg class="w-4 h-4 mr-2 shrink-0 text-slate-400 transition-transform ${expanded ? '' : 'rotate-[-90deg]'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              <span class="truncate">${escapeHtml(group.groupLabel)}</span>
+            </div>
+            <span class="text-xs text-slate-400">(${groupCount})</span>
+          </button>
+          <div class="ml-8 space-y-1 mt-1 ${expanded ? '' : 'hidden'}">
+            ${categories.map(item => {
+              const active = state.groupCode === group.groupCode && state.treeCategory === item.category;
+              const sources = item.children || [];
+              return `<div>
+                <button class="w-full flex items-center justify-between gap-2 p-2 rounded text-left text-sm ${active ? 'bg-blue-50 text-carbon-blue' : 'hover:bg-slate-50 text-slate-600'}" data-tree-category="${item.category}" data-tree-group="${group.groupCode}" type="button">
+                  <span class="flex items-center min-w-0">
+                    <span class="w-1.5 h-1.5 mr-2 rounded-full ${active ? 'bg-carbon-blue' : 'bg-slate-300'} shrink-0"></span>
+                    <span class="truncate">${escapeHtml(item.categoryLabel)}</span>
+                  </span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded ${treeStatusClass(item.status)}">${sources.length}</span>
+                </button>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}`;
+  }
+
+  function renderDisabledShortcut() {
+    const button = treePanel.querySelector('[data-tree-status="停用"]');
+    if (!button) return;
+    const count = emissionSourceData.filter(item => isWithinActualBoundary(item) && item.status === '停用').length;
+    const countNode = button.querySelector('span:last-child');
+    if (countNode) countNode.innerText = `(${count})`;
+    const active = state.treeStatus === '停用';
+    button.classList.toggle('bg-blue-50', active);
+    button.classList.toggle('text-carbon-blue', active);
+    button.classList.toggle('bg-slate-50', !active);
+  }
+
+  function syncHeaderStats() {
+    const rows = emissionSourceData.filter(isWithinActualBoundary);
+    const total = rows.length;
+    const enabled = rows.filter(item => item.status === '启用').length;
+    const disabled = rows.filter(item => item.status === '停用').length;
+    const pending = rows.filter(item => item.status === '待完善').length;
+    [total, enabled, disabled, pending].forEach((value, index) => {
+      const valueNode = headerStatCards[index]?.querySelector('.text-2xl.font-bold');
+      if (valueNode) valueNode.innerText = String(value);
+    });
+    const trendNodes = headerStatCards.map(card => card?.querySelector('.text-right .text-xs.flex'));
+    const labels = ['实时同步', `${total ? Math.round((enabled / total) * 100) : 0}%`, `${total ? Math.round((disabled / total) * 100) : 0}%`, `${total ? Math.round((pending / total) * 100) : 0}%`];
+    trendNodes.forEach((node, index) => {
+      if (!node) return;
+      const svg = node.querySelector('svg')?.outerHTML || '';
+      node.innerHTML = `${svg}${labels[index]}`;
+    });
+  }
+
+  function statusBadge(status) {
+    const styles = {
+      '启用': 'bg-green-100 text-status-success',
+      '停用': 'bg-slate-100 text-slate-500',
+      '待完善': 'bg-orange-100 text-status-warning'
+    };
+    const title = status === '待完善' ? ' title="该排放源已创建，但关键配置信息尚不完善，暂无法用于碳核算。"' : '';
+    return `<span class="${styles[status]} px-2 py-0.5 rounded text-xs"${title}>${status}</span>`;
+  }
+
+  function renderRows(rows) {
+    if (!rows.length) {
+      tableBody.innerHTML = `<tr><td class="px-4 py-10 text-center text-slate-400" colspan="9">暂无匹配数据</td></tr>`;
+      return;
+    }
+    tableBody.innerHTML = rows.map(item => {
+      const itemIndex = emissionSourceData.indexOf(item);
+      const action = item.status === '停用' ? '启用' : item.status === '待完善' ? '完善' : '停用';
+      const primaryAction = item.status === '待完善' ? 'complete' : 'toggle-status';
+      const active = itemIndex === selectedDetailIndex;
+      const dataSourceCount = getBoundDatasourceIds(item).length;
+      return `<tr class="transition-colors cursor-pointer ${active ? 'bg-blue-50/70' : 'hover:bg-slate-50'}" data-source-index="${itemIndex}">
+<td class="px-4 py-3"><button class="text-carbon-blue hover:underline source-detail-btn" data-index="${itemIndex}">${escapeHtml(item.name)}</button></td>
+<td class="px-4 py-3">${escapeHtml(item.scope)}</td>
+<td class="px-4 py-3">${escapeHtml(sourceOrg(item))}</td>
+<td class="px-4 py-3">
+  ${escapeHtml(Mock.formatSourceActivityConfig?.(sourceRowToShared(item)) || item.activityDataTypeLabel || Mock.getActivityDataLabel?.(item.activityDataType) || '—')}
+</td>
+<td class="px-4 py-3">${escapeHtml(item.category)}</td>
+<td class="px-4 py-3">${statusBadge(item.status)}</td>
+<td class="px-4 py-3">${dataSourceCount}</td>
+<td class="px-4 py-3 ${item.equipment === '—' ? 'text-slate-400' : 'text-carbon-blue'}">${escapeHtml(item.equipment || '—')}</td>
+<td class="px-3 py-3 text-left whitespace-nowrap space-x-3">
+<button class="text-carbon-blue source-edit-btn" data-index="${itemIndex}">编辑</button>
+<button class="text-carbon-blue source-action-btn" data-action="${primaryAction}" data-index="${itemIndex}">${action}</button>
+<button class="text-status-error source-action-btn" data-action="delete" data-index="${itemIndex}">删除</button>
+</td>
+</tr>`;
+    }).join('');
+    attachRowEvents();
+  }
+
+  function getFilteredRows() {
+    return emissionSourceData.filter(item => {
+   
+      const matchesKeyword = !state.keyword || item.name.includes(state.keyword);
+      const matchesScope = state.scope === '全部' || item.scope === state.scope;
+      const matchesStatus = state.status === '全部' || item.status === state.status;
+      const matchesCategory = state.category === '全部' || item.category === state.category;
+      const matchesOrg = state.org === '全部' || sourceOrg(item) === state.org;
+      const itemGroupCode = item.groupCode || Mock.getEmissionGroupByCategory?.(item.categoryCode)?.groupCode || '';
+      const matchesTreeGroup = !state.groupCode || itemGroupCode === state.groupCode;
+      const matchesTreeCategory = !state.treeCategory || item.categoryCode === state.treeCategory;
+      const matchesTreeSource = !state.treeSourceId || item.id === state.treeSourceId;
+      const matchesTreeStatus = !state.treeStatus || item.status === state.treeStatus;
+      return matchesKeyword && matchesScope && matchesStatus && matchesCategory && matchesOrg && matchesTreeGroup && matchesTreeCategory && matchesTreeSource && matchesTreeStatus;
+    });
+  }
+
+  function renderPager(total) {
+    const pageCount = Math.max(1, Math.ceil(total / state.pageSize));
+    state.page = Math.min(state.page, pageCount);
+    const startItem = total ? (state.page - 1) * state.pageSize + 1 : 0;
+    const endItem = total ? Math.min(total, state.page * state.pageSize) : 0;
+    totalText.innerText = `共 ${total} 条，显示 ${startItem}-${endItem} 条`;
+    pageJumpInput.max = String(pageCount);
+    pageJumpInput.value = String(state.page);
+    const pages = pageCount <= 5
+      ? Array.from({ length: pageCount }, (_, index) => index + 1)
+      : Array.from(new Set([1, Math.max(1, state.page - 1), state.page, Math.min(pageCount, state.page + 1), pageCount])).sort((a, b) => a - b);
+    const pageButtonClass = page => `h-8 w-8 rounded border text-sm transition-colors ${page === state.page ? 'bg-[#005bac] border-[#005bac] text-white' : 'bg-white border-slate-300 text-slate-600 hover:border-carbon-blue hover:text-carbon-blue'}`;
+    pagerBox.innerHTML = `
+      <button class="h-8 w-8 rounded border flex items-center justify-center ${state.page === 1 ? 'bg-slate-50 border-slate-200 text-slate-300 cursor-not-allowed' : 'bg-white border-slate-300 text-slate-500 hover:border-carbon-blue hover:text-carbon-blue'}" data-page="prev" ${state.page === 1 ? 'disabled' : ''}>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      ${pages.map((page, index) => `${index > 0 && page - pages[index - 1] > 1 ? '<span class="px-1 text-slate-400">...</span>' : ''}<button class="${pageButtonClass(page)}" data-page="${page}">${page}</button>`).join('')}
+      <button class="h-8 w-8 rounded border flex items-center justify-center ${state.page === pageCount ? 'bg-slate-50 border-slate-200 text-slate-300 cursor-not-allowed' : 'bg-white border-slate-300 text-slate-500 hover:border-carbon-blue hover:text-carbon-blue'}" data-page="next" ${state.page === pageCount ? 'disabled' : ''}>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+    `;
+  }
+
+  function renderTable() {
+    syncEmissionDatasourceBindings();
+    const filtered = getFilteredRows();
+    const start = (state.page - 1) * state.pageSize;
+    renderBoundaryTree();
+    renderDisabledShortcut();
+    syncHeaderStats();
+    renderRows(filtered.slice(start, start + state.pageSize));
+    renderPager(filtered.length);
+  }
+
+  function syncDetailDrawerFrame() {
+    const rect = detailDrawerFrame.getBoundingClientRect();
+    detailDrawer.style.top = `${rect.top}px`;
+    detailDrawer.style.right = `${Math.max(0, window.innerWidth - rect.right)}px`;
+    detailDrawer.style.height = `${rect.height}px`;
+  }
+
+  function setActiveTree(target) {
+    treePanel.querySelectorAll('[data-tree-filter]').forEach(item => {
+      item.classList.remove('bg-blue-50', 'text-carbon-blue');
+      item.classList.add('hover:bg-slate-50', 'text-slate-600');
+    });
+    if (target) {
+      target.classList.add('bg-blue-50', 'text-carbon-blue');
+      target.classList.remove('hover:bg-slate-50', 'text-slate-600');
+    }
+  }
+
+  function activityDataTypeLabel(value) {
+    const labels = {
+      electricity_consumption: '用电量',
+      fuel_consumption: '燃料消耗量',
+      replenishment_amount: '补充量',
+      steam_consumption: '蒸汽用量',
+      heat_consumption: '热力量',
+      cooling_consumption: '冷量',
+      transport_distance: '运输里程',
+      commute_distance: '通勤里程',
+      waste_weight: '废弃物重量'
+    };
+    return labels[value] || value || '';
+  }
+
+  function activityTextFromDatasources(datasources, fallback) {
+    const activityTypes = Array.from(new Set(datasources.map(source => source.activityDataType).filter(Boolean)));
+    if (!activityTypes.length) return fallback;
+    return activityTypes.map(activityDataTypeLabel).join(' / ');
+  }
+
+
+  function normalizeModelPeriodValue(period) {
+    if (!period) return '';
+    const value = String(period).trim();
+    const matchedMonth = value.match(/\d{4}-\d{2}/);
+    return matchedMonth ? matchedMonth[0] : value;
+  }
+
+  function isModelPeriodMatched(model = {}, period = '') {
+    const value = normalizeModelPeriodValue(period);
+    const start = normalizeModelPeriodValue(model.periodStart || model.matchRule?.periodStart || model.effectiveDate || model.effectiveAt || '');
+    const end = normalizeModelPeriodValue(model.periodEnd || model.matchRule?.periodEnd || model.expireDate || model.expiredAt || '');
+    if (!value) return true;
+    if (start && value < start) return false;
+    if (end && value > end) return false;
+    return true;
+  }
+
+  function getLatestRecordByDatasources(datasourceIds = []) {
+    const ids = new Set((datasourceIds || []).filter(Boolean));
+    const records = (Mock.ActivityDataRecords || [])
+      .filter(record => ids.has(record.datasourceId))
+      .slice()
+      .sort((a, b) => String(b.collectedAt || '').localeCompare(String(a.collectedAt || '')) || String(b.period || '').localeCompare(String(a.period || '')));
+    return records[0] || null;
+  }
+
+  function matchModelForSource(sharedSource, period = '') {
+    const sourceCategory = sharedSource?.categoryCode || sharedSource?.category || '';
+    const sourceScope = sharedSource?.scope || Mock.inferScopeByCategory?.(sourceCategory) || '';
+    const models = Mock.getAccountingModels?.() || Mock.AccountingModels || [];
+    const matched = models.find(model => {
+      const modelCategory = model.categoryCode || model.category || '';
+      const modelScope = model.scope || Mock.inferScopeByCategory?.(modelCategory) || '';
+      return model.status !== '停用'
+        && modelScope === sourceScope
+        && modelCategory === sourceCategory
+        && isModelPeriodMatched(model, period);
+    });
+    return matched || Mock.matchModel?.(sharedSource, models) || null;
+  }
+
+  function accountingInfo(item, datasources = []) {
+    const category = item.boundaryCategory || item.category || '';
+    const sharedSource = sourceRowToShared(item);
+    const latestRecord = Mock.getLatestActivityRecordBySource?.(sharedSource.id) || getLatestRecordByDatasources(sharedSource.datasourceIds);
+    const model = matchModelForSource(sharedSource, latestRecord?.period || '');
+    const matchedFactor = model && Mock.matchFactorByModelAndSource?.(model, sharedSource, latestRecord?.period || '');
+    const factorGroup = matchedFactor || (model && Mock.getFactorGroupByModel?.(model));
+    const formulaMap = [
+      {
+        test: () => category === '固定燃烧',
+        value: { activity: '燃料消耗量', factor: '燃料低位热值与排放因子', frequency: '月', formula: 'E = AD × NCV × EF × OF / 1000', note: 'AD 为燃料消耗量，NCV 为低位热值，EF 为单位热值排放因子，OF 为氧化率。' }
+      },
+      {
+        test: () => category === '逸散排放',
+        value: { activity: '制冷剂补充量 / 泄漏量', factor: '制冷剂 GWP 因子', frequency: '月', formula: 'E = AD × GWP / 1000', note: 'AD 为制冷剂补充或泄漏质量，GWP 为对应制冷剂全球变暖潜势。' }
+      },
+      {
+        test: () => category === '外购电力',
+        value: { activity: '购电量', factor: '区域电网排放因子', frequency: '月', formula: 'E = AD × EF', note: 'AD 为外购电量，EF 为区域电网或市场化电力排放因子。' }
+      },
+      {
+        test: () => category.includes('运输'),
+        value: { activity: '运输里程 / 货运周转量', factor: '运输方式排放因子', frequency: '月', formula: 'E = 运输距离 × 载重 × EF', note: '按车辆类型、燃料类型或承运商提供因子计算运输排放。' }
+      },
+      {
+        test: () => category.includes('员工通勤'),
+        value: { activity: '通勤人次 / 通勤里程', factor: '客运交通排放因子', frequency: '月', formula: 'E = 人次 × 单程距离 × 往返次数 × EF', note: '按交通方式分别汇总后折算为二氧化碳当量。' }
+      }
+    ];
+    const matched = formulaMap.find(item => item.test())?.value || {
+      activity: '活动数据',
+      factor: '默认排放因子',
+      frequency: '月',
+      formula: 'E = AD × EF',
+      note: 'AD 为活动数据，EF 为所选核算模型对应的排放因子。'
+    };
+    return {
+      model: model?.name || `${category || '排放源'}核算模型`,
+      activity: activityTextFromDatasources(datasources, matched.activity),
+      factor: factorGroup?.name || matched.factor,
+      frequency: matched.frequency,
+      formula: matched.formula,
+      note: matched.note,
+      quality: item.status === '待完善' ? '待完善' : (model ? '90%' : '80%')
+    };
+  }
+
+  function formatFactorMatchRule(model) {
+    const rule = model?.factorMatchRule || model?.matchRule;
+    if (!rule) return '暂无匹配规则';
+    const conditions = Object.entries(rule.conditions || {})
+      .map(([key, value]) => `${key}=${Mock.getAccountingParamLabel?.(key, value) || value}`)
+      .join('、');
+    const fields = Array.isArray(rule.fields) && rule.fields.length ? `fields=${rule.fields.join('+')}` : '';
+    const period = model?.periodStart || model?.periodEnd ? `period=${model.periodStart || '不限'}~${model.periodEnd || '长期'}` : '';
+    return [
+      rule.standardId || model?.standardId ? `standardId=${rule.standardId || model.standardId}` : '',
+      rule.factorGroupId ? `factorGroupId=${rule.factorGroupId}` : '',
+      rule.activityDataType ? `activityDataType=${rule.activityDataType}` : '',
+      fields,
+      period,
+      conditions ? `conditions: ${conditions}` : ''
+    ].filter(Boolean).join(' / ') || '暂无匹配规则';
+  }
+
+  function renderDetail(index) {
+    const item = emissionSourceData[index];
+    if (!item) {
+      closeDetailDrawer();
+      return;
+    }
+    const boundDatasources = getBoundDatasources(item);
+    const accounting = accountingInfo(item, boundDatasources);
+    const dataSourceCount = boundDatasources.length;
+    const sharedSource = sourceRowToShared(item);
+    const latestRecord = Mock.getLatestActivityRecordBySource?.(sharedSource.id) || getLatestRecordByDatasources(sharedSource.datasourceIds);
+    const matchedModel = matchModelForSource(sharedSource, latestRecord?.period || '');
+    const matchedFactor = matchedModel && Mock.matchFactorByModelAndSource?.(matchedModel, sharedSource, latestRecord?.period || '');
+    const matchRuleText = formatFactorMatchRule(matchedModel);
+    const datasourceNames = getDatasourceNames(item.datasourceIds || []);
+    const datasourceCards = boundDatasources.length
+      ? boundDatasources.map(source => `<div class="rounded border border-slate-100 bg-white p-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="font-medium text-slate-800 truncate">${escapeHtml(source.name)}</div>
+              <div class="mt-1 text-xs text-slate-400">${escapeHtml(source.groupLabel)} / ${escapeHtml(source.categoryLabel)}</div>
+            </div>
+            <span class="shrink-0 text-xs ${source.status === '在线' ? 'text-status-success' : source.status === '同步中' ? 'text-status-warning' : 'text-slate-400'}">${escapeHtml(source.status)}</span>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-500">
+            <span>${escapeHtml(source.org)}</span>
+            <span class="text-right">${escapeHtml(source.frequency)}</span>
+          </div>
+        </div>`).join('')
+      : '<div class="rounded border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-sm text-slate-400">尚未绑定数据源</div>';
+    const equipmentText = item.equipment === '—' ? '未关联' : item.equipment;
+    detailDrawerContent.innerHTML = `
+      <div class="mb-8">
+        <h3 class="font-bold border-l-4 border-carbon-blue pl-3 mb-4">基础信息</h3>
+        <div class="grid grid-cols-2 gap-y-4 text-sm">
+          <div class="text-slate-400">排放源名称</div>
+          <div class="text-slate-800">${escapeHtml(item.name)}</div>
+          <div class="text-slate-400">所属范围</div>
+          <div class="text-slate-800">${escapeHtml(scopeLabel(item.scope))}</div>
+          <div class="text-slate-400">排放类别</div>
+          <div class="text-slate-800">${escapeHtml(item.category)}</div>
+          <div class="text-slate-400">所属组织</div>
+          <div class="text-slate-800">${escapeHtml(sourceOrg(item))}</div>
+          <div class="text-slate-400">负责人</div>
+          <div class="text-slate-800">张三</div>
+          <div class="text-slate-400">联系方式</div>
+          <div class="text-slate-800">138****5678</div>
+          <div class="text-slate-400">状态</div>
+          <div class="${statusTextClass(item.status)}">${escapeHtml(item.status)}</div>
+          <div class="text-slate-400">创建时间</div>
+          <div class="text-slate-800">2024-01-10 10:30</div>
+          <div class="text-slate-400">更新时间</div>
+          <div class="text-slate-800">2024-05-20 14:21</div>
+        </div>
+      </div>
+      <div class="mb-8">
+        <h3 class="font-bold border-l-4 border-carbon-blue pl-3 mb-4">排放源描述</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">${escapeHtml(item.name)}用于${escapeHtml(item.category)}场景的活动数据归集与碳排放核算。</p>
+      </div>
+      <div class="mb-8">
+        <h3 class="font-bold border-l-4 border-carbon-blue pl-3 mb-4">闭环信息</h3>
+        <div class="grid grid-cols-2 gap-y-4 text-sm">
+          <div class="text-slate-400">活动数据类型</div>
+<div class="text-slate-800">${escapeHtml(item.activityDataTypeLabel || Mock.getActivityDataLabel?.(item.activityDataType) || '—')}</div>
+<div class="text-slate-400">活动数据配置</div>
+<div class="text-slate-800">${escapeHtml(Mock.formatSourceActivityConfig?.(sourceRowToShared(item)) || '—')}</div>
+          <div class="text-slate-400">排放类别</div>
+          <div class="text-slate-800">${escapeHtml(item.category || '—')}</div>
+          <div class="text-slate-400">所属范围</div>
+          <div class="text-slate-800">${escapeHtml(item.scope)}（自动推导）</div>
+          <div class="text-slate-400">分类编码</div>
+          <div class="text-slate-800">${escapeHtml(item.categoryCode || '—')}</div>
+          <div class="text-slate-400">绑定数据源</div>
+          <div class="${datasourceNames === '待绑定' ? 'text-slate-400' : 'text-slate-800'}">${escapeHtml(datasourceNames)}</div>
+          <div class="text-slate-400">最新期间</div>
+          <div class="${latestRecord?.period ? 'text-slate-800' : 'text-slate-400'}">${escapeHtml(latestRecord?.period || '暂无活动数据')}</div>
+          <div class="text-slate-400">匹配模型</div>
+          <div class="text-slate-800">${escapeHtml(matchedModel?.name || '待配置模型')}</div>
+          <div class="text-slate-400">匹配规则</div>
+          <div class="text-slate-800 break-words">${escapeHtml(matchRuleText)}</div>
+          <div class="text-slate-400">匹配因子</div>
+          <div class="text-slate-800">${escapeHtml(matchedFactor?.name || '待配置因子')}</div>
+        </div>
+      </div>
+      <div class="mb-8">
+        <h3 class="font-bold border-l-4 border-carbon-blue pl-3 mb-4">数据与设备</h3>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between text-sm bg-slate-50 p-3 rounded">
+            <span class="text-slate-600">关联数据源</span>
+            <span class="font-medium">${dataSourceCount} 个</span>
+          </div>
+          <div class="space-y-3">
+            ${datasourceCards}
+          </div>
+          <div class="flex items-center justify-between text-sm bg-slate-50 p-3 rounded">
+            <span class="text-slate-600">关联设备</span>
+            <span class="font-medium">${escapeHtml(equipmentText)}</span>
+          </div>
+        </div>
+      </div>
+      <div class="mb-8">
+        <h3 class="font-bold border-l-4 border-carbon-blue pl-3 mb-4">核算信息</h3>
+        <div class="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50/70 to-white p-4 shadow-sm">
+          <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <div class="text-xs text-slate-400 mb-1">核算模型</div>
+              <div class="font-semibold text-slate-800 leading-snug">${escapeHtml(accounting.model)}</div>
+            </div>
+            <span class="shrink-0 rounded-full bg-white border border-blue-100 px-2.5 py-1 text-xs text-carbon-blue">tCO₂e</span>
+          </div>
+          <div class="mt-4 rounded-lg bg-white border border-slate-100 p-4">
+            <div class="text-xs text-slate-400 mb-2">计算公式</div>
+            <div class="font-mono text-[15px] text-slate-900 leading-relaxed break-words">${escapeHtml(accounting.formula)}</div>
+            <div class="mt-2 text-xs leading-relaxed text-slate-500">${escapeHtml(accounting.note)}</div>
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <div class="rounded-lg bg-white/80 border border-slate-100 p-3">
+              <div class="text-xs text-slate-400 mb-1">活动数据</div>
+              <div class="text-slate-800 font-medium">${escapeHtml(accounting.activity)}</div>
+            </div>
+            <div class="rounded-lg bg-white/80 border border-slate-100 p-3">
+              <div class="text-xs text-slate-400 mb-1">排放因子</div>
+              <div class="text-slate-800 font-medium">${escapeHtml(accounting.factor)}</div>
+            </div>
+            <div class="rounded-lg bg-white/80 border border-slate-100 p-3">
+              <div class="text-xs text-slate-400 mb-1">计算频率</div>
+              <div class="text-slate-800 font-medium">${escapeHtml(accounting.frequency)}</div>
+            </div>
+            <div class="rounded-lg bg-white/80 border border-slate-100 p-3">
+              <div class="text-xs text-slate-400 mb-1">数据质量评估</div>
+              <div class="flex items-center gap-2 font-medium">
+                <span class="w-2 h-2 rounded-full ${item.status === '待完善' ? 'bg-status-warning' : 'bg-status-success'}"></span>
+                <span class="text-slate-800">${escapeHtml(accounting.quality)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-bold border-l-4 border-carbon-blue pl-3 mb-4">操作记录</h3>
+        <div class="space-y-4">
+          <div class="flex gap-4 text-xs">
+            <div class="text-slate-400 shrink-0">2024-05-20 14:21</div>
+            <div class="text-slate-600">李四</div>
+            <div class="text-slate-800">更新了排放源配置</div>
+          </div>
+          <div class="flex gap-4 text-xs">
+            <div class="text-slate-400 shrink-0">2024-05-18 09:15</div>
+            <div class="text-slate-600">王五</div>
+            <div class="text-slate-800">关联了数据源</div>
+          </div>
+          <div class="flex gap-4 text-xs">
+            <div class="text-slate-400 shrink-0">2024-05-15 16:30</div>
+            <div class="text-slate-600">张三</div>
+            <div class="text-slate-800">创建了排放源</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function openDetailDrawer(index) {
+    if (detailDrawerCloseTimer) {
+      window.clearTimeout(detailDrawerCloseTimer);
+      detailDrawerCloseTimer = null;
+    }
+    selectedDetailIndex = index;
+    selectedDetailSourceId = emissionSourceData[index]?.id || null;
+    detailDrawerTitle.innerText = '\u6392\u653e\u6e90\u8be6\u60c5';
+    syncDetailDrawerFrame();
+    renderDetail(index);
+    detailDrawer.classList.remove('hidden');
+    detailDrawer.classList.add('flex');
+    window.requestAnimationFrame(() => {
+      detailDrawer.classList.remove('translate-x-full');
+    });
+    renderTable();
+  }
+
+  function closeDetailDrawer() {
+    selectedDetailIndex = null;
+    selectedDetailSourceId = null;
+    detailDrawer.classList.add('translate-x-full');
+    detailDrawerCloseTimer = window.setTimeout(() => {
+      detailDrawer.classList.add('hidden');
+      detailDrawer.classList.remove('flex');
+      detailDrawerContent.innerHTML = '';
+      detailDrawerCloseTimer = null;
+    }, 300);
+    renderTable();
+  }
+
+  function refreshSourceDataViews() {
+    if ((Mock.EmissionSources || []).length) {
+      emissionSourceData = Mock.EmissionSources.map(sharedSourceToRow);
+      if (selectedDetailSourceId) {
+        const nextIndex = emissionSourceData.findIndex(item => item.id === selectedDetailSourceId);
+        selectedDetailIndex = nextIndex >= 0 ? nextIndex : null;
+      }
+    }
+    refreshDatasourceCatalog();
+    syncEmissionDatasourceBindings();
+    setupFilters();
+    syncFilterControls();
+    renderTable();
+    if (selectedDetailIndex !== null) renderDetail(selectedDetailIndex);
+    else if (selectedDetailSourceId) closeDetailDrawer();
+  }
+
+  function inferDatasourceFields(datasourceIds) {
+    const first = datasourceIds.map(id => datasourceMap.get(id)).find(Boolean);
+    return {
+      activityDataType: first?.activityDataType || '',
+      unit: first?.unit || ''
+    };
+  }
+
+  function sourceRowToShared(item) {
+  const categoryCode = item.categoryCode || Mock.toCategoryCode?.(item.boundaryCategory || item.category) || '';
+  const schema = getSourceActivityParamSchema(categoryCode) || {};
+  const inferredScope = item.scopeCode || Mock.inferScopeByCategory?.(categoryCode) || '';
+
+  return {
+    id: item.id,
+    name: item.name,
+    scope: inferredScope,
+    category: categoryCode,
+    categoryCode,
+    categoryLabel: item.boundaryCategory || item.category || Mock.toCategoryLabel?.(categoryCode) || categoryCode,
+    groupCode: item.groupCode || Mock.getEmissionGroupByCategory?.(categoryCode)?.groupCode || '',
+    groupLabel: item.groupLabel || Mock.getEmissionGroupByCategory?.(categoryCode)?.groupLabel || '',
+
+    activityDataType: item.activityDataType || schema.activityDataType || '',
+    activityDataTypeLabel: item.activityDataTypeLabel || schema.activityDataTypeLabel || '',
+    activityDataLabel: item.activityDataLabel || item.activityDataTypeLabel || schema.activityDataTypeLabel || '',
+
+    accountingParams: item.accountingParams || {},
+    accountingParamLabels: item.accountingParamLabels || {},
+
+    datasourceIds: item.datasourceIds || [],
+    unit: item.unit || schema.defaultUnit || '',
+    org: item.org || '',
+    equipment: item.equipment || '—',
+    status: item.status || '启用'
+  };
+}
+
+  function persistSourceRow(item) {
+    const shared = sourceRowToShared(item);
+    let saved = null;
+    if (item.id && Mock.upsertEmissionSource) {
+      Mock.upsertEmissionSource(shared);
+      saved = (Mock.EmissionSources || []).find(source => source.id === shared.id) || shared;
+    } else if (Mock.addEmissionSource) {
+      saved = Mock.addEmissionSource({ ...shared, id: undefined });
+    } else if (Mock.upsertEmissionSource) {
+      Mock.upsertEmissionSource(shared);
+      saved = (Mock.EmissionSources || []).find(source => source.id === shared.id) || shared;
+    } else {
+      saved = shared;
+    }
+    Object.assign(item, sharedSourceToRow(saved || shared));
+    return saved || shared;
+  }
+
+  function handleSourceAction(action, index) {
+    const item = emissionSourceData[index];
+    if (!item) return;
+    if (action === 'complete') {
+      openModal('edit', index);
+      return;
+    }
+    if (action === 'toggle-status') {
+      item.status = item.status === '停用' ? '启用' : '停用';
+      persistSourceRow(item);
+      refreshSourceDataViews();
+      return;
+    }
+   if (action === 'delete') {
+  const removed = emissionSourceData[index];
+  if (!removed) return;
+
+  const confirmed = window.confirm(`确认删除排放源「${removed.name}」吗？删除后 boundary 页面将不再展示该排放源。`);
+  if (!confirmed) return;
+
+  const removedId = removed.id;
+
+  if (removedId && Mock.removeEmissionSource) {
+    Mock.removeEmissionSource(removedId);
+  } else {
+    emissionSourceData.splice(index, 1);
+  }
+
+  // 以共享数据为准重新生成表格数据，不要只删页面数组
+  emissionSourceData = (Mock.EmissionSources || []).map(sharedSourceToRow);
+
+  if (selectedDetailIndex === index) {
+    setupFilters();
+    syncFilterControls();
+    closeDetailDrawer();
+    selectedDetailIndex = null;
+  } else if (selectedDetailIndex !== null && selectedDetailIndex > index) {
+    selectedDetailIndex -= 1;
+  }
+
+  state.page = Math.min(
+    state.page,
+    Math.max(1, Math.ceil(getFilteredRows().length / state.pageSize))
+  );
+
+  setupFilters();
+  syncFilterControls();
+  refreshSourceDataViews();
+
+  window.dispatchEvent(new Event('carbon-mock-updated'));
+  return;
+}
+  }
+
+  function attachRowEvents() {
+    document.querySelectorAll('tr[data-source-index]').forEach(row => {
+      row.onclick = () => openDetailDrawer(Number(row.dataset.sourceIndex));
+    });
+    document.querySelectorAll('.source-detail-btn').forEach(btn => {
+      btn.onclick = event => {
+        event.stopPropagation();
+        openDetailDrawer(Number(btn.dataset.index));
+      };
+    });
+    document.querySelectorAll('.source-edit-btn').forEach(btn => {
+      btn.onclick = event => {
+        event.stopPropagation();
+        openModal('edit', Number(btn.dataset.index));
+      };
+    });
+    document.querySelectorAll('.source-action-btn').forEach(btn => {
+      btn.onclick = event => {
+        event.stopPropagation();
+        handleSourceAction(btn.dataset.action, Number(btn.dataset.index));
+      };
+    });
+  }
+
+  function getCurrentDatasourceGroup() {
+    return sourceDatasourceGroups.find(group => group.key === sourceFormState.groupKey) || sourceDatasourceGroups[0];
+  }
+
+  function getCurrentDatasourceCategory() {
+    const group = getCurrentDatasourceGroup();
+    const select = document.getElementById('source-datasource-category');
+    return group.categories.find(category => category.key === select.value) || group.categories[0];
+  }
+
+  function renderDatasourceTypeCards() {
+    const box = document.getElementById('source-datasource-type-cards');
+    box.innerHTML = sourceDatasourceGroups.map(group => {
+      const active = group.key === sourceFormState.groupKey;
+      return `<button type="button" class="relative rounded p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border ${active ? 'border-2 border-carbon-blue bg-blue-50/50' : 'hover:bg-slate-50'}" data-ds-group="${group.key}">
+        <span class="material-symbols-outlined ${active ? 'text-carbon-blue' : 'text-slate-400'} text-3xl">${group.icon}</span>
+        <span class="text-sm ${active ? 'text-carbon-blue' : 'text-slate-600'} font-medium">${group.label}</span>
+        <span class="absolute top-1 right-1 bg-carbon-blue text-white rounded-bl-lg rounded-tr-sm p-0.5 ${active ? '' : 'hidden'}"><span class="material-symbols-outlined text-[16px]">check</span></span>
+      </button>`;
+    }).join('');
+    box.querySelectorAll('[data-ds-group]').forEach(card => {
+      card.addEventListener('click', () => {
+        sourceFormState.groupKey = card.dataset.dsGroup;
+        renderDatasourceSelector();
+      });
+    });
+  }
+
+  function renderDatasourceSelector() {
+    renderDatasourceTypeCards();
+    const group = getCurrentDatasourceGroup();
+    const categorySelect = document.getElementById('source-datasource-category');
+    categorySelect.innerHTML = group.categories.map(category => `<option value="${category.key}">${category.label}</option>`).join('');
+    if (!group.categories.some(category => category.key === categorySelect.dataset.selected)) categorySelect.dataset.selected = group.categories[0]?.key || '';
+    categorySelect.value = categorySelect.dataset.selected;
+    renderDatasourceOptions();
+  }
+
+  function renderDatasourceOptions() {
+    const category = getCurrentDatasourceCategory();
+    const list = document.getElementById('source-datasource-options');
+    const ownerMap = buildDatasourceOwnerMap(sourceFormState.editingIndex);
+    list.innerHTML = category.sources.map(source => {
+      const checked = sourceFormState.selectedIds.includes(source.id);
+      const owner = ownerMap.get(source.id);
+      const disabled = Boolean(owner);
+      return `<label class="grid grid-cols-[40px_1.3fr_1fr_0.8fr_0.8fr] items-center px-4 py-3 text-sm ${disabled ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'hover:bg-slate-50 cursor-pointer'}">
+        <input type="checkbox" class="rounded border-slate-300 text-carbon-blue focus:ring-carbon-blue disabled:opacity-40" value="${source.id}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+        <span class="font-medium text-slate-800">${source.name}</span>
+        <span class="text-slate-500">${source.org}</span>
+        <span class="${source.status === '在线' ? 'text-status-success' : source.status === '同步中' ? 'text-status-warning' : 'text-slate-400'}">${source.status}</span>
+        <span class="text-slate-500">${disabled ? `已绑定：${owner}` : source.frequency}</span>
+      </label>`;
+    }).join('') || '<div class="px-4 py-8 text-center text-slate-400 text-sm">该类别下暂无数据源</div>';
+    list.querySelectorAll('input[type="checkbox"]').forEach(input => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          if (!sourceFormState.selectedIds.includes(input.value)) sourceFormState.selectedIds.push(input.value);
+        } else {
+          sourceFormState.selectedIds = sourceFormState.selectedIds.filter(id => id !== input.value);
+        }
+        renderSelectedDatasources();
+      });
+    });
+    renderSelectedDatasources();
+  }
+
+  function renderSelectedDatasources() {
+    const selected = sourceFormState.selectedIds.map(id => datasourceMap.get(id)).filter(Boolean);
+    document.getElementById('source-datasource-count').innerText = `已选择 ${selected.length} 个`;
+    document.getElementById('source-datasource-selected').innerHTML = selected.length
+      ? selected.map(item => `<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-50 text-carbon-blue text-xs border border-blue-100">${item.groupLabel} / ${item.name}</span>`).join('')
+      : '<span class="text-xs text-slate-400">尚未选择数据源</span>';
+  }
+
+  function buildDatasourceOwnerMap(excludeIndex = null) {
+    const map = new Map();
+    emissionSourceData.forEach((item, index) => {
+      if (index === excludeIndex) return;
+      getBoundDatasourceIds(item).forEach(id => map.set(id, item.name));
+    });
+    return map;
+  }
+
+  function seedDatasourceSelection(item) {
+    return getBoundDatasourceIds(item);
+  }
+
+  const fallbackActivityParamSchemas = {
+    stationary_combustion: {
+      params: [{
+        key: 'fuelType',
+        label: '\u71c3\u6599\u7c7b\u578b',
+        allowCustom: true,
+        options: [
+          { value: 'natural_gas', label: '\u5929\u7136\u6c14' },
+          { value: 'diesel', label: '\u67f4\u6cb9' },
+          { value: 'coal', label: '\u7164' },
+          { value: '__custom__', label: '\u81ea\u5b9a\u4e49' }
+        ]
+      }]
+    },
+    purchased_electricity: {
+      params: [{
+        key: 'electricityRegion',
+        label: '\u7535\u529b\u533a\u57df',
+        allowCustom: true,
+        options: [
+          { value: 'east_china_grid', label: '\u534e\u4e1c\u7535\u7f51' },
+          { value: 'national_grid', label: '\u5168\u56fd\u7535\u7f51' },
+          { value: '__custom__', label: '\u81ea\u5b9a\u4e49' }
+        ]
+      }]
+    },
+    fugitive_emission: {
+      params: [{
+        key: 'refrigerantType',
+        label: '\u5236\u51b7\u5242\u7c7b\u578b',
+        allowCustom: true,
+        options: [
+          { value: 'r410a', label: 'R410A' },
+          { value: 'r134a', label: 'R134A' },
+          { value: '__custom__', label: '\u81ea\u5b9a\u4e49' }
+        ]
+      }]
+    }
+  };
+
+  function getSourceActivityParamSchema(categoryCode) {
+  return Mock.getActivityParamSchema?.(categoryCode) || null;
+}
+
+function renderAccountingParams(categoryCode, values = {}, labels = {}, options = {}) {
+  const section = document.getElementById('source-accounting-params-section');
+  const box = document.getElementById('source-accounting-params');
+  const activityInput = document.getElementById('source-activity-data-type-label');
+  const unitInput = document.getElementById('source-unit-input');
+
+  const schema = getSourceActivityParamSchema(categoryCode);
+  const params = schema?.params || [];
+  const forceUnit = options.forceUnit === true;
+
+  if (activityInput) {
+    activityInput.value = schema?.activityDataTypeLabel || '未配置';
+    activityInput.dataset.activityDataType = schema?.activityDataType || '';
+  }
+
+  const firstParam = params[0];
+  const firstOption = firstParam?.options?.find(option => option.value !== '__custom__');
+
+  if (unitInput) {
+    const nextUnit = firstOption?.unit || schema?.defaultUnit || '';
+    if (forceUnit || !unitInput.value) {
+      unitInput.value = nextUnit;
+    }
+  }
+
+  section.classList.toggle('hidden', !schema);
+
+  if (!schema || !params.length) {
+    box.innerHTML = `
+      <div class="col-span-2 rounded border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+        当前排放类别尚未配置活动数据规则，请先在共享数据 ActivityParamSchemas 中维护。
+      </div>
+    `;
+    return;
+  }
+
+  box.innerHTML = params.map(param => {
+    const options = param.options || [];
+    const current = values[param.key] || options.find(option => option.value !== '__custom__')?.value || '';
+    const hasCurrentOption = options.some(option => option.value === current);
+    const selectValue = hasCurrentOption ? current : (param.allowCustom ? '__custom__' : current);
+    const customValue = hasCurrentOption
+      ? (values[`${param.key}Custom`] || '')
+      : (labels[param.key] || values[`${param.key}Custom`] || current || '');
+
+    return `<div class="space-y-2" data-accounting-param="${escapeHtml(param.key)}">
+      <label class="text-sm text-slate-600">${escapeHtml(param.label || param.key)}</label>
+      <select class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue"
+              data-accounting-param-select="${escapeHtml(param.key)}">
+        ${options.map(option => `
+          <option value="${escapeHtml(option.value)}" ${option.value === selectValue ? 'selected' : ''}>
+            ${escapeHtml(option.label || option.value)}
+          </option>
+        `).join('')}
+      </select>
+      <input class="w-full border rounded px-3 py-2 text-sm focus:ring-1 focus:ring-carbon-blue ${selectValue === '__custom__' ? '' : 'hidden'}"
+             data-accounting-param-custom="${escapeHtml(param.key)}"
+             placeholder="请输入自定义${escapeHtml(param.label || '参数')}"
+             type="text"
+             value="${escapeHtml(customValue)}">
+    </div>`;
+  }).join('');
+
+  box.querySelectorAll('[data-accounting-param-select]').forEach(select => {
+    select.addEventListener('change', () => {
+      const key = select.dataset.accountingParamSelect;
+      const customInput = box.querySelector(`[data-accounting-param-custom="${CSS.escape(key)}"]`);
+      customInput?.classList.toggle('hidden', select.value !== '__custom__');
+
+      const param = params.find(item => item.key === key);
+      const option = (param?.options || []).find(item => item.value === select.value);
+
+      if (unitInput) {
+        unitInput.value = option?.unit || schema.defaultUnit || unitInput.value || '';
+      }
+    });
+  });
+}
+
+function collectAccountingParamForm() {
+  const params = {};
+  const labels = {};
+
+  document.querySelectorAll('[data-accounting-param-select]').forEach(select => {
+    const key = select.dataset.accountingParamSelect;
+    const customInput = document.querySelector(`[data-accounting-param-custom="${CSS.escape(key)}"]`);
+
+    if (select.value === '__custom__') {
+      const customLabel = customInput?.value.trim() || '';
+      params[key] = '__custom__';
+      params[`${key}Custom`] = customLabel;
+      labels[key] = customLabel;
+    } else {
+      const selectedOption = select.options[select.selectedIndex];
+      params[key] = select.value;
+      labels[key] = selectedOption?.textContent?.trim() || select.value;
+    }
+  });
+
+  return { params, labels };
+}
+
+function collectAccountingParams() {
+  return collectAccountingParamForm().params;
+}
+function updateSourceCategoryOptions(selectedCategory = '') {
+  const categorySelect = document.getElementById('source-category-select');
+  if (!categorySelect) return;
+
+  const options = Mock.getBoundaryCategoryOptionsForSourceForm
+    ? Mock.getBoundaryCategoryOptionsForSourceForm()
+    : [];
+
+  categorySelect.innerHTML = options.length
+    ? options.map(option => {
+        const value = option.categoryCode || option.category || '';
+        const label = option.categoryLabel || option.category || value;
+        const scope = option.scope || '';
+        const scopeLabel = option.scopeLabel || Mock.toScopeLabel?.(scope) || scope;
+
+        return `
+          <option 
+            value="${value}" 
+            data-scope="${scope}" 
+            data-scope-label="${scopeLabel}"
+            data-category-label="${label}"
+            ${value === selectedCategory ? 'selected' : ''}
+          >
+            ${label}
+          </option>
+        `;
+      }).join('')
+    : '<option value="">请先在核算边界中添加二级分类</option>';
+
+  if (selectedCategory) {
+    categorySelect.value = selectedCategory;
+  } else if (options[0]) {
+    categorySelect.value = options[0].categoryCode || options[0].category || '';
+  }
+
+  syncScopeBySelectedCategory();
+}
+function syncScopeBySelectedCategory() {
+  const categorySelect = document.getElementById('source-category-select');
+  const scopeInput = document.getElementById('source-scope-select');
+  const scopeDisplay = document.getElementById('source-scope-display');
+
+  if (!categorySelect) return;
+
+  const selectedOption = categorySelect.selectedOptions && categorySelect.selectedOptions[0];
+  const scopeCode = selectedOption?.dataset?.scope || '';
+  const scopeLabel = selectedOption?.dataset?.scopeLabel || Mock.toScopeLabel?.(scopeCode) || scopeCode;
+
+  // 如果你页面里有 source-scope-select，就把它当成只读值保存
+  if (scopeInput) {
+    scopeInput.value = scopeLabel;
+    scopeInput.dataset.scopeCode = scopeCode;
+  }
+
+  // 如果你右侧有单独展示范围的位置，就更新这个
+  if (scopeDisplay) {
+    scopeDisplay.textContent = scopeLabel || '-';
+  }
+
+  return {
+    scopeCode,
+    scopeLabel
+  };
+}
+function handleSourceCategoryChange() {
+  const categorySelect = document.getElementById('source-category-select');
+  if (!categorySelect) return;
+
+  syncScopeBySelectedCategory();
+
+  const categoryCode = categorySelect.value;
+
+  renderAccountingParams(
+    categoryCode,
+    {},
+    {},
+    { forceUnit: true }
+  );
+}
+function openModal(mode = 'add', index = null) {
+  refreshDatasourceCatalog();
+
+  sourceFormState.mode = mode;
+  sourceFormState.editingIndex = index;
+
+  const item = mode === 'edit' ? emissionSourceData[index] : null;
+  const selectedCategory = item?.categoryCode || state.treeCategory || '';
+
+  document.getElementById('source-modal-title').innerText = mode === 'edit' ? '编辑排放源' : '新增排放源';
+  document.getElementById('source-name-input').value = item?.name || '';
+  document.getElementById('source-unit-input').value = item?.unit || '';
+  document.getElementById('source-custom-group-input').value = mode === 'edit' ? (item?.groupLabel || '') : '';
+
+  // 二级分类永远来自 boundary，不受能源大类影响
+  updateSourceCategoryOptions(selectedCategory);
+
+  // 根据二级分类自动推导范围
+  syncScopeBySelectedCategory();
+
+  const currentCategory = document.getElementById('source-category-select').value;
+
+  renderAccountingParams(
+    currentCategory,
+    item?.accountingParams || {},
+    item?.accountingParamLabels || {},
+    { forceUnit: mode !== 'edit' }
+  );
+
+  setupFormOrgOptions(item ? sourceOrg(item) : '华东园区');
+
+  document.getElementById('source-status-checkbox').checked = item ? item.status !== '停用' : true;
+
+  sourceFormState.selectedIds = item ? seedDatasourceSelection(item) : [];
+
+  const firstSelected = datasourceMap.get(sourceFormState.selectedIds[0]);
+  sourceFormState.groupKey = firstSelected?.groupKey || 'smart-meter';
+
+  document.getElementById('source-datasource-category').dataset.selected = firstSelected?.categoryKey || '';
+
+  renderDatasourceSelector();
+  clearSourceFormValidation();
+
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+  function closeModal() {
+    document.getElementById('edit-modal').classList.add('hidden');
+  }
+
+  function setSourceFormInvalid(element, invalid) {
+    if (!element) return;
+    element.classList.toggle('border-status-error', invalid);
+    element.classList.toggle('ring-1', invalid);
+    element.classList.toggle('ring-status-error', invalid);
+  }
+
+  function clearSourceFormValidation() {
+    [
+      'source-name-input',
+      'source-group-select',
+      'source-custom-group-input',
+      'source-category-select',
+      'source-unit-input',
+      'source-scope-select',
+      'source-org-input',
+      'source-datasource-category',
+      'source-datasource-selected'
+    ].forEach(id => setSourceFormInvalid(document.getElementById(id), false));
+  }
+
+  function validateSourceForm(selectedIds) {
+    clearSourceFormValidation();
+    const sourceNameInput = document.getElementById('source-name-input');
+    const sourceGroupSelect = document.getElementById('source-group-select');
+    const customGroupInput = document.getElementById('source-custom-group-input');
+    const sourceCategorySelect = document.getElementById('source-category-select');
+    const sourceUnitInput = document.getElementById('source-unit-input');
+    const sourceScopeInput = document.getElementById('source-scope-select');
+    const sourceOrgInput = document.getElementById('source-org-input');
+    const datasourceCategorySelect = document.getElementById('source-datasource-category');
+    const datasourceSelectedBox = document.getElementById('source-datasource-selected');
+    const missing = [];
+
+    const requireField = (condition, label, element) => {
+      if (condition) return;
+      missing.push(label);
+      setSourceFormInvalid(element, true);
+    };
+
+    requireField(Boolean(sourceNameInput.value.trim()), '\u6392\u653e\u6e90\u540d\u79f0', sourceNameInput);
+    if (!sourceGroupSelect.value && sourceCategorySelect.value) {
+  const inferredGroupCode = Mock.getEmissionGroupByCategory?.(sourceCategorySelect.value)?.groupCode || '';
+  if (inferredGroupCode) sourceGroupSelect.value = inferredGroupCode;
+}
+requireField(Boolean(sourceGroupSelect.value), '排放源大类', sourceGroupSelect);
+    if (sourceGroupSelect.value === '__custom__') {
+      requireField(Boolean(customGroupInput.value.trim()), '\u81ea\u5b9a\u4e49\u5927\u7c7b\u540d\u79f0', customGroupInput);
+    }
+    requireField(Boolean(sourceCategorySelect.value), '\u6392\u653e\u7c7b\u522b', sourceCategorySelect);
+    requireField(Boolean(sourceUnitInput.value.trim()), '\u5355\u4f4d', sourceUnitInput);
+    requireField(Boolean(sourceScopeInput.dataset.scopeCode), '\u6240\u5c5e\u8303\u56f4', sourceScopeInput);
+    requireField(Boolean(sourceOrgInput.value.trim()), '\u6240\u5c5e\u7ec4\u7ec7', sourceOrgInput);
+    requireField(Boolean(datasourceCategorySelect.value), '\u6570\u636e\u6e90\u7c7b\u522b', datasourceCategorySelect);
+    requireField(selectedIds.length > 0, '\u9009\u62e9\u6570\u636e\u6e90', datasourceSelectedBox);
+
+    if (!missing.length) return true;
+    window.alert(`\u8bf7\u5b8c\u5584\u5fc5\u586b\u9879\uff1a${missing.join('\u3001')}`);
+    const firstInvalid = [
+      sourceNameInput,
+      sourceGroupSelect,
+      sourceGroupSelect.value === '__custom__' ? customGroupInput : null,
+      sourceCategorySelect,
+      sourceUnitInput,
+      sourceScopeInput,
+      sourceOrgInput,
+      datasourceCategorySelect,
+      datasourceSelectedBox
+    ].find(element => element?.classList.contains('border-status-error'));
+    firstInvalid?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    firstInvalid?.focus?.();
+    return false;
+  }
+
+  function getBoundaryGroupByCategory(categoryCode) {
+    for (const group of getActualBoundaryTree()) {
+      if ((group.children || []).some(category => category.category === categoryCode)) return group;
+    }
+    return null;
+  }
+
+  function validateBoundaryCategoryGroup(selectedGroupCode, selectedCategory) {
+    const boundaryGroup = getBoundaryGroupByCategory(selectedCategory);
+    if (!boundaryGroup || !selectedGroupCode || selectedGroupCode === boundaryGroup.groupCode) return true;
+    const selectedGroupLabel = getGroupNode(selectedGroupCode)?.groupLabel || selectedGroupCode;
+    const categoryLabel = Mock.toCategoryLabel?.(selectedCategory) || selectedCategory;
+    window.alert(`\u4e8c\u7ea7\u5206\u7c7b\u300c${categoryLabel}\u300d\u5df2\u5728\u300c${boundaryGroup.groupLabel}\u300d\u4e0b\u6dfb\u52a0\uff0c\u4e0d\u80fd\u518d\u6dfb\u52a0\u5230\u300c${selectedGroupLabel}\u300d\u4e0b\u3002`);
+    setSourceFormInvalid(document.getElementById('source-group-select'), true);
+    setSourceFormInvalid(document.getElementById('source-category-select'), true);
+    return false;
+  }
+
+  function saveSourceForm() {
+    refreshDatasourceCatalog();
+    const ownerMap = buildDatasourceOwnerMap(sourceFormState.editingIndex);
+    const selectedIds = Array.from(new Set(sourceFormState.selectedIds)).filter(id => !ownerMap.has(id));
+    if (!validateSourceForm(selectedIds)) return;
+ const categorySelect = document.getElementById('source-category-select');
+const selectedOption = categorySelect.selectedOptions && categorySelect.selectedOptions[0];
+
+const selectedCategory = categorySelect.value;
+const selectedGroupCode = document.getElementById('source-group-select').value;
+
+// 注意：这里不要再校验“二级分类必须属于某个能源大类”
+// 因为你现在的规则是：能源大类只是 source 自己的展示分组，二级分类永远来自 boundary 全量列表。
+// if (!validateBoundaryCategoryGroup(selectedGroupCode, selectedCategory)) return;
+
+const selectedGroupNode = getGroupNode(selectedGroupCode);
+const isCustomGroup = selectedGroupCode === '__custom__';
+
+const customGroupInput = document.getElementById('source-custom-group-input');
+const customGroupLabel = customGroupInput ? customGroupInput.value.trim() : '';
+
+const groupCode = isCustomGroup
+  ? (customGroupInput?.dataset?.groupCode || makeCustomGroupCode(customGroupLabel))
+  : selectedGroupCode;
+
+const groupLabel = isCustomGroup
+  ? (customGroupLabel || '自定义大类')
+  : (selectedGroupNode?.groupLabel || selectedGroupNode?.label || selectedGroupCode || '');
+
+const scopeCode =
+  selectedOption?.dataset?.scope ||
+  document.getElementById('source-scope-select')?.dataset?.scopeCode ||
+  Mock.inferScopeByCategory?.(selectedCategory) ||
+  '';
+
+const scopeLabel =
+  selectedOption?.dataset?.scopeLabel ||
+  Mock.toScopeLabel?.(scopeCode) ||
+  scopeCode ||
+  '待推导';
+
+const categoryLabel =
+  selectedOption?.dataset?.categoryLabel ||
+  selectedOption?.textContent?.trim() ||
+  Mock.toCategoryLabel?.(selectedCategory) ||
+  selectedCategory;
+
+const schema = getSourceActivityParamSchema(selectedCategory) || {};
+const accountingForm = collectAccountingParamForm();
+    const payload = {
+  name: document.getElementById('source-name-input').value.trim() || '未命名排放源',
+
+  // 排放源大类：只是 source 页面自己的展示分组，不决定二级分类
+  groupCode,
+  groupLabel,
+
+  // 范围：必须存编码给后续 model/factor 匹配；中文只作为展示字段
+  scope: scopeCode,
+  scopeCode,
+  scopeLabel,
+
+  // 二级分类：必须存编码，不能存中文
+  category: selectedCategory,
+  categoryCode: selectedCategory,
+  categoryLabel,
+  boundaryCategory: categoryLabel,
+
+  activityDataType: schema.activityDataType || '',
+  activityDataTypeLabel: schema.activityDataTypeLabel || '',
+  activityDataLabel: schema.activityDataTypeLabel || '',
+
+  accountingParams: accountingForm.params,
+  accountingParamLabels: accountingForm.labels,
+
+  status: document.getElementById('source-status-checkbox').checked ? '启用' : '停用',
+
+  dataSources: String(selectedIds.length),
+  datasourceIds: selectedIds,
+
+  unit: document.getElementById('source-unit-input').value.trim() || schema.defaultUnit || '',
+  org: document.getElementById('source-org-input').value.trim() || '华东园区',
+
+  equipment: sourceFormState.mode === 'edit'
+    ? (emissionSourceData[sourceFormState.editingIndex]?.equipment || '—')
+    : '—'
+};
+   if (sourceFormState.mode === 'edit' && sourceFormState.editingIndex !== null) {
+  emissionSourceData[sourceFormState.editingIndex] = {
+    ...emissionSourceData[sourceFormState.editingIndex],
+    ...payload
+  };
+
+  const saved = persistSourceRow(emissionSourceData[sourceFormState.editingIndex]);
+
+  if (saved) {
+    Object.assign(emissionSourceData[sourceFormState.editingIndex], sharedSourceToRow(saved));
+  }
+
+  if (selectedDetailIndex === sourceFormState.editingIndex) {
+    selectedDetailSourceId =
+      saved?.id ||
+      emissionSourceData[sourceFormState.editingIndex]?.id ||
+      selectedDetailSourceId;
+  }
+
+  // 编辑后如果修改了分类/状态，也回到全部视图，避免看起来“消失”
+  state.keyword = '';
+  state.scope = '全部';
+  state.status = '全部';
+  state.category = '全部';
+  state.org = '全部';
+  state.groupCode = '';
+  state.treeScope = '';
+  state.treeCategory = '';
+  state.treeSourceType = '';
+  state.treeSourceId = '';
+  state.treeStatus = '';
+  state.page = 1;
+} else {
+  emissionSourceData.unshift(payload);
+  const saved = persistSourceRow(emissionSourceData[0]);
+
+  if (saved) {
+    Object.assign(emissionSourceData[0], sharedSourceToRow(saved));
+  }
+
+  // 新增后回到全部视图，避免被当前左侧树或筛选条件过滤掉
+  state.keyword = '';
+  state.scope = '全部';
+  state.status = '全部';
+  state.category = '全部';
+  state.org = '全部';
+  state.groupCode = '';
+  state.treeScope = '';
+  state.treeCategory = '';
+  state.treeSourceType = '';
+  state.treeSourceId = '';
+  state.treeStatus = '';
+  state.page = 1;
+}
+
+closeModal();
+setupFilters();
+syncFilterControls();
+refreshSourceDataViews();
+  }
+
+  document.getElementById('source-add-button').addEventListener('click', () => openModal('add'));
+  document.getElementById('source-save-button').addEventListener('click', saveSourceForm);
+  detailCloseButton.addEventListener('click', closeDetailDrawer);
+document.getElementById('source-group-select')?.addEventListener('change', () => {
+  const groupSelect = document.getElementById('source-group-select');
+  const customGroupWrap = document.getElementById('source-custom-group-wrap');
+
+  if (customGroupWrap) {
+    customGroupWrap.classList.toggle('hidden', groupSelect.value !== '__custom__');
+  }
+
+  // 能源大类变化不重置二级分类，只重新同步范围展示
+  syncScopeBySelectedCategory();
+
+  const sourceCategorySelect = document.getElementById('source-category-select');
+
+  renderAccountingParams(
+    sourceCategorySelect.value,
+    collectAccountingParamForm().params || {},
+    collectAccountingParamForm().labels || {},
+    { forceUnit: false }
+  );
+});
+
+document.getElementById('source-category-select')?.addEventListener('change', handleSourceCategoryChange);
+  document.getElementById('source-datasource-category').addEventListener('change', event => {
+    event.target.dataset.selected = event.target.value;
+    renderDatasourceOptions();
+  });
+  window.addEventListener('resize', () => {
+    if (!detailDrawer.classList.contains('hidden')) syncDetailDrawerFrame();
+  });
+  window.addEventListener('storage', event => {
+    if (event.key !== Mock.STORAGE_KEY) return;
+    refreshDatasourceCatalog();
+    refreshSourceDataViews();
+  });
+  window.addEventListener('carbon-mock-updated', () => {
+    refreshSourceDataViews();
+  });
+  setupFilters();
+  syncFilterControls();
+  setupFormOptions();
+  setupFormOrgOptions('华东园区');
+  attachRowEvents();
+  renderTable();
+
+  keywordInput.addEventListener('input', () => {
+    state.keyword = keywordInput.value.trim();
+    state.page = 1;
+    renderTable();
+  });
+  keywordInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') renderTable();
+  });
+
+  filterSelects.forEach((select, index) => {
+    select.addEventListener('change', () => {
+      const keys = ['scope', 'status', 'category', 'org'];
+      state[keys[index]] = select.value;
+      if (keys[index] === 'scope') {
+        const allowedCategories = getFilterCategories();
+        if (state.category !== '全部' && !allowedCategories.includes(state.category)) {
+          state.category = '全部';
+        }
+        setupFilters();
+        syncFilterControls();
+      }
+      state.page = 1;
+      renderTable();
+    });
+  });
+
+  resetButton.addEventListener('click', () => {
+    keywordInput.value = '';
+    Object.assign(state, { keyword: '', scope: '全部', status: '全部', category: '全部', org: '全部', groupCode: '', treeScope: '', treeCategory: '', treeSourceType: '', treeSourceId: '', treeStatus: '', page: 1 });
+    setupFilters();
+    syncFilterControls();
+    closeDetailDrawer();
+  });
+
+  treePanel.addEventListener('click', event => {
+    const allButton = event.target.closest('[data-tree-all]');
+    if (allButton) {
+      Object.assign(state, { groupCode: '', treeScope: '', treeCategory: '', treeSourceType: '', treeSourceId: '', treeStatus: '', page: 1 });
+      closeDetailDrawer();
+      return;
+    }
+    const categoryButton = event.target.closest('[data-tree-category]');
+    if (categoryButton) {
+      state.groupCode = categoryButton.dataset.treeGroup || '';
+      state.treeScope = '';
+      state.treeCategory = categoryButton.dataset.treeCategory || '';
+      state.treeSourceType = '';
+      state.treeSourceId = '';
+      state.treeStatus = '';
+      state.page = 1;
+      closeDetailDrawer();
+      return;
+    }
+    const groupButton = event.target.closest('[data-tree-group]');
+    if (groupButton) {
+      const groupCode = groupButton.dataset.treeGroup;
+      expandedBoundaryScopes[groupCode] = !expandedBoundaryScopes[groupCode];
+      state.groupCode = groupCode || '';
+      state.treeScope = '';
+      state.treeCategory = '';
+      state.treeSourceType = '';
+      state.treeSourceId = '';
+      state.treeStatus = '';
+      state.page = 1;
+      closeDetailDrawer();
+      return;
+    }
+    const statusButton = event.target.closest('[data-tree-status]');
+    if (statusButton) {
+      state.groupCode = '';
+      state.treeScope = '';
+      state.treeCategory = '';
+      state.treeSourceType = '';
+      state.treeSourceId = '';
+      state.treeStatus = statusButton.dataset.treeStatus;
+      state.page = 1;
+      closeDetailDrawer();
+    }
+  });
+
+  pagerBox.addEventListener('click', event => {
+    const button = event.target.closest('button[data-page]');
+    if (!button || button.disabled) return;
+    const filtered = getFilteredRows();
+    const pageCount = Math.max(1, Math.ceil(filtered.length / state.pageSize));
+    if (button.dataset.page === 'prev' && state.page > 1) state.page -= 1;
+    if (button.dataset.page === 'next' && state.page < pageCount) state.page += 1;
+    if (/^\d+$/.test(button.dataset.page)) state.page = Number(button.dataset.page);
+    renderTable();
+  });
+
+  pageSizeSelect.addEventListener('change', () => {
+    state.pageSize = Number.parseInt(pageSizeSelect.value, 10);
+    state.page = 1;
+    renderTable();
+  });
+
+  function jumpToInputPage() {
+    const filtered = getFilteredRows();
+    const pageCount = Math.max(1, Math.ceil(filtered.length / state.pageSize));
+    const target = Math.min(pageCount, Math.max(1, Number.parseInt(pageJumpInput.value, 10) || 1));
+    state.page = target;
+    renderTable();
+  }
+
+  pageJumpInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') jumpToInputPage();
+  });
+
+  pageJumpInput.addEventListener('change', jumpToInputPage);
+</script><script>
+  const tabCards = document.querySelectorAll('.tab-card');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabCards.forEach(card => {
+    card.addEventListener('click', () => {
+      // 1. Reset all cards styling
+      tabCards.forEach(c => {
+        c.classList.remove('border-2', 'border-carbon-blue', 'bg-blue-50/50');
+        c.classList.add('border', 'hover:bg-slate-50');
+        
+        const check = c.querySelector('.tab-check');
+        if(check) check.classList.add('hidden');
+
+        const icon = c.querySelector('.material-symbols-outlined');
+        if(icon) icon.classList.replace('text-carbon-blue', 'text-slate-400');
+
+        const text = c.querySelector('span:not(.material-symbols-outlined)');
+        if(text) text.classList.replace('text-carbon-blue', 'text-slate-600');
+      });
+
+      // 2. Set active card styling
+      card.classList.add('border-2', 'border-carbon-blue', 'bg-blue-50/50');
+      card.classList.remove('border', 'hover:bg-slate-50');
+      
+      const activeCheck = card.querySelector('.tab-check');
+      if(activeCheck) activeCheck.classList.remove('hidden');
+
+      const activeIcon = card.querySelector('.material-symbols-outlined');
+      if(activeIcon) activeIcon.classList.replace('text-slate-400', 'text-carbon-blue');
+
+      const activeText = card.querySelector('span:not(.material-symbols-outlined)');
+      if(activeText) activeText.classList.replace('text-slate-600', 'text-carbon-blue');
+
+      // 3. Switch content
+      const targetId = card.id.replace('tab-', 'content-');
+      tabContents.forEach(content => {
+        if(content.id === targetId) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+
+</body></html>

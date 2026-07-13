@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Carbon Precision - 数据源管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .sidebar-active {
+            background-color: #005daa;
+            color: #ffffff;
+        }
+        /* Custom styles for modal transitions or specific elements */
+        .config-section {
+            display: none;
+        }
+        .config-section.active {
+            display: block;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#005daa",
+                        "on-secondary-fixed": "#071d31",
+                        "on-background": "#191c1e",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#707785",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e0e3e6",
+                        "surface-container-low": "#f2f4f7",
+                        "outline-variant": "#c0c7d6",
+                        "tertiary-container": "#b95a00",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed": "#ffdbc7",
+                        "inverse-surface": "#2d3133",
+                        "surface-variant": "#e0e3e6",
+                        "on-tertiary-fixed-variant": "#733600",
+                        "surface-tint": "#005fae",
+                        "surface-container-high": "#e6e8eb",
+                        "tertiary-fixed-dim": "#ffb688",
+                        "on-secondary": "#ffffff",
+                        "background": "#f7f9fc",
+                        "surface-dim": "#d8dadd",
+                        "on-primary-fixed-variant": "#004785",
+                        "secondary-fixed-dim": "#b4c8e3",
+                        "on-tertiary-container": "#fffbff",
+                        "error": "#ba1a1a",
+                        "secondary": "#4d6077",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#eceef1",
+                        "surface": "#f7f9fc",
+                        "tertiary": "#934600",
+                        "inverse-on-surface": "#eff1f4",
+                        "on-primary-container": "#fefcff",
+                        "primary-container": "#0075d5",
+                        "inverse-primary": "#a5c8ff",
+                        "secondary-fixed": "#d1e4ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "primary-fixed": "#d4e3ff",
+                        "on-secondary-fixed-variant": "#35485e",
+                        "secondary-container": "#cde1fd",
+                        "surface-bright": "#f7f9fc",
+                        "on-tertiary-fixed": "#311300",
+                        "on-surface-variant": "#404753",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#51647c",
+                        "on-primary-fixed": "#001c3a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sidebar-width": "240px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "sm": "12px",
+                        "grid-gutter": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-lg": ["18px", {"lineHeight": "26px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="./shared-mock-data.js"></script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- Main Content Wrapper -->
+<main class="h-screen flex flex-col">
+<div class="flex-1 min-h-0 overflow-y-auto p-lg flex flex-col">
+<!-- Statistics Cards -->
+<div class="grid grid-cols-4 gap-grid-gutter mb-lg shrink-0">
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex items-center space-x-4">
+<div class="p-3 bg-primary-fixed rounded-lg">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">description</span>
+</div>
+<div>
+<div class="text-outline text-xs">数据源总数</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-xl font-bold" id="stat-total">0</span>
+<span class="text-[10px] text-outline">当前列表</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex items-center space-x-4">
+<div class="p-3 bg-green-50 rounded-lg">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">sensors</span>
+</div>
+<div>
+<div class="text-outline text-xs">在线数据源</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-xl font-bold" id="stat-online">0</span>
+<span class="text-[10px] text-outline">实时统计</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex items-center space-x-4">
+<div class="p-3 bg-orange-50 rounded-lg">
+<span class="material-symbols-outlined text-orange-600" style="font-variation-settings: 'FILL' 1;">sensors_off</span>
+</div>
+<div>
+<div class="text-outline text-xs">离线数据源</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-xl font-bold" id="stat-offline">0</span>
+<span class="text-[10px] text-outline">实时统计</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant shadow-sm flex items-center space-x-4">
+<div class="p-3 bg-blue-50 rounded-lg">
+<span class="material-symbols-outlined text-blue-600" style="font-variation-settings: 'FILL' 1;">fact_check</span>
+</div>
+<div>
+<div class="text-outline text-xs">数据完整率</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-xl font-bold" id="stat-completeness">0%</span>
+<span class="text-[10px] text-outline">按必填项</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Area -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant mb-lg flex items-center gap-3 shrink-0 overflow-x-auto whitespace-nowrap">
+<label class="flex items-center gap-1.5 text-sm text-on-surface whitespace-nowrap shrink-0">
+<span class="text-outline">数据源名称：</span>
+<input id="search-input" class="px-3 py-1.5 border border-outline-variant rounded-lg text-sm w-44 focus:ring-primary focus:border-primary" placeholder="请输入名称" type="text"/>
+</label>
+<label class="flex items-center gap-1.5 text-sm text-on-surface whitespace-nowrap shrink-0">
+<span class="text-outline">接入类型：</span>
+<select id="filter-type" class="px-3 py-1.5 pr-8 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary w-28">
+<option value="">全部</option>
+<option value="smart-meter">智能表计</option>
+<option value="manual">手工填报</option>
+<option value="api">API接口</option>
+<option value="iot">IoT设备</option>
+<option value="excel">Excel导入</option>
+</select>
+</label>
+<label class="flex items-center gap-1.5 text-sm text-on-surface whitespace-nowrap shrink-0">
+<span class="text-outline">状态：</span>
+<select id="filter-status" class="px-3 py-1.5 pr-8 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary w-24">
+<option value="">全部</option>
+<option value="在线">在线</option>
+<option value="离线">离线</option>
+<option value="同步中">同步中</option>
+</select>
+</label>
+<label class="flex items-center gap-1.5 text-sm text-on-surface whitespace-nowrap shrink-0">
+<span class="text-outline">所属组织：</span>
+<select id="filter-org" class="px-3 py-1.5 pr-8 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary w-36">
+<option value="">全部</option>
+<option value="华东园区">华东园区</option>
+<option value="华南分公司">华南分公司</option>
+<option value="西北生产基地">西北生产基地</option>
+</select>
+</label>
+<label class="flex items-center gap-1.5 text-sm text-on-surface whitespace-nowrap shrink-0">
+<span class="text-outline">数据源分类：</span>
+<select id="filter-meter-type" class="px-3 py-1.5 pr-8 border border-outline-variant rounded-lg text-sm bg-white focus:ring-primary w-40">
+<option value="">全部</option>
+<option value="electric">电表</option>
+<option value="water">水表</option>
+<option value="gas">燃气表</option>
+<option value="heat">热表</option>
+<option value="refrigerant">制冷剂台账</option>
+<option value="api">API接口</option>
+<option value="iot">IoT设备</option>
+<option value="excel">Excel导入</option>
+</select>
+</label>
+<button id="filter-reset" class="px-4 py-1.5 text-sm border border-outline-variant rounded-lg hover:bg-surface-variant/10 shrink-0 whitespace-nowrap" type="button">重置</button>
+<button class="px-4 py-1.5 text-sm bg-primary text-on-primary rounded-lg flex items-center hover:opacity-90 shrink-0 whitespace-nowrap" id="add-datasource-btn" type="button">
+<span class="material-symbols-outlined text-sm mr-1">add</span>
+                    新增数据源
+                </button>
+</div>
+<!-- Content Grid (Tree + Table) -->
+<div class="grid grid-cols-[210px_minmax(0,1fr)] gap-lg flex-1 min-h-0">
+<!-- Left Tree Sidebar -->
+<div class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant h-full min-h-0 overflow-y-auto">
+<h3 class="font-bold text-sm mb-4 border-b border-surface-container-high pb-2">数据源分类</h3>
+<div class="space-y-1" data-datasource-tree id="datasource-category-tree"></div>
+</div>
+<!-- Main Table Container -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-full min-h-0">
+<div class="p-md border-b border-outline-variant">
+<h3 class="font-bold text-sm">数据源列表</h3>
+</div>
+<div class="flex-1 min-h-0 overflow-auto">
+<table class="w-full text-sm text-left">
+<thead class="bg-[#fafafa] border-b border-outline-variant text-outline">
+<tr>
+<th class="px-4 py-3 font-medium whitespace-nowrap">数据源名称</th>
+<th class="px-4 py-3 font-medium whitespace-nowrap">类型</th>
+<th class="px-4 py-3 font-medium whitespace-nowrap">关联排放源</th>
+<th class="px-4 py-3 font-medium whitespace-nowrap">采集频率</th>
+<th class="px-4 py-3 font-medium whitespace-nowrap">所属组织</th>
+<th class="px-4 py-3 font-medium whitespace-nowrap">状态</th>
+<th class="px-4 py-3 font-medium whitespace-nowrap">最后更新时间</th>
+<th class="px-4 py-3 font-medium text-right whitespace-nowrap">操作</th>
+</tr>
+</thead>
+<tbody id="datasource-table-body" class="divide-y divide-outline-variant/10"></tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div id="datasource-pagination" class="p-md border-t border-outline-variant flex items-center justify-between gap-3 text-sm text-outline shrink-0">
+<div id="pagination-summary">共 0 条</div>
+<div class="flex items-center space-x-2 flex-wrap justify-end">
+<button id="pagination-prev" type="button" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-variant/10">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<div id="pagination-pages" class="flex items-center space-x-2"></div>
+<button id="pagination-next" type="button" class="w-8 h-8 flex items-center justify-center border border-outline-variant rounded hover:bg-surface-variant/10">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<select id="pagination-size" class="w-[104px] px-2 py-1 pr-7 border border-outline-variant rounded text-xs ml-4 bg-white">
+<option value="5">5 条/页</option>
+<option value="10">10 条/页</option>
+<option value="20">20 条/页</option>
+<option value="50">50 条/页</option>
+</select>
+<div class="flex items-center space-x-1 ml-4">
+<span>前往</span>
+<input id="pagination-jump" class="w-12 h-8 text-center border border-outline-variant rounded text-xs p-0 focus:ring-primary" type="text" value="1"/>
+<span>页</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Unified Dynamic Modal -->
+<div class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity" id="add-datasource-modal" aria-hidden="true">
+<div class="bg-surface-container-lowest w-[800px] max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl flex flex-col">
+<!-- Modal Header -->
+<div class="flex items-center justify-between p-lg border-b border-outline-variant">
+<h2 class="text-lg font-bold">新增数据源</h2>
+<button type="button" class="text-outline hover:text-on-surface transition-colors" id="close-modal-btn" aria-label="关闭">
+<span class="material-symbols-outlined ">close</span>
+</button>
+</div>
+<div class="p-lg space-y-lg">
+<!-- Basic Info -->
+<section>
+<h3 class="text-sm font-semibold mb-md flex items-center text-on-surface">
+<span class="w-1 h-4 bg-primary mr-3 rounded-full"></span>
+基础信息
+</h3>
+<div class="grid grid-cols-2 gap-grid-gutter">
+<div>
+<label class="block text-xs text-outline mb-1">数据源名称 <span class="text-error">*</span></label>
+<input id="modal-name-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="请输入名称" type="text"/>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">所属组织 <span class="text-error">*</span></label>
+<select id="modal-org-select" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option value="">请选择组织</option>
+<option>华东园区</option>
+<option>华南分公司</option>
+<option>西北生产基地</option>
+</select>
+</div>
+<div class="col-span-2">
+<div class="flex items-center justify-between mb-2">
+<label class="block text-sm text-outline">数据源类型 <span class="text-error">*</span></label>
+<button id="add-subcategory-btn" type="button" class="text-sm text-primary font-medium hover:underline">自定义新增类型</button>
+</div>
+<div class="relative" id="type-category-picker">
+<button type="button" id="type-category-trigger" class="w-full min-h-[42px] px-3 py-2 border border-outline-variant rounded-lg bg-white text-sm text-left focus:ring-2 focus:ring-primary/20 focus:border-primary flex items-center justify-between">
+<span id="type-category-label" class="truncate">请选择数据源类型</span>
+<span class="material-symbols-outlined text-base text-outline">expand_more</span>
+</button>
+<div id="type-category-panel" class="hidden absolute z-[80] mt-1 w-full rounded-lg border border-outline-variant bg-white shadow-xl overflow-hidden">
+<div class="grid grid-cols-[150px_1fr] max-h-[260px]">
+<div id="type-category-groups" class="border-r border-outline-variant/60 bg-surface-container-low overflow-y-auto py-1"></div>
+<div id="type-category-children" class="overflow-y-auto py-1"></div>
+</div>
+</div>
+</div>
+<select class="hidden" id="datasource-type-select"></select>
+</div>
+<div id="subcategory-create-row" class="hidden col-span-2 grid grid-cols-[150px_1fr_auto_auto] gap-3 items-end rounded-lg border border-dashed border-primary/40 bg-primary/5 p-3">
+<div>
+<label class="block text-xs text-outline mb-1">所属接入类型</label>
+<select id="new-subcategory-group-select" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary"></select>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">具体分类名称</label>
+<input id="new-subcategory-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="例如：3号车间电表、冷媒台账"/>
+</div>
+<button id="confirm-subcategory-btn" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium">添加并选中</button>
+<button id="cancel-subcategory-btn" type="button" class="px-4 py-2 rounded-lg border border-outline-variant text-sm font-medium bg-white">取消</button>
+</div>
+<select id="modal-group-select" class="hidden"></select>
+<select id="modal-meter-type-select" class="hidden"></select>
+<select id="modal-unit-select" class="hidden">
+<option value="kWh">kWh</option>
+<option value="m3">m3</option>
+<option value="Nm3">Nm3</option>
+<option value="Nm³">Nm³</option>
+<option value="GJ">GJ</option>
+<option value="kg">kg</option>
+<option value="t">t</option>
+<option value="L">L</option>
+<option value="人次">人次</option>
+<option value="条">条</option>
+</select>
+<select id="modal-related-select" class="hidden"></select>
+<div class="col-span-2 rounded-lg border border-dashed border-outline-variant bg-surface-container-low p-3">
+<div class="text-xs text-outline mb-1">关联排放源</div>
+<div class="text-sm font-medium text-on-surface" id="modal-binding-preview">未绑定</div>
+</div>
+</div>
+</section>
+<!-- Dynamic Config Sections -->
+<div class="space-y-7" id="dynamic-config-container">
+<section class="config-section active" id="config-smart-meter">
+<h3 class="text-sm font-semibold mb-md flex items-center text-on-surface">
+<span class="w-1 h-4 bg-primary mr-3 rounded-full"></span>
+智能表计配置
+</h3>
+<div class="grid grid-cols-2 gap-grid-gutter">
+<div>
+<label class="block text-xs text-outline mb-1">表计ID (Meter ID)</label>
+<input id="modal-meter-id-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="请输入表计唯一编码" type="text"/>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">采样频率</label>
+<select id="modal-frequency-select" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option>5分钟</option>
+<option>15分钟</option>
+<option>1小时</option>
+<option>日</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-xs text-outline mb-1">网关控制台 (Gateway)</label>
+<input id="modal-gateway-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="请输入网关地址或标识" type="text"/>
+</div>
+</div>
+</section>
+<section class="config-section" id="config-manual">
+<h3 class="text-sm font-semibold mb-md flex items-center text-on-surface">
+<span class="w-1 h-4 bg-primary mr-3 rounded-full"></span>
+手工填报配置
+</h3>
+<div class="grid grid-cols-2 gap-grid-gutter">
+<div>
+<label class="block text-xs text-outline mb-1">负责人 (Responsible Person)</label>
+<input id="modal-person-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="姓名/员工编号" type="text"/>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">填报周期</label>
+<select id="modal-manual-frequency-select" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option>每日</option>
+<option>每周</option>
+<option>每月</option>
+<option>每季度</option>
+</select>
+</div>
+<div class="col-span-2 pt-1">
+<div class="text-xs text-outline mb-3">提醒设置</div>
+<div class="flex items-center gap-10">
+<label class="inline-flex items-center gap-3 text-sm text-on-surface cursor-pointer">
+<input id="modal-remind-before-checkbox" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span>截止日期前24小时推送</span>
+</label>
+<label class="inline-flex items-center gap-3 text-sm text-on-surface cursor-pointer">
+<input id="modal-overdue-alert-checkbox" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span>逾期未填报警</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<section class="config-section" id="config-api">
+<h3 class="text-sm font-semibold mb-md flex items-center text-on-surface">
+<span class="w-1 h-4 bg-primary mr-3 rounded-full"></span>
+API 接口配置
+</h3>
+<div class="grid grid-cols-2 gap-grid-gutter">
+<div class="col-span-2">
+<label class="block text-xs text-outline mb-1">接口地址 (Endpoint URL)</label>
+<input id="modal-url-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary font-mono" placeholder="https://api.example.com/v1/data" type="text"/>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">请求方法</label>
+<select id="modal-method-select" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option>GET</option>
+<option>POST</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">鉴权 Token/Key</label>
+<input id="modal-token-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="Bearer ..." type="password"/>
+</div>
+</div>
+</section>
+<section class="config-section" id="config-iot">
+<h3 class="text-sm font-semibold mb-md flex items-center text-on-surface">
+<span class="w-1 h-4 bg-primary mr-3 rounded-full"></span>
+IoT 设备配置
+</h3>
+<div class="grid grid-cols-2 gap-grid-gutter">
+<div>
+<label class="block text-xs text-outline mb-1">接入协议 (Protocol)</label>
+<select id="modal-protocol-select" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option>MQTT</option>
+<option>Modbus</option>
+<option>OPC-UA</option>
+<option>HTTP/HTTPS</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-outline mb-1">设备唯一标识 (Device ID)</label>
+<input id="modal-device-id-input" class="w-full border-outline-variant rounded-lg text-sm focus:ring-primary focus:border-primary font-mono" placeholder="DEV-8829-XJ" type="text"/>
+</div>
+<div class="col-span-2">
+<label class="block text-xs text-outline mb-1">心跳间隔 (Heartbeat Interval)</label>
+<div class="flex items-center space-x-2">
+<input id="modal-heartbeat-input" class="w-28 h-12 px-4 border border-outline-variant rounded-md text-base focus:ring-primary focus:border-primary" type="number" value="60"/>
+<span class="text-sm text-outline">秒</span>
+</div>
+</div>
+</div>
+</section>
+<section class="config-section" id="config-excel">
+<h3 class="text-sm font-semibold mb-md flex items-center text-on-surface">
+<span class="w-1 h-4 bg-primary mr-3 rounded-full"></span>
+Excel 导入配置
+</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-lg border border-outline-variant">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-3">download</span>
+<div>
+<div class="text-sm font-medium">数据上报模板.xlsx</div>
+<div class="text-xs text-outline">版本 v2.1 | 最后更新 2024-05-01</div>
+</div>
+</div>
+<button type="button" id="download-template-btn" class="text-primary text-sm font-medium hover:underline">下载模板</button>
+</div>
+<div id="excel-upload-zone" class="border-2 border-dashed border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-outline mb-3 group-hover:text-primary transition-colors">cloud_upload</span>
+<p class="text-sm font-medium mb-1">点击或将文件拖拽到此处上传</p>
+<p class="text-xs text-outline">支持 .xls, .xlsx 格式文件，最大 50MB</p>
+<input type="file" id="excel-file-input" class="hidden" accept=".xls,.xlsx">
+<p id="excel-upload-file-name" class="mt-2 text-xs text-primary font-medium hidden"></p>
+</div>
+</div>
+</section>
+</div>
+<section>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant">
+<div class="flex items-center space-x-3">
+<span class="text-base font-semibold">数据质量校验</span>
+<button type="button" class="relative inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-outline-variant" id="quality-switch" role="switch">
+<span class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" id="quality-knob"></span>
+</button>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-base font-semibold">立即启用</span>
+<button type="button" class="relative inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-primary" id="active-switch" role="switch">
+<span class="translate-x-6 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" id="active-knob"></span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Modal Footer -->
+<div class="p-lg border-t border-outline-variant flex justify-end space-x-3 bg-surface-container-low">
+<button type="button" class="px-6 py-2 text-sm border border-outline-variant rounded-lg hover:bg-surface-variant/10 font-medium transition-colors" id="cancel-modal-btn">取消</button>
+<button type="button" class="px-6 py-2 text-sm bg-primary text-on-primary rounded-lg hover:opacity-90 font-semibold transition-opacity shadow-sm" id="save-modal-btn">保存并测试</button>
+</div>
+</div>
+</div>
+<script>
+        const Mock = window.CarbonAccountingMock || {};
+
+const sharedDatasourceExtraMap = {
+  "ds-1": {
+    type: "smart-meter",
+    groupKey: "smart-meter",
+    meterType: "electric",
+    org: "华东园区",
+    frequency: "15分钟",
+    status: "在线",
+    time: "2026-06-29 10:30",
+    meterId: "MTR-001",
+    gateway: "GW-HQ-01",
+    check: true
+  },
+  "ds-3": {
+    type: "manual",
+    groupKey: "manual",
+    meterType: "refrigerant",
+    org: "华东园区",
+    frequency: "月度",
+    status: "离线",
+    time: "2026-06-28 18:00",
+    person: "张三",
+    remindBeforeDeadline: true,
+    overdueAlert: true
+  },
+  "ds-6": {
+    type: "smart-meter",
+    groupKey: "smart-meter",
+    meterType: "gas",
+    org: "华东园区",
+    frequency: "15分钟",
+    status: "在线",
+    time: "2026-06-29 10:27",
+    meterId: "MTR-G008",
+    gateway: "GW-BOILER-01",
+    check: true
+  },
+  "ds-10": {
+    type: "manual",
+    groupKey: "manual",
+    meterType: "fuel-ledger",
+    org: "西北生产基地",
+    frequency: "每周",
+    status: "在线",
+    time: "2026-06-29 09:20",
+    person: "李四",
+    remindBeforeDeadline: false,
+    overdueAlert: true
+  }
+};
+
+let datasourceList = (Mock.DataSources || []).map((item) => {
+  const { activityDataType, ...datasource } = item || {};
+  return {
+    ...datasource,
+    ...(sharedDatasourceExtraMap[item.id] || {}),
+    id: item.id,
+    unit: item.unit
+  };
+});
+
+// 兜底：如果 shared-mock-data.js 未加载或 DataSources 为空，仍能看到 demo 数据。
+if (!datasourceList.length) {
+  datasourceList = [
+    { id: "ds-1", name: "办公楼总电表", unit: "kWh", ...sharedDatasourceExtraMap["ds-1"] },
+    { id: "ds-3", name: "R410A充注记录", unit: "kg", ...sharedDatasourceExtraMap["ds-3"] },
+    { id: "ds-6", name: "锅炉房天然气表", unit: "Nm³", ...sharedDatasourceExtraMap["ds-6"] },
+    { id: "ds-10", name: "柴油加注手工台账", unit: "L", ...sharedDatasourceExtraMap["ds-10"] }
+  ];
+}
+
+      function normalizeDatasourceId(id) {
+  const text = String(id);
+  return text.startsWith("ds-") ? text : `ds-${text}`;
+}
+
+function getBoundSourcesByDatasourceId(datasourceId) {
+  const id = normalizeDatasourceId(datasourceId);
+  return (Mock.EmissionSources || []).filter((source) =>
+    (source.datasourceIds || []).map(normalizeDatasourceId).includes(id)
+  );
+}
+
+function boundSourceNames(item) {
+  return getBoundSourcesByDatasourceId(item.id).map((source) => source.name);
+}
+
+function bindingText(item) {
+  const names = boundSourceNames(item);
+  return names.length ? names.join("，") : "未绑定";
+}
+
+        let categoryTree = [
+          { groupKey: "smart-meter", groupLabel: "智能表计", type: "smart-meter", expanded: true, children: [
+            { key: "electric", label: "电表", unit: "kWh" },
+            { key: "water", label: "水表", unit: "m3" },
+            { key: "gas", label: "燃气表", unit: "Nm3" },
+            { key: "heat", label: "热表", unit: "GJ" }
+          ]},
+          { groupKey: "manual", groupLabel: "手工填报", type: "manual", expanded: false, children: [
+            { key: "refrigerant", label: "制冷剂台账", unit: "kg" },
+            { key: "fuel-ledger", label: "燃料台账", unit: "L" },
+            { key: "commute-ledger", label: "通勤台账", unit: "人次" }
+          ]},
+          { groupKey: "api", groupLabel: "API接口", type: "api", expanded: false, children: [
+            { key: "purchase-api", label: "采购系统", unit: "t" },
+            { key: "erp-api", label: "ERP系统", unit: "t" },
+            { key: "energy-api", label: "能源平台", unit: "kWh" }
+          ]},
+          { groupKey: "iot", groupLabel: "IoT设备", type: "iot", expanded: false, children: [
+            { key: "flow-meter", label: "流量计", unit: "m3" },
+            { key: "temperature-sensor", label: "温度传感器", unit: "℃" },
+            { key: "level-sensor", label: "液位计", unit: "m" }
+          ]},
+          { groupKey: "excel", groupLabel: "Excel导入", type: "excel", expanded: false, children: [
+            { key: "excel-ledger", label: "Excel台账", unit: "条" },
+            { key: "production-excel", label: "生产数据台账", unit: "条" }
+          ]}
+        ];
+
+        let currentTreeCategory = "";
+        let editingDatasourceId = null;
+        let pendingCustomCategory = null;
+        let currentPage = 1;
+        let pageSize = 10;
+
+        (function() {
+            const typeLabels = { "smart-meter": "智能表计", manual: "手工填报", api: "API接口", iot: "IoT设备", excel: "Excel导入" };
+            const activityDataTypeLabels = { fuel_consumption: "燃料消耗量", electricity_consumption: "用电量", replenishment_amount: "补充量" };
+            const statusClasses = { "在线": "bg-green-50 text-green-600 border-green-200", "离线": "bg-gray-100 text-gray-500 border-gray-200", "同步中": "bg-blue-50 text-blue-600 border-blue-200" };
+            const get = (id) => document.getElementById(id);
+            const tableBody = get("datasource-table-body");
+            const modal = get("add-datasource-modal");
+            const openBtn = get("add-datasource-btn");
+            const closeBtn = get("close-modal-btn");
+            const cancelBtn = get("cancel-modal-btn");
+            const typeSelect = get("datasource-type-select");
+            const modalTitle = modal.querySelector("h2");
+            const saveBtn = get("save-modal-btn");
+            let activeTypeGroupKey = "smart-meter";
+            const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
+
+            function findGroup(groupKey) { return categoryTree.find((group) => group.groupKey === groupKey); }
+            function datasourceId(item) { return String(item?.id || ""); }
+            function normalizeDatasourceIdLocal(id) {
+                const text = String(id || "");
+                return text.startsWith("ds-") ? text : `ds-${text}`;
+            }
+            function activityDataTypeLabel(value) {
+                return activityDataTypeLabels[value] || value || "-";
+            }
+            function getBoundSources(item) {
+                const id = normalizeDatasourceIdLocal(item?.id);
+                return (Mock.EmissionSources || []).filter((source) =>
+                    (source.datasourceIds || []).map(normalizeDatasourceIdLocal).includes(id)
+                );
+            }
+            function getDatasourceActivityDataType(item) {
+                const values = [...new Set(
+                    getBoundSources(item)
+                        .map((source) => source.activityDataType)
+                        .filter(Boolean)
+                )];
+                return values.map(activityDataTypeLabel).join("，") || "-";
+            }
+            function boundSourceNames(item) {
+                return getBoundSources(item).map((source) => source.name);
+            }
+            function bindingText(item) {
+                const names = boundSourceNames(item);
+                return names.length ? names.join("，") : "未绑定";
+            }
+            function bindingCell(item) {
+                const names = boundSourceNames(item);
+                if (!names.length) {
+                    return '<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs border border-slate-200">未绑定</span>';
+                }
+                return '<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-primary text-xs border border-blue-100">' + esc(names.join('，')) + '</span>';
+            }
+            function getLatestActivityRecord(item) {
+                if (typeof Mock.getLatestActivityRecordByDatasource === "function") {
+                    return Mock.getLatestActivityRecordByDatasource(item.id);
+                }
+                return getActivityRecordsForDatasource(item.id)[0] || null;
+            }
+            function latestRecordCells(item) {
+                const latestRecord = getLatestActivityRecord(item);
+                if (!latestRecord) {
+                    return '<td class="px-4 py-3 text-outline whitespace-nowrap">-</td>' +
+                        '<td class="px-4 py-3 text-outline whitespace-nowrap">-</td>' +
+                        '<td class="px-4 py-3 text-outline whitespace-nowrap">-</td>' +
+                        '<td class="px-4 py-3 text-outline whitespace-nowrap">-</td>';
+                }
+                return '<td class="px-4 py-3 whitespace-nowrap">' + esc(latestRecord.period) + '</td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap font-medium">' + esc(latestRecord.amount) + ' <span class="text-xs text-outline">' + esc(latestRecord.unit) + '</span></td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap">' + esc(latestRecord.quality) + '</td>' +
+                    '<td class="px-4 py-3 whitespace-nowrap">' + esc(latestRecord.status) + '</td>';
+            }
+            function setBindingPreview(item) {
+                const preview = get("modal-binding-preview");
+                if (!preview) return;
+                const text = item ? bindingText(item) : "未绑定";
+                preview.textContent = text;
+                preview.className = text === "未绑定" ? "text-sm font-medium text-outline" : "text-sm font-medium text-primary";
+            }
+            function findCategory(key) {
+                for (const group of categoryTree) {
+                    const child = group.children.find((item) => item.key === key);
+                    if (child) return { group, child };
+                }
+                if (pendingCustomCategory?.child.key === key) {
+                    const group = findGroup(pendingCustomCategory.groupKey);
+                    if (group) return { group, child: pendingCustomCategory.child, pending: true };
+                }
+                return null;
+            }
+            function categoryLabel(key) { return findCategory(key)?.child.label || key || "-"; }
+            function renderTypeCategoryOptions(selectedKey = "") {
+                const select = get("datasource-type-select");
+                const selectedInfo = findCategory(selectedKey);
+                const fallback = categoryTree[0]?.children[0]?.key || "";
+                select.innerHTML = categoryTree.flatMap((group) => {
+                    const children = group.children.concat(pendingCustomCategory?.groupKey === group.groupKey ? [pendingCustomCategory.child] : []);
+                    return children.map((child) => '<option value="' + esc(child.key) + '">' + esc(group.groupLabel + " / " + child.label) + '</option>');
+                }).join("");
+                select.value = selectedInfo ? selectedKey : fallback;
+                activeTypeGroupKey = (selectedInfo?.group.groupKey) || activeTypeGroupKey || categoryTree[0]?.groupKey || "";
+                renderTypeCategoryPicker();
+                syncCategoryDerivedFields();
+            }
+            function renderTypeCategoryPicker() {
+                const current = get("datasource-type-select").value;
+                const currentInfo = findCategory(current);
+                const activeGroup = findGroup(activeTypeGroupKey) || currentInfo?.group || categoryTree[0];
+                get("type-category-label").textContent = currentInfo ? currentInfo.group.groupLabel + " / " + currentInfo.child.label : "请选择数据源类型";
+                get("type-category-groups").innerHTML = categoryTree.map((group) => '<button type="button" data-type-group="' + esc(group.groupKey) + '" class="w-full px-3 py-2 text-left text-sm font-semibold whitespace-nowrap ' + (group.groupKey === activeGroup.groupKey ? 'bg-primary/10 text-primary' : 'hover:bg-surface-container text-on-surface') + '">' + esc(group.groupLabel) + '</button>').join("");
+                const visibleChildren = activeGroup.children.concat(pendingCustomCategory?.groupKey === activeGroup.groupKey ? [pendingCustomCategory.child] : []);
+                get("type-category-children").innerHTML = visibleChildren.map((child) => {
+                    const active = child.key === current;
+                    return '<button type="button" data-type-child="' + esc(child.key) + '" class="w-full px-3 py-2.5 text-left text-sm transition-colors ' + (active ? 'bg-primary text-on-primary' : 'hover:bg-primary/5 text-on-surface') + '">' +
+                        '<div class="flex items-center gap-2 min-w-0">' +
+                            '<span class="w-1.5 h-1.5 rounded-full shrink-0 ' + (active ? 'bg-white' : 'bg-primary/60') + '"></span>' +
+                            '<span class="truncate font-medium">' + esc(child.label) + '</span>' +
+                        '</div>' +
+                    '</button>';
+                }).join("");
+            }
+            function renderNewSubcategoryGroupOptions(selected = "") {
+                const groupSelect = get("new-subcategory-group-select");
+                if (!groupSelect) return;
+                groupSelect.innerHTML = categoryTree.map((group) => '<option value="' + esc(group.groupKey) + '">' + esc(group.groupLabel) + '</option>').join("");
+                groupSelect.value = selected && findGroup(selected) ? selected : (findCategory(get("datasource-type-select").value)?.group.groupKey || categoryTree[0]?.groupKey || "");
+            }
+            function slugify(text) { return "custom-" + Date.now() + "-" + String(text).trim().toLowerCase().replace(/[^a-z0-9\\u4e00-\\u9fa5]+/g, "-").replace(/^-|-$/g, ""); }
+
+            function toast(message) {
+                let el = document.querySelector("[data-datasource-toast]");
+                if (!el) {
+                    el = document.createElement("div");
+                    el.dataset.datasourceToast = "true";
+                    el.className = "fixed top-5 right-5 z-[80] rounded-lg bg-on-surface text-white px-4 py-2 text-sm shadow-xl";
+                    document.body.appendChild(el);
+                }
+                el.textContent = message;
+                el.style.opacity = "1";
+                clearTimeout(el._timer);
+                el._timer = setTimeout(() => { el.style.opacity = "0"; }, 1800);
+            }
+
+            function renderCategoryTree() {
+                const root = get("datasource-category-tree");
+                root.innerHTML = categoryTree.map((group) => {
+                    const count = group.children.reduce((sum, child) => sum + datasourceList.filter((row) => row.meterType === child.key).length, 0);
+                    const children = group.children.map((child) => {
+                        const active = currentTreeCategory === child.key;
+                        const itemCount = datasourceList.filter((row) => row.meterType === child.key).length;
+                        return '<button type="button" data-category="' + esc(child.key) + '" class="w-full flex items-center py-2 px-3 rounded text-sm whitespace-nowrap ' + (active ? 'bg-primary/10 text-primary' : 'hover:bg-surface-container text-outline') + '"><span class="w-1.5 h-1.5 ' + (active ? 'bg-primary' : 'bg-outline-variant') + ' rounded-full mr-4"></span><span class="flex-1 text-left">' + esc(child.label) + ' (' + itemCount + ')</span></button>';
+                    }).join("");
+                    return '<button type="button" data-tree-toggle="' + esc(group.groupKey) + '" class="w-full flex items-center py-2 px-2 rounded cursor-pointer text-sm whitespace-nowrap ' + 'text-on-surface hover:bg-surface-container' + '"><span class="material-symbols-outlined text-sm mr-2 text-outline" data-tree-arrow="' + esc(group.groupKey) + '">' + (group.expanded ? 'expand_more' : 'chevron_right') + '</span><span class="flex-1 text-left">' + esc(group.groupLabel) + ' (' + count + ')</span></button><div class="ml-8 space-y-1 mt-1 ' + (group.expanded ? '' : 'hidden') + '" data-tree-children="' + esc(group.groupKey) + '">' + children + '</div>';
+                }).join("");
+                root.querySelectorAll("[data-tree-toggle]").forEach((node) => {
+                    node.addEventListener("click", () => {
+                        const group = findGroup(node.dataset.treeToggle);
+                        if (!group) return;
+                        group.expanded = !group.expanded;
+                        renderCategoryTree();
+                    });
+                });
+                root.querySelectorAll("[data-category]").forEach((node) => {
+                    node.addEventListener("click", () => {
+                        currentTreeCategory = node.dataset.category || "";
+                        get("filter-meter-type").value = currentTreeCategory;
+                        refreshDatasourceView({ resetPage: true });
+                    });
+                });
+            }
+
+            function renderGroupOptions(selected = "smart-meter") {
+                get("modal-group-select").innerHTML = categoryTree.map((group) => '<option value="' + esc(group.groupKey) + '">' + esc(group.groupLabel) + '</option>').join("");
+                get("modal-group-select").value = selected;
+            }
+
+            function renderSubcategoryOptions(groupKey, selectedKey = "") {
+                const group = findGroup(groupKey) || categoryTree[0];
+                get("modal-meter-type-select").innerHTML = group.children.map((child) => '<option value="' + esc(child.key) + '">' + esc(child.label) + '</option>').join("");
+                get("modal-meter-type-select").value = selectedKey && group.children.some((child) => child.key === selectedKey) ? selectedKey : (group.children[0]?.key || "");
+                syncCategoryDerivedFields();
+            }
+
+            function renderFilterCategoryOptions() {
+                const filter = get("filter-meter-type");
+                const currentValue = filter.value;
+                filter.innerHTML = '<option value="">全部</option>' + categoryTree.flatMap((group) => group.children.map((child) => '<option value="' + esc(child.key) + '">' + esc(group.groupLabel + " / " + child.label) + '</option>')).join("");
+                filter.value = categoryTree.some((group) => group.children.some((child) => child.key === currentValue)) ? currentValue : "";
+            }
+
+            function syncCategoryDerivedFields() {
+                const info = findCategory(get("datasource-type-select").value);
+                if (!info) return;
+                get("modal-group-select").innerHTML = '<option value="' + esc(info.group.groupKey) + '">' + esc(info.group.groupLabel) + '</option>';
+                get("modal-group-select").value = info.group.groupKey;
+                get("modal-meter-type-select").innerHTML = '<option value="' + esc(info.child.key) + '">' + esc(info.child.label) + '</option>';
+                get("modal-meter-type-select").value = info.child.key;
+                get("modal-unit-select").value = info.child.unit || "kWh";
+                get("modal-related-select").innerHTML = '<option value="">未绑定</option>';
+                get("modal-related-select").value = "";
+                switchConfigSection(info.group.type || "smart-meter");
+                renderNewSubcategoryGroupOptions(info.group.groupKey);
+            }
+
+            function addSubcategory() {
+                const row = get("subcategory-create-row");
+                const input = get("new-subcategory-input");
+                if (row.classList.contains("hidden")) {
+                    renderNewSubcategoryGroupOptions(activeTypeGroupKey);
+                    row.classList.remove("hidden");
+                    input.focus();
+                    return;
+                }
+                const groupKey = get("new-subcategory-group-select").value;
+                const group = findGroup(groupKey);
+                if (!group) return;
+                const name = input.value.trim();
+                if (!name) {
+                    input.focus();
+                    toast("请先输入具体分类名称");
+                    return;
+                }
+                const key = slugify(name);
+                const child = { key, label: name, unit: "kWh" };
+                pendingCustomCategory = { groupKey: group.groupKey, child };
+                input.value = "";
+                row.classList.add("hidden");
+                activeTypeGroupKey = group.groupKey;
+                renderTypeCategoryOptions(key);
+                toast("具体分类已暂存，保存数据源后生效");
+                }
+
+            function getFilteredData() {
+                const keyword = (get("search-input").value || "").trim().toLowerCase();
+                const type = get("filter-type").value;
+                const status = get("filter-status").value;
+                const org = get("filter-org").value;
+                const meterType = get("filter-meter-type").value;
+                return datasourceList.filter((item) => {
+                    const matchKeyword = !keyword || [item.name, item.org, bindingText(item), item.meterId, item.gateway, item.url, item.deviceId].some((field) => String(field || "").toLowerCase().includes(keyword));
+                    return matchKeyword && (!currentTreeCategory || item.meterType === currentTreeCategory) && (!type || item.type === type) && (!status || item.status === status) && (!org || item.org === org) && (!meterType || item.meterType === meterType);
+                });
+            }
+
+            function getPagedData() {
+                const rows = getFilteredData();
+                const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+                const start = (currentPage - 1) * pageSize;
+                return { rows, pageRows: rows.slice(start, start + pageSize), totalPages, start };
+            }
+
+            function isDatasourceComplete(item) {
+                const baseComplete = [item.name, item.type, item.meterType, item.org, item.frequency, item.status, item.unit].every(Boolean);
+                if (!baseComplete) return false;
+                if (item.type === "smart-meter") return Boolean(item.meterId && item.gateway);
+                if (item.type === "manual") return Boolean(item.person && item.frequency);
+                if (item.type === "api") return Boolean(item.url && item.token && item.mapping);
+                if (item.type === "iot") return Boolean(item.protocol && item.deviceId && item.heartbeat);
+                if (item.type === "excel") return Boolean(item.template || item.fileName);
+                return true;
+            }
+
+            function renderStats() {
+                const total = datasourceList.length;
+                const online = datasourceList.filter((item) => item.status === "在线").length;
+                const offline = datasourceList.filter((item) => item.status === "离线").length;
+                const complete = datasourceList.filter(isDatasourceComplete).length;
+                get("stat-total").textContent = String(total);
+                get("stat-online").textContent = String(online);
+                get("stat-offline").textContent = String(offline);
+                get("stat-completeness").textContent = total ? ((complete / total) * 100).toFixed(1).replace(/\.0$/, "") + "%" : "0%";
+            }
+
+            function renderTable() {
+                const { pageRows } = getPagedData();
+                if (!pageRows.length) {
+                    tableBody.innerHTML = '<tr><td colspan="8" class="px-4 py-10 text-center text-outline">暂无匹配的数据源</td></tr>';
+                    return;
+                }
+                tableBody.innerHTML = pageRows.map((item) => {
+                    const statusClass = statusClasses[item.status] || statusClasses["离线"];
+                    return '<tr class="hover:bg-surface-container/30 transition-colors" data-id="' + esc(item.id) + '">' +
+                        '<td class="px-4 py-3 font-medium whitespace-nowrap">' + esc(item.name) + '</td>' +
+                        '<td class="px-4 py-3 text-outline whitespace-nowrap">' + esc(typeLabels[item.type] || item.type) + '-' + esc(categoryLabel(item.meterType)) + '</td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap">' + bindingCell(item) + '</td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap">' + esc(item.frequency) + '</td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap">' + esc(item.org) + '</td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-full text-[10px] border ' + statusClass + '">' + esc(item.status) + '</span></td>' +
+                        '<td class="px-4 py-3 whitespace-nowrap">' + esc(item.time || '-') + '</td>' +
+                        '<td class="px-4 py-3 text-right whitespace-nowrap"><div class="flex items-center justify-end space-x-3 whitespace-nowrap"><button class="text-primary hover:underline" data-action="edit" data-id="' + esc(item.id) + '">编辑</button><button class="text-primary hover:underline" data-action="detail" data-id="' + esc(item.id) + '">详情</button><button class="inline-flex items-center gap-1 text-error hover:underline" data-action="delete" data-id="' + esc(item.id) + '"><span class="material-symbols-outlined text-sm">delete</span>删除</button></div></td>' +
+                    '</tr>';
+                }).join("");
+            }
+
+            function renderPagination() {
+                const { rows, totalPages, start, pageRows } = getPagedData();
+                const from = rows.length ? start + 1 : 0;
+                const to = rows.length ? start + pageRows.length : 0;
+                get("pagination-summary").textContent = "共 " + rows.length + " 条，显示 " + from + "-" + to + " 条";
+                get("pagination-size").value = String(pageSize);
+                get("pagination-jump").value = String(currentPage);
+                const prevDisabled = currentPage <= 1;
+                const nextDisabled = currentPage >= totalPages;
+                get("pagination-prev").disabled = prevDisabled;
+                get("pagination-next").disabled = nextDisabled;
+                get("pagination-prev").classList.toggle("opacity-40", prevDisabled);
+                get("pagination-prev").classList.toggle("cursor-not-allowed", prevDisabled);
+                get("pagination-next").classList.toggle("opacity-40", nextDisabled);
+                get("pagination-next").classList.toggle("cursor-not-allowed", nextDisabled);
+                const pages = [];
+                const windowSize = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(windowSize / 2));
+                let endPage = Math.min(totalPages, startPage + windowSize - 1);
+                startPage = Math.max(1, endPage - windowSize + 1);
+                if (startPage > 1) pages.push(1);
+                if (startPage > 2) pages.push("...");
+                for (let page = startPage; page <= endPage; page += 1) pages.push(page);
+                if (endPage < totalPages - 1) pages.push("...");
+                if (endPage < totalPages) pages.push(totalPages);
+                get("pagination-pages").innerHTML = pages.map((page) => page === "..."
+                    ? '<span class="w-8 h-8 flex items-center justify-center text-outline">...</span>'
+                    : '<button type="button" data-page="' + page + '" class="w-8 h-8 flex items-center justify-center rounded ' + (page === currentPage ? 'bg-primary text-on-primary' : 'border border-outline-variant hover:bg-surface-variant/10') + '">' + page + '</button>'
+                ).join("");
+                get("pagination-pages").querySelectorAll("[data-page]").forEach((btn) => btn.addEventListener("click", () => { currentPage = Number(btn.dataset.page); refreshDatasourceView(); }));
+            }
+
+            function refreshDatasourceView(options = {}) {
+                if (options.resetPage) currentPage = 1;
+                renderStats();
+                renderCategoryTree();
+                renderTable();
+                renderPagination();
+            }
+
+            function setModalVisible(visible) {
+                modal.classList.toggle("hidden", !visible);
+                modal.classList.toggle("flex", visible);
+                modal.setAttribute("aria-hidden", visible ? "false" : "true");
+                if (visible) {
+                    modal.scrollTop = 0;
+                }
+            }
+            function setToggle(prefix, enabled) {
+                const btn = get(prefix + "-switch");
+                const knob = get(prefix + "-knob");
+                btn.classList.toggle("bg-primary", enabled);
+                btn.classList.toggle("bg-outline-variant", !enabled);
+                knob.classList.toggle("translate-x-6", enabled);
+                knob.classList.toggle("translate-x-0", !enabled);
+                knob.classList.toggle("translate-x-5", false);
+            }
+            function switchConfigSection(type) { document.querySelectorAll(".config-section").forEach((section) => section.classList.toggle("active", section.id === "config-" + type)); }
+
+            function clearModal() {
+                pendingCustomCategory = null;
+                modal.querySelectorAll("input").forEach((input) => { if (input.type === "checkbox") input.checked = false; else if (input.type === "number") input.value = input.defaultValue || ""; else input.value = ""; });
+                modal.querySelectorAll("select").forEach((select) => { select.selectedIndex = 0; });
+                get("subcategory-create-row").classList.add("hidden");
+                get("new-subcategory-input").value = "";
+                get("modal-org-select").value = "";
+                renderTypeCategoryOptions("electric");
+                setBindingPreview(null);
+                setToggle("quality", false);
+                setToggle("active", true);
+            }
+
+            function openCreateModal() {
+                editingDatasourceId = null;
+                clearModal();
+                modalTitle.textContent = "新增数据源";
+                saveBtn.textContent = "保存并测试";
+                setModalVisible(true);
+            }
+
+            function openEditModal(id) {
+                const item = datasourceList.find((row) => String(row.id) === String(id));
+                if (!item) return;
+                const info = findCategory(item.meterType) || { group: categoryTree[0], child: categoryTree[0].children[0] };
+                editingDatasourceId = item.id;
+                clearModal();
+                modalTitle.textContent = "编辑数据源";
+                saveBtn.textContent = "提交修改";
+                get("modal-name-input").value = item.name || "";
+                get("modal-org-select").value = item.org || "";
+                renderTypeCategoryOptions(item.meterType || info.child.key);
+                get("modal-unit-select").value = item.unit || info.child.unit || "kWh";
+                get("modal-related-select").innerHTML = '<option value="' + esc(bindingText(item)) + '">' + esc(bindingText(item)) + '</option>';
+                get("modal-related-select").value = bindingText(item);
+                setBindingPreview(item);
+                get("modal-meter-id-input").value = item.meterId || "";
+                get("modal-frequency-select").value = item.frequency || "15分钟";
+                get("modal-gateway-input").value = item.gateway || "";
+                get("modal-person-input").value = item.person || "";
+                get("modal-manual-frequency-select").value = item.frequency || "每月";
+                get("modal-remind-before-checkbox").checked = Boolean(item.remindBeforeDeadline);
+                get("modal-overdue-alert-checkbox").checked = Boolean(item.overdueAlert);
+                get("modal-url-input").value = item.url || "";
+                get("modal-token-input").value = item.token || "";
+                get("modal-protocol-select").value = item.protocol || "MQTT";
+                get("modal-device-id-input").value = item.deviceId || "";
+                get("modal-heartbeat-input").value = item.heartbeat || "60";
+                setToggle("quality", item.check !== false);
+                setToggle("active", item.status !== "离线");
+                switchConfigSection(info.group.type || item.type || "smart-meter");
+                setModalVisible(true);
+            }
+
+            function collectModalData() {
+                const info = findCategory(get("datasource-type-select").value) || { group: categoryTree[0], child: categoryTree[0].children[0] };
+                const group = info.group;
+                const type = group.type || "smart-meter";
+                const active = get("active-switch").classList.contains("bg-primary");
+                const selectedUnit = get("modal-unit-select")?.value || info.child.unit || "kWh";
+                const base = { name: get("modal-name-input").value.trim() || "未命名数据源", org: get("modal-org-select").value || "华东园区", type, groupKey: group.groupKey, meterType: info.child.key, frequency: "日", status: active ? "在线" : "离线", time: "2026-06-29 10:35", check: get("quality-switch").classList.contains("bg-primary"), unit: selectedUnit };
+                if (type === "smart-meter") return { ...base, frequency: get("modal-frequency-select").value || "15分钟", meterId: get("modal-meter-id-input").value.trim(), gateway: get("modal-gateway-input").value.trim() };
+                if (type === "manual") return { ...base, frequency: get("modal-manual-frequency-select").value || "每月", person: get("modal-person-input").value.trim(), remindBeforeDeadline: get("modal-remind-before-checkbox").checked, overdueAlert: get("modal-overdue-alert-checkbox").checked };
+                if (type === "api") return { ...base, url: get("modal-url-input").value.trim(), token: get("modal-token-input").value.trim(), mapping: "data.val" };
+                if (type === "iot") return { ...base, frequency: "5分钟", protocol: get("modal-protocol-select").value || "MQTT", deviceId: get("modal-device-id-input").value.trim(), heartbeat: get("modal-heartbeat-input").value || "60" };
+                if (type === "excel") return { ...base, frequency: "按次导入", template: "数据上报模板.xlsx", fileName: get("excel-file-input")?.files?.[0]?.name || "" };
+                return { ...base, frequency: "月度", template: "数据上报模板.xlsx" };
+            }
+
+            function commitPendingCustomCategory() {
+                if (!pendingCustomCategory) return;
+                const group = findGroup(pendingCustomCategory.groupKey);
+                if (group && !group.children.some((child) => child.key === pendingCustomCategory.child.key)) {
+                    group.children.push(pendingCustomCategory.child);
+                    group.expanded = true;
+                }
+                pendingCustomCategory = null;
+            }
+
+            function closeDatasourceModal() {
+                pendingCustomCategory = null;
+                get("subcategory-create-row").classList.add("hidden");
+                get("new-subcategory-input").value = "";
+                setModalVisible(false);
+            }
+
+            function nextDatasourceId() {
+                const maxNumber = datasourceList
+                    .map((row) => Number(String(row.id).replace("ds-", "")))
+                    .filter(Number.isFinite)
+                    .reduce((max, num) => Math.max(max, num), 0);
+                return `ds-${maxNumber + 1}`;
+            }
+
+            function persistDatasource(item) {
+                if (!Mock.DataSources) return;
+                const index = Mock.DataSources.findIndex((row) => String(row.id) === String(item.id));
+                const row = { ...item };
+                delete row.activityDataType;
+                if (index >= 0) {
+                    const { activityDataType, ...existing } = Mock.DataSources[index] || {};
+                    Mock.DataSources.splice(index, 1, { ...existing, ...row });
+                } else Mock.DataSources.unshift(row);
+                Mock.saveState?.();
+            }
+
+            function removePersistedDatasource(id) {
+                if (!Mock.DataSources) return;
+                const index = Mock.DataSources.findIndex((row) => String(row.id) === String(id));
+                if (index >= 0) {
+                    Mock.DataSources.splice(index, 1);
+                    Mock.saveState?.();
+                }
+            }
+
+            function saveModal() {
+                const data = collectModalData();
+                commitPendingCustomCategory();
+                if (editingDatasourceId) {
+                    const index = datasourceList.findIndex((row) => String(row.id) === String(editingDatasourceId));
+                    if (index === -1) return;
+                    datasourceList[index] = { ...datasourceList[index], ...data };
+                    persistDatasource(datasourceList[index]);
+                    toast("修改成功");
+                } else {
+                    const row = { id: nextDatasourceId(), ...data };
+                    datasourceList.unshift(row);
+                    persistDatasource(row);
+                    toast("新增成功");
+                }
+                setModalVisible(false);
+                renderFilterCategoryOptions();
+                refreshDatasourceView({ resetPage: true });
+            }
+
+            function detailRows(item) {
+                const rows = [["数据源名称", item.name], ["类型", (typeLabels[item.type] || item.type) + "-" + categoryLabel(item.meterType)], ["关联排放源", bindingText(item)], ["采集频率", item.frequency], ["所属组织", item.org], ["状态", item.status], ["最后更新时间", item.time]];
+                return rows.filter(([, value]) => value !== undefined && value !== null && value !== "").map(([label, value]) => '<div class="rounded-lg border border-outline-variant bg-surface-container-lowest p-3"><div class="text-xs text-outline mb-1">' + esc(label) + '</div><div class="text-sm font-medium break-all">' + esc(value) + '</div></div>').join("");
+            }
+
+            function getSourceNameById(sourceId) {
+                return (Mock.EmissionSources || []).find((source) => String(source.id) === String(sourceId))?.name || sourceId || "-";
+            }
+
+            function getActivityRecordsForDatasource(datasourceId) {
+                if (typeof Mock.getActivityRecordsByDatasource === "function") {
+                    return Mock.getActivityRecordsByDatasource(datasourceId);
+                }
+                const id = normalizeDatasourceIdLocal(datasourceId);
+                return (Mock.ActivityDataRecords || [])
+                    .filter((record) => normalizeDatasourceIdLocal(record.datasourceId) === id)
+                    .sort((a, b) => String(b.collectedAt || "").localeCompare(String(a.collectedAt || "")) || String(b.period || "").localeCompare(String(a.period || "")));
+            }
+
+            function ensureActivityRecordApi() {
+                if (typeof Mock.addActivityDataRecord === "function") return;
+                Mock.addActivityDataRecord = function addActivityDataRecord(record) {
+                    if (!Mock.ActivityDataRecords) Mock.ActivityDataRecords = [];
+                    const maxNumber = Mock.ActivityDataRecords
+                        .map((row) => Number(String(row.id || "").replace("adr-", "")))
+                        .filter(Number.isFinite)
+                        .reduce((max, num) => Math.max(max, num), 0);
+                    const now = new Date();
+                    const timestamp = now.getFullYear() + "-" +
+                        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+                        String(now.getDate()).padStart(2, "0") + " " +
+                        String(now.getHours()).padStart(2, "0") + ":" +
+                        String(now.getMinutes()).padStart(2, "0");
+                    const row = {
+                        id: `adr-${maxNumber + 1}`,
+                        datasourceId: record.datasourceId,
+                        sourceId: record.sourceId,
+                        period: record.period,
+                        amount: Number(record.amount),
+                        unit: record.unit,
+                        quality: "待复核",
+                        collectedAt: timestamp,
+                        status: "待确认"
+                    };
+                    Mock.ActivityDataRecords.unshift(row);
+                    Mock.saveState?.();
+                    return row;
+                };
+            }
+
+            function activityRecordsTable(item) {
+                const records = getActivityRecordsForDatasource(item.id).slice(0, 5);
+                if (!records.length) {
+                    return '<div class="rounded-lg border border-dashed border-outline-variant bg-surface-container-lowest p-6 text-center text-sm text-outline">暂无活动数据记录</div>';
+                }
+                return '<div class="overflow-x-auto rounded-lg border border-outline-variant"><table class="min-w-full text-sm"><thead class="bg-surface-container-low text-xs text-outline"><tr><th class="px-3 py-2 text-left font-medium whitespace-nowrap">核算期间</th><th class="px-3 py-2 text-left font-medium whitespace-nowrap">活动数据量</th><th class="px-3 py-2 text-left font-medium whitespace-nowrap">单位</th><th class="px-3 py-2 text-left font-medium whitespace-nowrap">关联排放源</th><th class="px-3 py-2 text-left font-medium whitespace-nowrap">数据质量</th><th class="px-3 py-2 text-left font-medium whitespace-nowrap">采集/导入时间</th><th class="px-3 py-2 text-left font-medium whitespace-nowrap">状态</th></tr></thead><tbody class="divide-y divide-outline-variant/60">' +
+                    records.map((record) => '<tr class="bg-white"><td class="px-3 py-2 whitespace-nowrap">' + esc(record.period) + '</td><td class="px-3 py-2 whitespace-nowrap font-medium">' + esc(record.amount) + '</td><td class="px-3 py-2 whitespace-nowrap">' + esc(record.unit) + '</td><td class="px-3 py-2 whitespace-nowrap">' + esc(record.sourceName || getSourceNameById(record.sourceId)) + '</td><td class="px-3 py-2 whitespace-nowrap">' + esc(record.quality) + '</td><td class="px-3 py-2 whitespace-nowrap">' + esc(record.collectedAt) + '</td><td class="px-3 py-2 whitespace-nowrap">' + esc(record.status) + '</td></tr>').join("") +
+                '</tbody></table></div>';
+            }
+
+            function showDetails(id) {
+                const item = datasourceList.find((row) => String(row.id) === String(id));
+                if (!item) return;
+                let panel = get("datasource-detail-modal");
+                if (!panel) {
+                    panel = document.createElement("div");
+                    panel.id = "datasource-detail-modal";
+                    panel.className = "fixed inset-0 z-[70] hidden items-center justify-center bg-black/50 backdrop-blur-sm";
+                    panel.innerHTML = '<div class="bg-white w-[920px] max-w-[94vw] max-h-[86vh] overflow-y-auto rounded-xl shadow-2xl"><div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between"><h2 class="text-lg font-bold">数据源详情</h2><button data-close class="text-outline hover:text-on-surface"><span class="material-symbols-outlined">close</span></button></div><div class="p-6 space-y-6" data-detail-body></div><div class="px-6 py-4 border-t border-outline-variant bg-surface-container-low flex justify-end"><button data-close class="px-5 py-2 rounded-lg bg-primary text-white text-sm">关闭</button></div></div>';
+                    document.body.appendChild(panel);
+                    panel.querySelectorAll("[data-close]").forEach((btn) => btn.addEventListener("click", () => panel.classList.add("hidden")));
+                    panel.addEventListener("click", (event) => { if (event.target === panel) panel.classList.add("hidden"); });
+                }
+                panel.querySelector("[data-detail-body]").innerHTML =
+                    '<section><div class="mb-3 flex items-center justify-between"><h3 class="text-sm font-semibold text-on-surface">数据源配置</h3></div><div class="grid grid-cols-2 gap-4">' + detailRows(item) + '</div></section>' +
+                    '<section><div class="mb-3 flex items-center justify-between"><h3 class="text-sm font-semibold text-on-surface">活动数据记录</h3><span class="text-xs text-outline">由表计/台账后台自动记录，仅展示最近记录</span></div><div class="space-y-4">' + activityRecordsTable(item) + '</div></section>';
+                panel.classList.remove("hidden");
+                panel.classList.add("flex");
+            }
+
+            function deleteDatasource(id) {
+                const index = datasourceList.findIndex((row) => String(row.id) === String(id));
+                if (index === -1) return;
+                const [removed] = datasourceList.splice(index, 1);
+                removePersistedDatasource(removed.id);
+                toast("已删除：" + removed.name);
+                refreshDatasourceView();
+            }
+
+            function renderFilterCategoryOptions() {
+                const current = get("filter-meter-type").value;
+                get("filter-meter-type").innerHTML = '<option value="">全部</option>' + categoryTree.flatMap((group) => group.children.map((child) => '<option value="' + esc(child.key) + '">' + esc(group.groupLabel + " / " + child.label) + '</option>')).join("");
+                get("filter-meter-type").value = categoryTree.some((group) => group.children.some((child) => child.key === current)) ? current : "";
+            }
+
+            function resetAllFilters() {
+                currentTreeCategory = "";
+                currentPage = 1;
+                ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => { get(id).value = ""; });
+                refreshDatasourceView();
+            }
+
+            ["search-input", "filter-type", "filter-status", "filter-org", "filter-meter-type"].forEach((id) => {
+                const el = get(id);
+                el.addEventListener(el.tagName === "INPUT" ? "input" : "change", () => { if (id === "filter-meter-type") currentTreeCategory = el.value; refreshDatasourceView({ resetPage: true }); });
+            });
+            get("filter-reset").addEventListener("click", resetAllFilters);
+            openBtn.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                openCreateModal();
+            };
+            closeBtn.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                closeDatasourceModal();
+            };
+            cancelBtn.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                closeDatasourceModal();
+            };
+            saveBtn.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                saveModal();
+            };
+            typeSelect.addEventListener("change", syncCategoryDerivedFields);
+            get("type-category-trigger").addEventListener("click", (event) => { event.preventDefault(); event.stopPropagation(); get("type-category-panel").classList.toggle("hidden"); renderTypeCategoryPicker(); });
+            function previewTypeGroup(event) {
+                const btn = event.target.closest("[data-type-group]");
+                if (!btn || activeTypeGroupKey === btn.dataset.typeGroup) return;
+                activeTypeGroupKey = btn.dataset.typeGroup;
+                renderTypeCategoryPicker();
+            }
+            get("type-category-groups").addEventListener("pointerover", previewTypeGroup);
+            get("type-category-groups").addEventListener("click", previewTypeGroup);
+            get("type-category-children").addEventListener("click", (event) => {
+                const btn = event.target.closest("[data-type-child]");
+                if (!btn) return;
+                typeSelect.value = btn.dataset.typeChild;
+                get("type-category-panel").classList.add("hidden");
+                syncCategoryDerivedFields();
+                renderTypeCategoryPicker();
+            });
+            document.addEventListener("click", (event) => { if (!get("type-category-picker").contains(event.target)) get("type-category-panel").classList.add("hidden"); });
+            get("add-subcategory-btn").addEventListener("click", addSubcategory);
+            get("confirm-subcategory-btn").addEventListener("click", addSubcategory);
+            get("cancel-subcategory-btn").addEventListener("click", () => { get("subcategory-create-row").classList.add("hidden"); get("new-subcategory-input").value = ""; });
+            get("new-subcategory-input").addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); addSubcategory(); } });
+            modal.addEventListener("click", (event) => { if (event.target === modal) closeDatasourceModal(); });
+            ["quality", "active"].forEach((prefix) => get(prefix + "-switch").addEventListener("click", () => setToggle(prefix, !get(prefix + "-switch").classList.contains("bg-primary"))));
+            tableBody.addEventListener("click", (event) => {
+                const btn = event.target.closest("[data-action]");
+                if (!btn) return;
+                const id = btn.dataset.id;
+                if (btn.dataset.action === "edit") openEditModal(id);
+                if (btn.dataset.action === "detail") showDetails(id);
+                if (btn.dataset.action === "delete") deleteDatasource(id);
+            });
+            get("pagination-prev").addEventListener("click", () => { if (currentPage <= 1) return; currentPage -= 1; refreshDatasourceView(); });
+            get("pagination-next").addEventListener("click", () => { const totalPages = Math.max(1, Math.ceil(getFilteredData().length / pageSize)); if (currentPage >= totalPages) return; currentPage += 1; refreshDatasourceView(); });
+            get("pagination-size").addEventListener("change", () => { pageSize = Number(get("pagination-size").value) || 10; currentPage = 1; refreshDatasourceView(); });
+            function jumpToPage() {
+                const totalPages = Math.max(1, Math.ceil(getFilteredData().length / pageSize));
+                const page = Math.min(totalPages, Math.max(1, Number(get("pagination-jump").value) || 1));
+                currentPage = page;
+                refreshDatasourceView();
+            }
+            get("pagination-jump").addEventListener("change", jumpToPage);
+            get("pagination-jump").addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); jumpToPage(); } });
+
+
+            function downloadExcelTemplate() {
+                const content = "数据源名称,所属组织,数据源类型,数值,采集时间\n示例数据源,华东园区,Excel导入,100,2026-06-29 10:30";
+                const blob = new Blob([content], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "数据上报模板.xlsx";
+                document.body.appendChild(link);
+                link.click();
+                URL.revokeObjectURL(link.href);
+                link.remove();
+                toast("模板下载已开始");
+            }
+            function handleExcelFile(file) {
+                if (!file) return;
+                const valid = /\.(xls|xlsx)$/i.test(file.name);
+                if (!valid) {
+                    toast("仅支持 .xls / .xlsx 文件");
+                    return;
+                }
+                if (file.size > 50 * 1024 * 1024) {
+                    toast("文件不能超过 50MB");
+                    return;
+                }
+                const nameEl = get("excel-upload-file-name");
+                if (nameEl) {
+                    nameEl.textContent = "已选择：" + file.name;
+                    nameEl.classList.remove("hidden");
+                }
+                toast("文件已选择");
+            }
+            const templateBtn = get("download-template-btn");
+            if (templateBtn) templateBtn.addEventListener("click", downloadExcelTemplate);
+            const uploadZone = get("excel-upload-zone");
+            const uploadInput = get("excel-file-input");
+            if (uploadZone && uploadInput) {
+                uploadZone.addEventListener("click", () => uploadInput.click());
+                uploadInput.addEventListener("change", () => handleExcelFile(uploadInput.files[0]));
+                uploadZone.addEventListener("dragover", (event) => {
+                    event.preventDefault();
+                    uploadZone.classList.add("border-primary", "bg-primary/5");
+                });
+                uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("border-primary", "bg-primary/5"));
+                uploadZone.addEventListener("drop", (event) => {
+                    event.preventDefault();
+                    uploadZone.classList.remove("border-primary", "bg-primary/5");
+                    handleExcelFile(event.dataTransfer.files[0]);
+                });
+            }
+
+            window.showDetails = showDetails;
+            window.deleteDatasource = deleteDatasource;
+            renderFilterCategoryOptions();
+            renderTypeCategoryOptions("electric");
+            refreshDatasourceView({ resetPage: true });
+        })();
+    </script>
+
+<script data-binding-refresh>
+(function () {
+  window.addEventListener('storage', function (event) {
+    if (event.key === window.CarbonAccountingMock?.STORAGE_KEY) location.reload();
+  });
+})();
+</script>
+
+</body></html>
